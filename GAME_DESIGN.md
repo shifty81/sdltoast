@@ -1,5 +1,7 @@
 # Harvest Quest - Game Design Document
 
+> **Note:** The primary design reference for this project is now [`sdltoastnew.rtf`](sdltoastnew.rtf). Please refer to that document for the most up-to-date design specifications.
+
 ## Concept
 A top-down action-adventure RPG that combines the dungeon exploration and combat of *The Legend of Zelda: A Link to the Past* with the farming, crafting, and social simulation aspects of *Stardew Valley*.
 

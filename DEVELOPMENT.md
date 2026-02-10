@@ -211,6 +211,10 @@ Follow conventional commits:
 - [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/)
 - [Modern C++ Features](https://github.com/AnthonyCalandra/modern-cpp-features)
 
+## Design Reference
+
+The primary design reference for the project is [sdltoastnew.rtf](sdltoastnew.rtf). Refer to this document for the latest game design specifications, architecture decisions, and development roadmap.
+
 ## Contributing
 
 See [README.md](../README.md) for contribution guidelines.
