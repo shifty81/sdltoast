@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "../engine/Input.h"
 #include "../engine/Renderer.h"
+#include "../engine/SpriteSheet.h"
 #include <SDL2/SDL.h>
 
 Player::Player()
@@ -62,7 +63,29 @@ void Player::Update(float deltaTime, Input* input) {
 void Player::Render(Renderer* renderer) {
     if (!m_active) return;
 
-    // Render player as a colored rectangle (placeholder)
+    // Try to use character sprite sheet if available
+    SpriteSheet* charSheet = SpriteSheetManager::Instance().GetSpriteSheet("characters");
+    
+    if (charSheet && charSheet->IsLoaded()) {
+        // Use sprite sheet - get tile based on direction
+        int spriteId = GetCharacterSpriteId();
+        charSheet->RenderTile(renderer, spriteId, 
+                             static_cast<int>(m_x), 
+                             static_cast<int>(m_y),
+                             static_cast<int>(m_width),
+                             static_cast<int>(m_height));
+    } else {
+        // Fallback: colored rectangle (current method)
+        RenderFallback(renderer);
+    }
+
+    // Draw health hearts (always show)
+    for (int i = 0; i < m_health; ++i) {
+        renderer->FillRect(10 + i * 25, 10, 20, 20, 255, 50, 50);
+    }
+}
+
+void Player::RenderFallback(Renderer* renderer) {
     // Color changes based on facing direction for debugging
     Uint8 r = 50, g = 50, b = 200;
     
@@ -80,9 +103,25 @@ void Player::Render(Renderer* renderer) {
         static_cast<int>(m_height),
         r, g, b
     );
+}
 
-    // Draw health hearts (simple visualization)
-    for (int i = 0; i < m_health; ++i) {
-        renderer->FillRect(10 + i * 25, 10, 20, 20, 255, 50, 50);
+int Player::GetCharacterSpriteId() const {
+    // Map facing direction to sprite sheet tile ID
+    // Assumes sprite sheet layout:
+    // Row 0: Down-facing animation
+    // Row 1: Up-facing animation  
+    // Row 2: Left-facing animation
+    // Row 3: Right-facing animation
+    
+    int baseId = 0;
+    switch (m_facing) {
+        case Direction::DOWN:  baseId = 0; break;
+        case Direction::UP:    baseId = 4; break;
+        case Direction::LEFT:  baseId = 8; break;
+        case Direction::RIGHT: baseId = 12; break;
     }
+    
+    // For now, use first frame (idle)
+    // TODO: Add animation based on movement
+    return baseId;
 }

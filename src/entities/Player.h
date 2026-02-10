@@ -29,6 +29,10 @@ private:
     
     enum class Direction { DOWN, UP, LEFT, RIGHT };
     Direction m_facing;
+    
+    // Helper methods
+    void RenderFallback(Renderer* renderer);
+    int GetCharacterSpriteId() const;
 };
 
 #endif // PLAYER_H

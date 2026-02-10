@@ -50,6 +50,10 @@ private:
     
     int GetIndex(int x, int y) const;
     bool IsValidPosition(int x, int y) const;
+    
+    // Helper methods for rendering
+    void RenderTileFallback(Renderer* renderer, const Tile* tile, int screenX, int screenY);
+    int GetTileSpriteId(const Tile* tile) const;
 };
 
 #endif // MAP_H

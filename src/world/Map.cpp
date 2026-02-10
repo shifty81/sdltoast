@@ -1,5 +1,6 @@
 #include "Map.h"
 #include "../engine/Renderer.h"
+#include "../engine/SpriteSheet.h"
 #include <iostream>
 
 Map::Map()
@@ -33,70 +34,94 @@ void Map::Update(float deltaTime) {
 }
 
 void Map::Render(Renderer* renderer) {
+    // Try to use sprite sheets if available
+    SpriteSheet* worldTiles = SpriteSheetManager::Instance().GetSpriteSheet("world_tiles");
+    
     for (int y = 0; y < m_height; ++y) {
         for (int x = 0; x < m_width; ++x) {
             const Tile* tile = GetTileAt(x, y);
             if (!tile) continue;
             
-            // Render based on tile TYPE (semantic), not visual ID yet
-            Uint8 r = 50, g = 100, b = 50;  // Default grass
+            int screenX = x * TILE_SIZE;
+            int screenY = y * TILE_SIZE;
             
-            switch (tile->GetType()) {
-                case TileType::VOID:
-                    r = 20; g = 20; b = 20;
-                    break;
-                case TileType::FLOOR:
-                    r = 80; g = 80; b = 80;
-                    break;
-                case TileType::WALL:
-                    r = 60; g = 60; b = 70;
-                    break;
-                case TileType::DOOR:
-                    r = 100; g = 60; b = 30;
-                    break;
-                case TileType::WATER:
-                    r = 50; g = 100; b = 200;
-                    break;
-                case TileType::SOIL:
-                    r = 90; g = 60; b = 30;
-                    break;
-                case TileType::CROP:
-                    r = 50; g = 150; b = 50;
-                    break;
-                case TileType::GRASS:
-                    r = 50; g = ((x + y) % 2 == 0) ? 100 : 120; b = 50;
-                    break;
-                case TileType::DIRT:
-                    r = 120; g = 90; b = 60;
-                    break;
-                case TileType::STONE:
-                    r = 100; g = 100; b = 110;
-                    break;
-                case TileType::SAND:
-                    r = 194; g = 178; b = 128;
-                    break;
-                case TileType::DECORATION:
-                    r = 30; g = 140; b = 30;
-                    break;
+            // Use sprite sheet if loaded
+            if (worldTiles && worldTiles->IsLoaded()) {
+                // Map tile type to sprite sheet tile ID
+                int tileId = GetTileSpriteId(tile);
+                worldTiles->RenderTile(renderer, tileId, screenX, screenY, TILE_SIZE, TILE_SIZE);
+            } else {
+                // Fallback: Render colored rectangles (current method)
+                RenderTileFallback(renderer, tile, screenX, screenY);
             }
-            
-            renderer->FillRect(
-                x * TILE_SIZE,
-                y * TILE_SIZE,
-                TILE_SIZE,
-                TILE_SIZE,
-                r, g, b
-            );
-            
-            // Draw grid lines for clarity
-            renderer->DrawRect(
-                x * TILE_SIZE,
-                y * TILE_SIZE,
-                TILE_SIZE,
-                TILE_SIZE,
-                r/2, g/2, b/2
-            );
         }
+    }
+}
+
+void Map::RenderTileFallback(Renderer* renderer, const Tile* tile, int screenX, int screenY) {
+    Uint8 r = 50, g = 100, b = 50;  // Default grass
+    
+    switch (tile->GetType()) {
+        case TileType::VOID:
+            r = 20; g = 20; b = 20;
+            break;
+        case TileType::FLOOR:
+            r = 80; g = 80; b = 80;
+            break;
+        case TileType::WALL:
+            r = 60; g = 60; b = 70;
+            break;
+        case TileType::DOOR:
+            r = 100; g = 60; b = 30;
+            break;
+        case TileType::WATER:
+            r = 50; g = 100; b = 200;
+            break;
+        case TileType::SOIL:
+            r = 90; g = 60; b = 30;
+            break;
+        case TileType::CROP:
+            r = 50; g = 150; b = 50;
+            break;
+        case TileType::GRASS:
+            r = 50; g = ((screenX/TILE_SIZE + screenY/TILE_SIZE) % 2 == 0) ? 100 : 120; b = 50;
+            break;
+        case TileType::DIRT:
+            r = 120; g = 90; b = 60;
+            break;
+        case TileType::STONE:
+            r = 100; g = 100; b = 110;
+            break;
+        case TileType::SAND:
+            r = 194; g = 178; b = 128;
+            break;
+        case TileType::DECORATION:
+            r = 30; g = 140; b = 30;
+            break;
+    }
+    
+    renderer->FillRect(screenX, screenY, TILE_SIZE, TILE_SIZE, r, g, b);
+    renderer->DrawRect(screenX, screenY, TILE_SIZE, TILE_SIZE, r/2, g/2, b/2);
+}
+
+int Map::GetTileSpriteId(const Tile* tile) const {
+    // Map semantic tile types to sprite sheet tile IDs
+    // These IDs depend on your tileset layout
+    // Example mapping (adjust based on actual tileset):
+    
+    switch (tile->GetType()) {
+        case TileType::GRASS:      return 0;   // First tile in sheet
+        case TileType::DIRT:       return 1;
+        case TileType::SOIL:       return 2;
+        case TileType::WATER:      return 3;
+        case TileType::STONE:      return 4;
+        case TileType::SAND:       return 5;
+        case TileType::FLOOR:      return 6;
+        case TileType::WALL:       return 7 + tile->GetVisualId();  // Use auto-tile ID
+        case TileType::DOOR:       return 20;
+        case TileType::CROP:       return 30 + tile->GetGrowthStage();
+        case TileType::DECORATION: return 40 + tile->GetVisualId();
+        default:                   return 0;
     }
 }
 

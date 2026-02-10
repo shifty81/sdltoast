@@ -1,0 +1,19 @@
+==========================================
+   PLACE YOUR TILESET FILES HERE!
+==========================================
+
+Expected files:
+
+📁 tilesets/
+  └── world_tileset.png     (16x16 tiles) - Grass, dirt, water, stone, etc.
+  └── dungeon_tileset.png   (16x16 tiles) - Walls, floors, doors
+  └── farm_tileset.png      (16x16 tiles) - Soil, crops, farmland
+
+📁 sprites/
+  └── character_tileset.png (16x16 or 32x32) - Player animations
+
+The game will automatically load these files at startup!
+
+If files are missing, the game uses colored rectangles as placeholders.
+
+See docs/TILESET_INTEGRATION.md for full documentation.

@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "AssetManager.h"
 #include "AudioManager.h"
+#include "SpriteSheet.h"
 #include "../entities/Player.h"
 #include "../world/Map.h"
 #include "../world/WorldGenerator.h"
@@ -65,6 +66,9 @@ bool Game::Initialize(const std::string& title, int width, int height) {
 
     // Initialize tile registry (CRITICAL for smart tiles)
     TileRegistry::Initialize();
+
+    // Load sprite sheets (will gracefully fallback if files don't exist)
+    SpriteSheetManager::Instance().LoadDefaultAssets(m_renderer.get());
 
     // Initialize game objects
     m_player = std::make_unique<Player>();
@@ -193,6 +197,10 @@ void Game::Render() {
 void Game::Shutdown() {
     m_player.reset();
     m_currentMap.reset();
+    
+    // Cleanup sprite sheets
+    SpriteSheetManager::Instance().Clear();
+    
     m_audioManager.reset();
     m_assetManager.reset();
     m_input.reset();
