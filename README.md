@@ -20,17 +20,28 @@ Tend to your crops in the morning, explore dangerous dungeons in the afternoon, 
 
 ### 🗡️ Combat & Exploration
 - Real-time top-down combat with sword, bow, bombs, and magic
-- Multiple themed dungeons with puzzles and boss battles
+- **Procedurally generated dungeons** with rooms and corridors (Zelda-style)
 - Progressive item unlocks (hookshot, boomerang, etc.)
 - Heart-based health system
 - Secret areas and hidden treasures
+- Boss room generation with combat locks
 
 ### 🌱 Farming & Crafting
+- **Smart tile system** - tiles react to semantic rules
 - Plant, water, and harvest seasonal crops
+- **Soil state machine** (Grass → Hoe → Watered → Crop → Harvest)
 - Raise animals for resources
 - Craft tools, weapons, and items
 - Upgrade your farm and equipment
 - Process crops into artisan goods
+
+### 🌍 World Generation
+- **Tiles are dumb, data is smart** - meaning-first approach
+- **Procedural farm generation** with designated zones
+- **Procedural dungeon generation** with auto-tiling
+- **Noise-based overworld** generation with biomes
+- Auto-tiling system for seamless terrain transitions
+- Decoration pass for environmental detail
 
 ### 🏘️ Social & RPG Elements
 - Befriend 10+ unique NPCs with daily schedules
@@ -97,6 +108,12 @@ After building, run the executable from the build directory:
 ./HarvestQuest  # Linux/macOS
 HarvestQuest.exe  # Windows
 ```
+
+**Try the Procedural Generation!**
+- Press **1** to generate a Farm
+- Press **2** to generate a Dungeon
+- Press **3** to generate an Overworld
+- Watch the smart tile system in action!
 
 ## 🎯 Controls
 
@@ -178,8 +195,10 @@ ctest --output-on-failure
 ## 📖 Documentation
 
 - [Game Design Document](GAME_DESIGN.md) - Detailed gameplay and technical specifications
-- [API Documentation](docs/API.md) - Code documentation (coming soon)
-- [Modding Guide](docs/MODDING.md) - How to create mods (coming soon)
+- [World Generation System](docs/WORLD_GENERATION.md) - **NEW!** Procedural generation deep-dive
+- [Development Guide](DEVELOPMENT.md) - Code architecture and contribution guidelines
+- [Quick Start Guide](QUICKSTART.md) - Get up and running fast
+- [Asset Guidelines](assets/README.md) - How to create game assets
 
 ## 🎨 Assets
 
@@ -194,14 +213,20 @@ Asset creation guidelines coming soon!
 
 - [x] Core game design
 - [x] Project structure
-- [ ] Basic SDL2 engine setup
-- [ ] Character movement and collision
-- [ ] Combat system
-- [ ] Farming mechanics
-- [ ] Inventory system
+- [x] Basic SDL2 engine setup
+- [x] Character movement and collision
+- [x] **Procedural world generation system**
+- [x] **Smart tile system (semantic tiles)**
+- [x] **Auto-tiling algorithm**
+- [x] **Dungeon generation (Zelda-style)**
+- [x] **Farm generation (Stardew-style)**
+- [ ] Combat system with enemies
+- [ ] Farming mechanics (crop growth timing)
+- [ ] Inventory system (UI)
 - [ ] NPC dialogue
-- [ ] First dungeon
 - [ ] Save/load system
+- [ ] Sprite assets and animations
+- [ ] Music and sound effects
 - [ ] Alpha release
 
 See [GAME_DESIGN.md](GAME_DESIGN.md) for detailed development phases.
