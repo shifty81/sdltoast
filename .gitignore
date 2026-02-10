@@ -1,0 +1,63 @@
+# Build directories
+build/
+cmake-build-*/
+out/
+bin/
+obj/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Compiled files
+*.o
+*.obj
+*.exe
+*.out
+*.app
+*.dll
+*.so
+*.dylib
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+Makefile
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.vcxproj.filters
+*.vcxproj.user
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Logs
+*.log
+
+# Save files (for testing)
+saves/
+
+# Temporary files
+tmp/
+temp/
+
+# User-provided tileset PNGs in root (optional to commit)
+# Uncomment these lines if you want to ignore root PNGs:
+# /*.png
+# !example_*.png
+
+# Or keep specific root PNGs tracked:
+# Keep example PNGs in repo for reference
+!example_world_tileset.png
+!example_character_tileset.png

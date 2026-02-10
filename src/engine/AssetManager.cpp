@@ -1,0 +1,52 @@
+#include "AssetManager.h"
+#include "Renderer.h"
+#include <SDL2/SDL_image.h>
+#include <iostream>
+
+AssetManager::~AssetManager() {
+    for (auto& pair : m_textures) {
+        SDL_DestroyTexture(pair.second);
+    }
+    m_textures.clear();
+}
+
+bool AssetManager::Initialize(Renderer* renderer) {
+    m_renderer = renderer;
+    
+    int imgFlags = IMG_INIT_PNG;
+    if (!(IMG_Init(imgFlags) & imgFlags)) {
+        std::cerr << "SDL_image initialization failed: " << IMG_GetError() << std::endl;
+        return false;
+    }
+    
+    return true;
+}
+
+SDL_Texture* AssetManager::LoadTexture(const std::string& filepath) {
+    auto it = m_textures.find(filepath);
+    if (it != m_textures.end()) {
+        return it->second;
+    }
+
+    SDL_Surface* surface = IMG_Load(filepath.c_str());
+    if (!surface) {
+        std::cerr << "Failed to load image " << filepath << ": " << IMG_GetError() << std::endl;
+        return nullptr;
+    }
+
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(m_renderer->GetSDLRenderer(), surface);
+    SDL_FreeSurface(surface);
+
+    if (!texture) {
+        std::cerr << "Failed to create texture from " << filepath << ": " << SDL_GetError() << std::endl;
+        return nullptr;
+    }
+
+    m_textures[filepath] = texture;
+    return texture;
+}
+
+SDL_Texture* AssetManager::GetTexture(const std::string& id) const {
+    auto it = m_textures.find(id);
+    return (it != m_textures.end()) ? it->second : nullptr;
+}
