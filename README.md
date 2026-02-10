@@ -195,7 +195,8 @@ ctest --output-on-failure
 ## 📖 Documentation
 
 - [Game Design Document](GAME_DESIGN.md) - Detailed gameplay and technical specifications
-- [World Generation System](docs/WORLD_GENERATION.md) - **NEW!** Procedural generation deep-dive
+- [World Generation System](docs/WORLD_GENERATION.md) - Procedural generation deep-dive
+- [Tileset Integration Guide](docs/TILESET_INTEGRATION.md) - **NEW!** How to add your own tilesets
 - [Development Guide](DEVELOPMENT.md) - Code architecture and contribution guidelines
 - [Quick Start Guide](QUICKSTART.md) - Get up and running fast
 - [Asset Guidelines](assets/README.md) - How to create game assets
@@ -207,7 +208,14 @@ Currently using placeholder assets. Final game will feature:
 - Chiptuneesque music
 - Retro sound effects
 
-Asset creation guidelines coming soon!
+**NEW: Tileset Support!**
+The game now supports actual sprite sheets! Place your PNG tilesets in:
+- `assets/tilesets/world_tileset.png` (16x16 tiles)
+- `assets/sprites/character_tileset.png` (16x16 or 32x32)
+
+See [Tileset Integration Guide](docs/TILESET_INTEGRATION.md) for details.
+
+The game gracefully falls back to colored rectangles if tileset files are missing.
 
 ## 🗺️ Roadmap
 
