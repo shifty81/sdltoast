@@ -67,6 +67,9 @@ private:
     SpriteSheetManager() = default;
     ~SpriteSheetManager();
     
+    // Helper to check and load PNGs from root directory
+    bool CheckAndLoadRootPngs(Renderer* renderer);
+    
     std::unordered_map<std::string, SpriteSheet*> m_sheets;
 };
 

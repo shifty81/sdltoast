@@ -208,14 +208,29 @@ Currently using placeholder assets. Final game will feature:
 - Chiptuneesque music
 - Retro sound effects
 
-**NEW: Tileset Support!**
-The game now supports actual sprite sheets! Place your PNG tilesets in:
+**NEW: Root Directory PNG Support! 🎉**
+
+You can now place PNG tileset files **directly in the project root directory** and the game will automatically detect and use them!
+
+**Quick Start:**
+1. Place your PNG files in the root: `world_tileset.png` and `character_tileset.png`
+2. Run the game - they'll be automatically loaded!
+
+**Supported naming patterns:**
+- World tiles: `world_tileset.png`, `tiles.png`, `tileset.png`, etc.
+- Characters: `character_tileset.png`, `characters.png`, `sprites.png`, etc.
+
+Or just drop **any 2 PNG files** in the root - first becomes world tiles, second becomes characters!
+
+See [Root PNG Usage Guide](docs/ROOT_PNG_USAGE.md) for complete details.
+
+**Alternative:** Place PNGs in standard locations:
 - `assets/tilesets/world_tileset.png` (16x16 tiles)
 - `assets/sprites/character_tileset.png` (16x16 or 32x32)
 
-See [Tileset Integration Guide](docs/TILESET_INTEGRATION.md) for details.
-
 The game gracefully falls back to colored rectangles if tileset files are missing.
+
+See [Tileset Integration Guide](docs/TILESET_INTEGRATION.md) for asset format details.
 
 ## 🗺️ Roadmap
 

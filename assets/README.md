@@ -1,5 +1,17 @@
 # Asset Guidelines
 
+## 🎉 NEW: Root Directory PNG Support!
+
+**The easiest way to use your tilesets:**
+
+Simply place your PNG files in the **root directory** of the project:
+- `tileset.png` or `world_tileset.png` → World tiles
+- `characters.png` or `character_tileset.png` → Character sprites
+
+The game automatically detects and loads them! See [Root PNG Usage](../docs/ROOT_PNG_USAGE.md) for details.
+
+---
+
 ## Overview
 This directory contains all game assets including sprites, tilesets, music, and sound effects.
 

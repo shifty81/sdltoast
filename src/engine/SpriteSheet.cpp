@@ -2,6 +2,13 @@
 #include "Renderer.h"
 #include <SDL2/SDL_image.h>
 #include <iostream>
+#include <algorithm>
+#include <vector>
+
+// For directory reading
+#ifndef _WIN32
+#include <dirent.h>
+#endif
 
 // ============================================================================
 // SpriteSheet Implementation
@@ -126,17 +133,104 @@ SpriteSheet* SpriteSheetManager::GetSpriteSheet(const std::string& name) {
 void SpriteSheetManager::LoadDefaultAssets(Renderer* renderer) {
     std::cout << "\n=== Loading Sprite Sheets ===" << std::endl;
     
+    // Check root directory for PNG files first (user convenience)
+    std::cout << "Checking root directory for PNG files..." << std::endl;
+    bool foundRootPngs = CheckAndLoadRootPngs(renderer);
+    if (foundRootPngs) {
+        std::cout << "Loaded tilesets from root directory!" << std::endl;
+    }
+    
     // Load world tileset (16x16 tiles)
-    LoadSpriteSheet(renderer, "world_tiles", "assets/tilesets/world_tileset.png", 16, 16);
+    if (!GetSpriteSheet("world_tiles")) {
+        LoadSpriteSheet(renderer, "world_tiles", "assets/tilesets/world_tileset.png", 16, 16);
+    }
     
     // Load character sprite sheet (16x16 or 32x32)
-    LoadSpriteSheet(renderer, "characters", "assets/sprites/character_tileset.png", 16, 16);
+    if (!GetSpriteSheet("characters")) {
+        LoadSpriteSheet(renderer, "characters", "assets/sprites/character_tileset.png", 16, 16);
+    }
     
     // Load additional tilesets as needed
     LoadSpriteSheet(renderer, "dungeon_tiles", "assets/tilesets/dungeon_tileset.png", 16, 16);
     LoadSpriteSheet(renderer, "farm_tiles", "assets/tilesets/farm_tileset.png", 16, 16);
     
     std::cout << "=== Sprite Sheets Loaded ===" << std::endl;
+}
+
+bool SpriteSheetManager::CheckAndLoadRootPngs(Renderer* renderer) {
+    // Common tileset filenames to check in root directory
+    std::vector<std::string> tilesetNames = {
+        "world_tileset.png", "tiles.png", "tileset.png", "world.png",
+        "terrain.png", "map.png"
+    };
+    
+    std::vector<std::string> characterNames = {
+        "character_tileset.png", "characters.png", "char.png", "sprites.png",
+        "player.png", "hero.png"
+    };
+    
+    bool loadedAny = false;
+    
+    // Try to load world tileset from root
+    for (const auto& name : tilesetNames) {
+        if (LoadSpriteSheet(renderer, "world_tiles", name, 16, 16)) {
+            std::cout << "  ✓ Loaded world tiles from: " << name << std::endl;
+            loadedAny = true;
+            break;
+        }
+    }
+    
+    // Try to load character sprites from root
+    for (const auto& name : characterNames) {
+        if (LoadSpriteSheet(renderer, "characters", name, 16, 16)) {
+            std::cout << "  ✓ Loaded character sprites from: " << name << std::endl;
+            loadedAny = true;
+            break;
+        }
+    }
+    
+    // If exactly 2 PNGs in root, try them in order
+    // (This handles the case where user just drops 2 PNGs with any names)
+    if (!loadedAny) {
+        std::vector<std::string> rootPngs;
+        // Check for any .png files in current directory
+        #ifdef _WIN32
+        // Windows version would use different API
+        #else
+        // Unix-like systems
+        DIR* dir = opendir(".");
+        if (dir) {
+            struct dirent* entry;
+            while ((entry = readdir(dir)) != nullptr) {
+                std::string filename = entry->d_name;
+                if (filename.length() > 4 && 
+                    filename.substr(filename.length() - 4) == ".png") {
+                    rootPngs.push_back(filename);
+                }
+            }
+            closedir(dir);
+        }
+        #endif
+        
+        // Sort for consistency
+        std::sort(rootPngs.begin(), rootPngs.end());
+        
+        if (rootPngs.size() >= 1 && !GetSpriteSheet("world_tiles")) {
+            if (LoadSpriteSheet(renderer, "world_tiles", rootPngs[0], 16, 16)) {
+                std::cout << "  ✓ Loaded world tiles from: " << rootPngs[0] << " (1st PNG in root)" << std::endl;
+                loadedAny = true;
+            }
+        }
+        
+        if (rootPngs.size() >= 2 && !GetSpriteSheet("characters")) {
+            if (LoadSpriteSheet(renderer, "characters", rootPngs[1], 16, 16)) {
+                std::cout << "  ✓ Loaded character sprites from: " << rootPngs[1] << " (2nd PNG in root)" << std::endl;
+                loadedAny = true;
+            }
+        }
+    }
+    
+    return loadedAny;
 }
 
 void SpriteSheetManager::Clear() {
