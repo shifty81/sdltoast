@@ -1,10 +1,34 @@
 #ifndef DUNGEON_H
 #define DUNGEON_H
 
-// Placeholder for dungeon generation
+#include "Map.h"
+#include <memory>
+
+/**
+ * Dungeon class - represents a procedurally generated dungeon
+ * Uses WorldGenerator for the actual generation
+ */
 class Dungeon {
 public:
-    // TODO: Implement dungeon generation
+    Dungeon(int width = 50, int height = 50, unsigned int seed = 0);
+    ~Dungeon() = default;
+    
+    void Generate();
+    void Update(float deltaTime);
+    void Render(Renderer* renderer);
+    
+    Map* GetMap() { return m_map.get(); }
+    
+    // Room combat lock (Zelda-style)
+    void LockDoors();
+    void UnlockDoors();
+    
+private:
+    std::unique_ptr<Map> m_map;
+    int m_width, m_height;
+    unsigned int m_seed;
+    bool m_doorsLocked;
+    int m_enemiesRemaining;
 };
 
 #endif // DUNGEON_H

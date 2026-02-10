@@ -47,6 +47,7 @@ set(SOURCES
     src/world/Map.cpp
     src/world/Tile.cpp
     src/world/Dungeon.cpp
+    src/world/WorldGenerator.cpp
     src/ui/HUD.cpp
     src/ui/Menu.cpp
     src/ui/DialogueBox.cpp
@@ -72,6 +73,7 @@ set(HEADERS
     src/world/Map.h
     src/world/Tile.h
     src/world/Dungeon.h
+    src/world/WorldGenerator.h
     src/ui/HUD.h
     src/ui/Menu.h
     src/ui/DialogueBox.h
