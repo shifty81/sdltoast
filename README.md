@@ -194,6 +194,7 @@ ctest --output-on-failure
 
 ## 📖 Documentation
 
+- [Primary Design Reference](sdltoastnew.rtf) - **Primary** design reference document for the project
 - [Game Design Document](GAME_DESIGN.md) - Detailed gameplay and technical specifications
 - [World Generation System](docs/WORLD_GENERATION.md) - Procedural generation deep-dive
 - [Tileset Integration Guide](docs/TILESET_INTEGRATION.md) - **NEW!** How to add your own tilesets
