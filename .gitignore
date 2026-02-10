@@ -1,0 +1,53 @@
+# Build directories
+build/
+cmake-build-*/
+out/
+bin/
+obj/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Compiled files
+*.o
+*.obj
+*.exe
+*.out
+*.app
+*.dll
+*.so
+*.dylib
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+Makefile
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.vcxproj.filters
+*.vcxproj.user
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Logs
+*.log
+
+# Save files (for testing)
+saves/
+
+# Temporary files
+tmp/
+temp/

@@ -1,2 +1,231 @@
-# sdltoast
-sdltoast
+# Harvest Quest 🌾⚔️
+
+> *When Zelda: A Link to the Past and Stardew Valley had a baby...*
+
+A top-down action-adventure RPG that seamlessly blends dungeon exploration and real-time combat with peaceful farming, crafting, and village life. Built with SDL2 in C++.
+
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)
+![SDL2](https://img.shields.io/badge/SDL2-2.0+-green.svg)
+
+## 🎮 Concept
+
+Experience the perfect blend of two gaming classics:
+- **From Zelda**: Top-down combat, dungeon exploration, heart-based health, epic boss battles, hidden secrets
+- **From Stardew Valley**: Farming mechanics, seasonal calendar, NPC relationships, crafting, day/night cycle, skill progression
+
+Tend to your crops in the morning, explore dangerous dungeons in the afternoon, and socialize with villagers in the evening. Every day brings new adventures!
+
+## ✨ Features
+
+### 🗡️ Combat & Exploration
+- Real-time top-down combat with sword, bow, bombs, and magic
+- Multiple themed dungeons with puzzles and boss battles
+- Progressive item unlocks (hookshot, boomerang, etc.)
+- Heart-based health system
+- Secret areas and hidden treasures
+
+### 🌱 Farming & Crafting
+- Plant, water, and harvest seasonal crops
+- Raise animals for resources
+- Craft tools, weapons, and items
+- Upgrade your farm and equipment
+- Process crops into artisan goods
+
+### 🏘️ Social & RPG Elements
+- Befriend 10+ unique NPCs with daily schedules
+- Romance and marriage system
+- Quest and achievement system
+- 4 seasons with 28 days each
+- Day/night cycle with energy management
+- Skill progression (Farming, Combat, Mining, Fishing)
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **C++ Compiler**: GCC 9+, Clang 10+, or MSVC 2019+
+- **CMake**: 3.15 or higher
+- **SDL2 Libraries**:
+  - SDL2 (2.0.0+)
+  - SDL2_image
+  - SDL2_mixer
+  - SDL2_ttf
+
+### Installing SDL2
+
+#### Ubuntu/Debian
+```bash
+sudo apt-get update
+sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev cmake build-essential
+```
+
+#### macOS (Homebrew)
+```bash
+brew install sdl2 sdl2_image sdl2_mixer sdl2_ttf cmake
+```
+
+#### Windows (vcpkg)
+```bash
+vcpkg install sdl2 sdl2-image sdl2-mixer sdl2-ttf
+```
+
+### Building the Game
+
+```bash
+# Clone the repository
+git clone https://github.com/shifty81/sdltoast.git
+cd sdltoast
+
+# Create build directory
+mkdir build && cd build
+
+# Configure with CMake
+cmake ..
+
+# Build
+cmake --build .
+
+# Run
+./HarvestQuest
+```
+
+### Running the Game
+
+After building, run the executable from the build directory:
+```bash
+./HarvestQuest  # Linux/macOS
+HarvestQuest.exe  # Windows
+```
+
+## 🎯 Controls
+
+### Keyboard
+- **Arrow Keys / WASD**: Move character
+- **Z / Space**: Attack/Interact
+- **X / Shift**: Use equipped item
+- **C**: Open inventory
+- **Esc**: Pause menu
+- **1-5**: Quick item slots
+
+### Gamepad (Xbox layout)
+- **Left Stick / D-Pad**: Move character
+- **A**: Attack/Interact
+- **B**: Use equipped item
+- **X**: Open inventory
+- **Start**: Pause menu
+- **Bumpers**: Cycle through items
+
+## 📁 Project Structure
+
+```
+sdltoast/
+├── src/
+│   ├── main.cpp              # Entry point
+│   ├── engine/               # Core engine systems
+│   │   ├── Game.cpp/h
+│   │   ├── Renderer.cpp/h
+│   │   ├── Input.cpp/h
+│   │   ├── AssetManager.cpp/h
+│   │   └── AudioManager.cpp/h
+│   ├── entities/             # Game entities
+│   │   ├── Player.cpp/h
+│   │   ├── Enemy.cpp/h
+│   │   └── NPC.cpp/h
+│   ├── systems/              # Game systems
+│   │   ├── Combat.cpp/h
+│   │   ├── Farming.cpp/h
+│   │   ├── Inventory.cpp/h
+│   │   └── Calendar.cpp/h
+│   ├── world/                # World and maps
+│   │   ├── Map.cpp/h
+│   │   └── Dungeon.cpp/h
+│   └── ui/                   # User interface
+│       ├── HUD.cpp/h
+│       └── Menu.cpp/h
+├── assets/                   # Game assets
+│   ├── sprites/
+│   ├── tilesets/
+│   ├── music/
+│   └── sfx/
+├── GAME_DESIGN.md           # Detailed design document
+├── CMakeLists.txt           # Build configuration
+└── README.md                # This file
+```
+
+## 🛠️ Development
+
+### Code Style
+- C++17 standard
+- Follow existing naming conventions
+- Use RAII for resource management
+- Document public APIs
+
+### Contributing
+Contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Testing
+```bash
+cd build
+ctest --output-on-failure
+```
+
+## 📖 Documentation
+
+- [Game Design Document](GAME_DESIGN.md) - Detailed gameplay and technical specifications
+- [API Documentation](docs/API.md) - Code documentation (coming soon)
+- [Modding Guide](docs/MODDING.md) - How to create mods (coming soon)
+
+## 🎨 Assets
+
+Currently using placeholder assets. Final game will feature:
+- 16-bit style pixel art
+- Chiptuneesque music
+- Retro sound effects
+
+Asset creation guidelines coming soon!
+
+## 🗺️ Roadmap
+
+- [x] Core game design
+- [x] Project structure
+- [ ] Basic SDL2 engine setup
+- [ ] Character movement and collision
+- [ ] Combat system
+- [ ] Farming mechanics
+- [ ] Inventory system
+- [ ] NPC dialogue
+- [ ] First dungeon
+- [ ] Save/load system
+- [ ] Alpha release
+
+See [GAME_DESIGN.md](GAME_DESIGN.md) for detailed development phases.
+
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+Inspired by:
+- **The Legend of Zelda: A Link to the Past** by Nintendo
+- **Stardew Valley** by ConcernedApe
+
+Built with:
+- [SDL2](https://www.libsdl.org/) - Simple DirectMedia Layer
+- [SDL2_image](https://github.com/libsdl-org/SDL_image)
+- [SDL2_mixer](https://github.com/libsdl-org/SDL_mixer)
+- [SDL2_ttf](https://github.com/libsdl-org/SDL_ttf)
+
+## 📞 Contact
+
+Project Link: [https://github.com/shifty81/sdltoast](https://github.com/shifty81/sdltoast)
+
+---
+
+*Cultivate your farm, explore dungeons, save the world! 🌾⚔️✨*
