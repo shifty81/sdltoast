@@ -25,6 +25,9 @@ echo [OK] CMake found
 REM Check for vcpkg
 if defined VCPKG_ROOT (
     echo [OK] VCPKG_ROOT is set to: %VCPKG_ROOT%
+) else if defined VCPKG_INSTALLATION_ROOT (
+    set "VCPKG_ROOT=%VCPKG_INSTALLATION_ROOT%"
+    echo [OK] VCPKG_ROOT set from VCPKG_INSTALLATION_ROOT: !VCPKG_ROOT!
 ) else if exist "%LOCALAPPDATA%\vcpkg\vcpkg.exe" (
     set "VCPKG_ROOT=%LOCALAPPDATA%\vcpkg"
     echo [OK] Found vcpkg at: !VCPKG_ROOT!
