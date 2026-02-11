@@ -4,6 +4,7 @@
 set -e
 
 BUILD_LOG="build_output.log"
+VCPKG_TOOLCHAIN=""
 
 # Start logging
 echo "Build started: $(date)" | tee "$BUILD_LOG"
@@ -12,6 +13,46 @@ echo "==================================" | tee -a "$BUILD_LOG"
 echo "  Harvest Quest - Build Script   " | tee -a "$BUILD_LOG"
 echo "==================================" | tee -a "$BUILD_LOG"
 echo "" | tee -a "$BUILD_LOG"
+
+# Function to detect vcpkg and set VCPKG_TOOLCHAIN
+detect_vcpkg() {
+    if [ -n "$VCPKG_ROOT" ] && { [ -f "$VCPKG_ROOT/vcpkg" ] || [ -f "$VCPKG_ROOT/vcpkg.exe" ]; }; then
+        echo "Detected vcpkg at: $VCPKG_ROOT" | tee -a "$BUILD_LOG"
+        return 0
+    elif [ -n "$VCPKG_INSTALLATION_ROOT" ] && { [ -f "$VCPKG_INSTALLATION_ROOT/vcpkg" ] || [ -f "$VCPKG_INSTALLATION_ROOT/vcpkg.exe" ]; }; then
+        export VCPKG_ROOT="$VCPKG_INSTALLATION_ROOT"
+        echo "Detected vcpkg at: $VCPKG_ROOT" | tee -a "$BUILD_LOG"
+        return 0
+    elif command -v vcpkg >/dev/null 2>&1; then
+        local vcpkg_path
+        vcpkg_path="$(dirname "$(command -v vcpkg)")"
+        export VCPKG_ROOT="$vcpkg_path"
+        echo "Detected vcpkg at: $VCPKG_ROOT" | tee -a "$BUILD_LOG"
+        return 0
+    fi
+    return 1
+}
+
+# Function to install SDL2 via vcpkg
+install_sdl2_vcpkg() {
+    if detect_vcpkg; then
+        local vcpkg_exe="$VCPKG_ROOT/vcpkg"
+        if [ ! -f "$vcpkg_exe" ] && [ -f "$VCPKG_ROOT/vcpkg.exe" ]; then
+            vcpkg_exe="$VCPKG_ROOT/vcpkg.exe"
+        fi
+        echo "Installing SDL2 via vcpkg..." | tee -a "$BUILD_LOG"
+        if ! "$vcpkg_exe" install sdl2 sdl2-image sdl2-mixer sdl2-ttf 2>&1 | tee -a "$BUILD_LOG"; then
+            echo "WARNING: vcpkg install command failed." | tee -a "$BUILD_LOG"
+            return 1
+        fi
+        if [ -f "$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" ]; then
+            VCPKG_TOOLCHAIN="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+            echo "Using vcpkg toolchain: $VCPKG_TOOLCHAIN" | tee -a "$BUILD_LOG"
+        fi
+        return 0
+    fi
+    return 1
+}
 
 # Function to install SDL2 dependencies automatically
 install_sdl2() {
@@ -70,6 +111,9 @@ install_sdl2() {
                 sudo zypper install -y libSDL2-devel libSDL2_image-devel libSDL2_mixer-devel libSDL2_ttf-devel 2>&1 | tee -a "$BUILD_LOG"
                 ;;
             *)
+                if install_sdl2_vcpkg; then
+                    return 0
+                fi
                 echo "ERROR: Unsupported platform ($PRETTY_NAME). Please install SDL2 manually:" | tee -a "$BUILD_LOG"
                 echo "  Ubuntu/Debian: sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev" | tee -a "$BUILD_LOG"
                 echo "  Fedora: sudo dnf install SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel" | tee -a "$BUILD_LOG"
@@ -102,6 +146,9 @@ install_sdl2() {
             echo "Detected Homebrew. Installing SDL2..." | tee -a "$BUILD_LOG"
             brew install sdl2 sdl2_image sdl2_mixer sdl2_ttf 2>&1 | tee -a "$BUILD_LOG"
         else
+            if install_sdl2_vcpkg; then
+                return 0
+            fi
             echo "ERROR: Unsupported platform. Please install SDL2 manually:" | tee -a "$BUILD_LOG"
             echo "  Ubuntu/Debian: sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev" | tee -a "$BUILD_LOG"
             echo "  Fedora: sudo dnf install SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel" | tee -a "$BUILD_LOG"
@@ -120,8 +167,8 @@ if ! pkg-config --exists sdl2 2>/dev/null; then
     echo "SDL2 not found. Will attempt automatic installation." | tee -a "$BUILD_LOG"
     install_sdl2
 
-    # Verify installation succeeded
-    if ! pkg-config --exists sdl2 2>/dev/null; then
+    # Verify installation succeeded (skip for vcpkg, as CMake handles SDL2 discovery)
+    if [ -z "$VCPKG_TOOLCHAIN" ] && ! pkg-config --exists sdl2 2>/dev/null; then
         echo "ERROR: SDL2 installation failed. Please install manually." | tee -a "$BUILD_LOG"
         echo "Build finished with errors: $(date)" >> "$BUILD_LOG"
         exit 1
@@ -140,7 +187,12 @@ cd build
 # Configure with CMake
 echo "" | tee -a "$BUILD_LOG"
 echo "Configuring with CMake..." | tee -a "$BUILD_LOG"
-if ! cmake .. -DCMAKE_BUILD_TYPE=Debug 2>&1 | tee -a "../$BUILD_LOG"; then
+CMAKE_ARGS=(-DCMAKE_BUILD_TYPE=Debug)
+if [ -n "$VCPKG_TOOLCHAIN" ]; then
+    CMAKE_ARGS+=("-DCMAKE_TOOLCHAIN_FILE=$VCPKG_TOOLCHAIN")
+    echo "Using vcpkg toolchain file: $VCPKG_TOOLCHAIN" | tee -a "$BUILD_LOG"
+fi
+if ! cmake .. "${CMAKE_ARGS[@]}" 2>&1 | tee -a "../$BUILD_LOG"; then
     echo "ERROR: CMake configuration failed!" | tee -a "../$BUILD_LOG"
     echo "Build finished with errors: $(date)" >> "../$BUILD_LOG"
     exit 1
