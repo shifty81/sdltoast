@@ -38,7 +38,9 @@ if defined VCPKG_ROOT (
         echo   vcpkg install sdl2 sdl2-image sdl2-mixer sdl2-ttf
         echo.
     ) else (
-        for /f "delims=" %%i in ('where vcpkg') do set "VCPKG_ROOT=%%~dpi"
+        for /f "delims=" %%i in ('where vcpkg') do (
+            if not defined VCPKG_ROOT set "VCPKG_ROOT=%%~dpi"
+        )
         REM Remove trailing backslash if present
         if "!VCPKG_ROOT:~-1!"=="\" set "VCPKG_ROOT=!VCPKG_ROOT:~0,-1!"
         echo [OK] Found vcpkg at: !VCPKG_ROOT!
