@@ -1,6 +1,6 @@
 # Harvest Quest - Game Design Document
 
-> **Note:** The primary design reference for this project is now [`sdltoastnew.rtf`](sdltoastnew.rtf). Please refer to that document for the most up-to-date design specifications.
+> **Note:** The primary design reference for this project is now [`sdltoastnew.rtf`](sdltoastnew.rtf). Please refer to that document for the most up-to-date design specifications, and check the SDLDEV reference folder for additional recommendations.
 
 ## Concept
 A top-down action-adventure RPG that combines the dungeon exploration and combat of *The Legend of Zelda: A Link to the Past* with the farming, crafting, and social simulation aspects of *Stardew Valley*.
@@ -54,7 +54,7 @@ A top-down action-adventure RPG that combines the dungeon exploration and combat
 - General store for buying seeds and supplies
 - Blacksmith for upgrading tools and weapons
 - Tavern for socializing
-- 10-15 unique NPCs with daily schedules
+- 15-20 unique NPCs with daily schedules
 - Quest board for side missions
 
 ### Wilderness Areas
@@ -211,6 +211,7 @@ A top-down action-adventure RPG that combines the dungeon exploration and combat
 - Day/night cycle
 - Calendar system
 - Energy system
+- Crafting system and recipe data
 - Save/load functionality
 
 ### Phase 6: Polish & Content (Weeks 17-20)
@@ -219,7 +220,7 @@ A top-down action-adventure RPG that combines the dungeon exploration and combat
 - Quest system
 - Sound effects and music
 - Multiple dungeons and areas
-- NPC schedules and events
+- Expanded NPC roster, schedules, and events
 
 ## Technical Architecture
 
