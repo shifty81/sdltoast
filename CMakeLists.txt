@@ -13,6 +13,10 @@ else()
     add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+# Add cmake/ directory to module path for Find modules (fallback when
+# config-mode packages are not available, e.g. Windows without vcpkg)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
 # Find SDL2 packages
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
