@@ -44,7 +44,7 @@ Tend to your crops in the morning, explore dangerous dungeons in the afternoon, 
 - Decoration pass for environmental detail
 
 ### 🏘️ Social & RPG Elements
-- Befriend 10+ unique NPCs with daily schedules
+- Befriend 15+ unique NPCs with daily schedules
 - Romance and marriage system
 - Quest and achievement system
 - 4 seasons with 28 days each
@@ -195,6 +195,7 @@ ctest --output-on-failure
 ## 📖 Documentation
 
 - [Primary Design Reference](sdltoastnew.rtf) - **Primary** design reference document for the project
+- [SDLDEV Reference Folder](SDLDEV/README.md) - Reference folder recommendations and development notes
 - [Game Design Document](GAME_DESIGN.md) - Detailed gameplay and technical specifications
 - [World Generation System](docs/WORLD_GENERATION.md) - Procedural generation deep-dive
 - [Tileset Integration Guide](docs/TILESET_INTEGRATION.md) - **NEW!** How to add your own tilesets
@@ -247,7 +248,9 @@ See [Tileset Integration Guide](docs/TILESET_INTEGRATION.md) for asset format de
 - [ ] Combat system with enemies
 - [ ] Farming mechanics (crop growth timing)
 - [ ] Inventory system (UI)
-- [ ] NPC dialogue
+- [ ] Crafting and quest systems
+- [ ] NPC dialogue and relationship events
+- [ ] Expanded NPC roster and schedules
 - [ ] Save/load system
 - [ ] Sprite assets and animations
 - [ ] Music and sound effects

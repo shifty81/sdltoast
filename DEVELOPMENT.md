@@ -213,7 +213,7 @@ Follow conventional commits:
 
 ## Design Reference
 
-The primary design reference for the project is [sdltoastnew.rtf](sdltoastnew.rtf). Refer to this document for the latest game design specifications, architecture decisions, and development roadmap.
+The primary design reference for the project is [sdltoastnew.rtf](sdltoastnew.rtf). Refer to this document for the latest game design specifications, architecture decisions, and development roadmap. The SDLDEV reference folder ([SDLDEV/README.md](SDLDEV/README.md)) captures additional recommendations and planning notes to incorporate as the roadmap evolves.
 
 ## Contributing
 
