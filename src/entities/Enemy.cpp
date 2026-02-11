@@ -1,7 +1,7 @@
 #include "Enemy.h"
 #include "../engine/Renderer.h"
 #include <cmath>
-#include <cstdlib>
+#include <random>
 
 Enemy::Enemy()
     : Entity()
@@ -30,7 +30,10 @@ void Enemy::Update(float deltaTime) {
             if (m_patrolTimer >= PATROL_INTERVAL) {
                 m_patrolTimer = 0.0f;
                 // Pick a new random patrol target near origin
-                float angle = static_cast<float>(std::rand()) / RAND_MAX * 6.2832f;
+                static std::mt19937 rng(std::random_device{}());
+                static constexpr float TWO_PI = 6.2831853f;
+                std::uniform_real_distribution<float> dist(0.0f, TWO_PI);
+                float angle = dist(rng);
                 m_patrolTargetX = m_patrolOriginX + std::cos(angle) * PATROL_RADIUS;
                 m_patrolTargetY = m_patrolOriginY + std::sin(angle) * PATROL_RADIUS;
             }

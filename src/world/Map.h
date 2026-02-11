@@ -31,6 +31,7 @@ public:
     
     // Check tile properties at position
     bool IsSolid(int x, int y) const;
+    bool IsAreaSolid(float worldX, float worldY, float width, float height) const;
     bool CanPlantCrop(int x, int y) const;
     
     // Farming interactions

@@ -167,31 +167,18 @@ void Game::Update(float deltaTime) {
         float px, py;
         m_player->GetPosition(px, py);
         
-        // Check all four corners of the player for solid tiles
-        float pw = 32.0f;
-        float ph = 32.0f;
+        // Get actual player dimensions
+        float pw, ph;
+        m_player->GetSize(pw, ph);
         
-        // Check horizontal movement
-        int tlX, tlY, trX, trY, blX, blY, brX, brY;
-        m_currentMap->WorldToTile(px, prevY, tlX, tlY);
-        m_currentMap->WorldToTile(px + pw - 1, prevY, trX, trY);
-        m_currentMap->WorldToTile(px, prevY + ph - 1, blX, blY);
-        m_currentMap->WorldToTile(px + pw - 1, prevY + ph - 1, brX, brY);
-        
-        if (m_currentMap->IsSolid(tlX, tlY) || m_currentMap->IsSolid(trX, trY) ||
-            m_currentMap->IsSolid(blX, blY) || m_currentMap->IsSolid(brX, brY)) {
-            px = prevX; // Revert horizontal movement
+        // Check horizontal movement (keep previous Y)
+        if (m_currentMap->IsAreaSolid(px, prevY, pw, ph)) {
+            px = prevX;
         }
         
-        // Check vertical movement
-        m_currentMap->WorldToTile(px, py, tlX, tlY);
-        m_currentMap->WorldToTile(px + pw - 1, py, trX, trY);
-        m_currentMap->WorldToTile(px, py + ph - 1, blX, blY);
-        m_currentMap->WorldToTile(px + pw - 1, py + ph - 1, brX, brY);
-        
-        if (m_currentMap->IsSolid(tlX, tlY) || m_currentMap->IsSolid(trX, trY) ||
-            m_currentMap->IsSolid(blX, blY) || m_currentMap->IsSolid(brX, brY)) {
-            py = prevY; // Revert vertical movement
+        // Check vertical movement (use resolved X)
+        if (m_currentMap->IsAreaSolid(px, py, pw, ph)) {
+            py = prevY;
         }
         
         m_player->SetPosition(px, py);

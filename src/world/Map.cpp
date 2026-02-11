@@ -146,6 +146,16 @@ bool Map::IsSolid(int x, int y) const {
     return tile ? tile->IsSolid() : true;
 }
 
+bool Map::IsAreaSolid(float worldX, float worldY, float width, float height) const {
+    int tlX, tlY, trX, trY, blX, blY, brX, brY;
+    WorldToTile(worldX, worldY, tlX, tlY);
+    WorldToTile(worldX + width - 1, worldY, trX, trY);
+    WorldToTile(worldX, worldY + height - 1, blX, blY);
+    WorldToTile(worldX + width - 1, worldY + height - 1, brX, brY);
+    return IsSolid(tlX, tlY) || IsSolid(trX, trY) ||
+           IsSolid(blX, blY) || IsSolid(brX, brY);
+}
+
 bool Map::CanPlantCrop(int x, int y) const {
     const Tile* tile = GetTileAt(x, y);
     return tile ? tile->IsFarmable() : false;
