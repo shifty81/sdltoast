@@ -87,6 +87,9 @@ set(HEADERS
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 # Link SDL2 libraries
+if(TARGET SDL2::SDL2main)
+    target_link_libraries(${PROJECT_NAME} SDL2::SDL2main)
+endif()
 target_link_libraries(${PROJECT_NAME}
     SDL2::SDL2
     SDL2_image::SDL2_image

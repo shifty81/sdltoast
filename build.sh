@@ -81,14 +81,36 @@ install_sdl2() {
                 ;;
         esac
     else
-        echo "ERROR: Unsupported platform. Please install SDL2 manually:" | tee -a "$BUILD_LOG"
-        echo "  Ubuntu/Debian: sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev" | tee -a "$BUILD_LOG"
-        echo "  Fedora: sudo dnf install SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel" | tee -a "$BUILD_LOG"
-        echo "  Arch: sudo pacman -S sdl2 sdl2_image sdl2_mixer sdl2_ttf" | tee -a "$BUILD_LOG"
-        echo "  macOS: brew install sdl2 sdl2_image sdl2_mixer sdl2_ttf" | tee -a "$BUILD_LOG"
-        echo "  Windows: Use vcpkg or download from https://www.libsdl.org/" | tee -a "$BUILD_LOG"
-        echo "Build finished with errors: $(date)" >> "$BUILD_LOG"
-        exit 1
+        # Last resort: try to detect any available package manager
+        if command -v apt-get >/dev/null 2>&1; then
+            echo "Detected apt-get package manager. Installing SDL2..." | tee -a "$BUILD_LOG"
+            sudo apt-get update 2>&1 | tee -a "$BUILD_LOG"
+            sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev cmake build-essential pkg-config 2>&1 | tee -a "$BUILD_LOG"
+        elif command -v dnf >/dev/null 2>&1; then
+            echo "Detected dnf package manager. Installing SDL2..." | tee -a "$BUILD_LOG"
+            sudo dnf install -y SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel 2>&1 | tee -a "$BUILD_LOG"
+        elif command -v yum >/dev/null 2>&1; then
+            echo "Detected yum package manager. Installing SDL2..." | tee -a "$BUILD_LOG"
+            sudo yum install -y SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel 2>&1 | tee -a "$BUILD_LOG"
+        elif command -v pacman >/dev/null 2>&1; then
+            echo "Detected pacman package manager. Installing SDL2..." | tee -a "$BUILD_LOG"
+            sudo pacman -S --noconfirm sdl2 sdl2_image sdl2_mixer sdl2_ttf 2>&1 | tee -a "$BUILD_LOG"
+        elif command -v zypper >/dev/null 2>&1; then
+            echo "Detected zypper package manager. Installing SDL2..." | tee -a "$BUILD_LOG"
+            sudo zypper install -y libSDL2-devel libSDL2_image-devel libSDL2_mixer-devel libSDL2_ttf-devel 2>&1 | tee -a "$BUILD_LOG"
+        elif command -v brew >/dev/null 2>&1; then
+            echo "Detected Homebrew. Installing SDL2..." | tee -a "$BUILD_LOG"
+            brew install sdl2 sdl2_image sdl2_mixer sdl2_ttf 2>&1 | tee -a "$BUILD_LOG"
+        else
+            echo "ERROR: Unsupported platform. Please install SDL2 manually:" | tee -a "$BUILD_LOG"
+            echo "  Ubuntu/Debian: sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev" | tee -a "$BUILD_LOG"
+            echo "  Fedora: sudo dnf install SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel" | tee -a "$BUILD_LOG"
+            echo "  Arch: sudo pacman -S sdl2 sdl2_image sdl2_mixer sdl2_ttf" | tee -a "$BUILD_LOG"
+            echo "  macOS: brew install sdl2 sdl2_image sdl2_mixer sdl2_ttf" | tee -a "$BUILD_LOG"
+            echo "  Windows: Use vcpkg or download from https://www.libsdl.org/" | tee -a "$BUILD_LOG"
+            echo "Build finished with errors: $(date)" >> "$BUILD_LOG"
+            exit 1
+        fi
     fi
 }
 
