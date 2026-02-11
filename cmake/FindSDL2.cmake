@@ -17,12 +17,16 @@ if(NOT SDL2_FOUND)
         pkg_check_modules(PC_SDL2 QUIET sdl2)
     endif()
 
+    # Gather vcpkg hints when available
+    include(${CMAKE_CURRENT_LIST_DIR}/VcpkgHints.cmake)
+
     find_path(SDL2_INCLUDE_DIR
         NAMES SDL.h
         HINTS
             ${PC_SDL2_INCLUDEDIR}
             ${PC_SDL2_INCLUDE_DIRS}
             $ENV{SDL2DIR}
+            ${_VCPKG_HINTS}
         PATH_SUFFIXES SDL2 include/SDL2 include
     )
 
@@ -32,6 +36,7 @@ if(NOT SDL2_FOUND)
             ${PC_SDL2_LIBDIR}
             ${PC_SDL2_LIBRARY_DIRS}
             $ENV{SDL2DIR}
+            ${_VCPKG_HINTS}
         PATH_SUFFIXES lib
     )
 
@@ -41,6 +46,7 @@ if(NOT SDL2_FOUND)
             ${PC_SDL2_LIBDIR}
             ${PC_SDL2_LIBRARY_DIRS}
             $ENV{SDL2DIR}
+            ${_VCPKG_HINTS}
         PATH_SUFFIXES lib
     )
 
