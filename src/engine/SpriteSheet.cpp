@@ -1,5 +1,6 @@
 #include "SpriteSheet.h"
 #include "Renderer.h"
+#include "Logger.h"
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <algorithm>
@@ -36,7 +37,7 @@ bool SpriteSheet::Load(Renderer* renderer, const std::string& filepath, int tile
     // Load the image
     SDL_Surface* surface = IMG_Load(filepath.c_str());
     if (!surface) {
-        std::cerr << "Failed to load sprite sheet " << filepath << ": " << IMG_GetError() << std::endl;
+        Logger::Instance().Error("Failed to load sprite sheet " + filepath + ": " + IMG_GetError());
         return false;
     }
 
@@ -52,14 +53,14 @@ bool SpriteSheet::Load(Renderer* renderer, const std::string& filepath, int tile
     SDL_FreeSurface(surface);
 
     if (!m_texture) {
-        std::cerr << "Failed to create texture from " << filepath << ": " << SDL_GetError() << std::endl;
+        Logger::Instance().Error("Failed to create texture from " + filepath + ": " + SDL_GetError());
         return false;
     }
 
-    std::cout << "Loaded sprite sheet: " << filepath << std::endl;
-    std::cout << "  Size: " << m_sheetWidth << "x" << m_sheetHeight << std::endl;
-    std::cout << "  Tiles: " << m_columns << "x" << m_rows << " (" << GetTileCount() << " total)" << std::endl;
-    std::cout << "  Tile size: " << m_tileWidth << "x" << m_tileHeight << std::endl;
+    Logger::Instance().Info("Loaded sprite sheet: " + filepath);
+    Logger::Instance().Info("  Size: " + std::to_string(m_sheetWidth) + "x" + std::to_string(m_sheetHeight));
+    Logger::Instance().Info("  Tiles: " + std::to_string(m_columns) + "x" + std::to_string(m_rows) + " (" + std::to_string(GetTileCount()) + " total)");
+    Logger::Instance().Info("  Tile size: " + std::to_string(m_tileWidth) + "x" + std::to_string(m_tileHeight));
 
     return true;
 }
@@ -131,13 +132,14 @@ SpriteSheet* SpriteSheetManager::GetSpriteSheet(const std::string& name) {
 }
 
 void SpriteSheetManager::LoadDefaultAssets(Renderer* renderer) {
-    std::cout << "\n=== Loading Sprite Sheets ===" << std::endl;
+    Logger::Instance().Info("");
+    Logger::Instance().Info("=== Loading Sprite Sheets ===");
     
     // Check root directory for PNG files first (user convenience)
-    std::cout << "Checking root directory for PNG files..." << std::endl;
+    Logger::Instance().Info("Checking root directory for PNG files...");
     bool foundRootPngs = CheckAndLoadRootPngs(renderer);
     if (foundRootPngs) {
-        std::cout << "Loaded tilesets from root directory!" << std::endl;
+        Logger::Instance().Info("Loaded tilesets from root directory!");
     }
     
     // Load world tileset (16x16 tiles)
@@ -154,7 +156,7 @@ void SpriteSheetManager::LoadDefaultAssets(Renderer* renderer) {
     LoadSpriteSheet(renderer, "dungeon_tiles", "assets/tilesets/dungeon_tileset.png", 16, 16);
     LoadSpriteSheet(renderer, "farm_tiles", "assets/tilesets/farm_tileset.png", 16, 16);
     
-    std::cout << "=== Sprite Sheets Loaded ===" << std::endl;
+    Logger::Instance().Info("=== Sprite Sheets Loaded ===");
 }
 
 bool SpriteSheetManager::CheckAndLoadRootPngs(Renderer* renderer) {
@@ -174,7 +176,7 @@ bool SpriteSheetManager::CheckAndLoadRootPngs(Renderer* renderer) {
     // Try to load world tileset from root
     for (const auto& name : tilesetNames) {
         if (LoadSpriteSheet(renderer, "world_tiles", name, 16, 16)) {
-            std::cout << "  ✓ Loaded world tiles from: " << name << std::endl;
+            Logger::Instance().Info("  ✓ Loaded world tiles from: " + name);
             loadedAny = true;
             break;
         }
@@ -183,7 +185,7 @@ bool SpriteSheetManager::CheckAndLoadRootPngs(Renderer* renderer) {
     // Try to load character sprites from root
     for (const auto& name : characterNames) {
         if (LoadSpriteSheet(renderer, "characters", name, 16, 16)) {
-            std::cout << "  ✓ Loaded character sprites from: " << name << std::endl;
+            Logger::Instance().Info("  ✓ Loaded character sprites from: " + name);
             loadedAny = true;
             break;
         }
@@ -217,14 +219,14 @@ bool SpriteSheetManager::CheckAndLoadRootPngs(Renderer* renderer) {
         
         if (rootPngs.size() >= 1 && !GetSpriteSheet("world_tiles")) {
             if (LoadSpriteSheet(renderer, "world_tiles", rootPngs[0], 16, 16)) {
-                std::cout << "  ✓ Loaded world tiles from: " << rootPngs[0] << " (1st PNG in root)" << std::endl;
+                Logger::Instance().Info("  ✓ Loaded world tiles from: " + rootPngs[0] + " (1st PNG in root)");
                 loadedAny = true;
             }
         }
         
         if (rootPngs.size() >= 2 && !GetSpriteSheet("characters")) {
             if (LoadSpriteSheet(renderer, "characters", rootPngs[1], 16, 16)) {
-                std::cout << "  ✓ Loaded character sprites from: " << rootPngs[1] << " (2nd PNG in root)" << std::endl;
+                Logger::Instance().Info("  ✓ Loaded character sprites from: " + rootPngs[1] + " (2nd PNG in root)");
                 loadedAny = true;
             }
         }

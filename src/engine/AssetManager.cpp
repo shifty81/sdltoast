@@ -1,5 +1,6 @@
 #include "AssetManager.h"
 #include "Renderer.h"
+#include "Logger.h"
 #include <SDL2/SDL_image.h>
 #include <iostream>
 
@@ -15,7 +16,7 @@ bool AssetManager::Initialize(Renderer* renderer) {
     
     int imgFlags = IMG_INIT_PNG;
     if (!(IMG_Init(imgFlags) & imgFlags)) {
-        std::cerr << "SDL_image initialization failed: " << IMG_GetError() << std::endl;
+        Logger::Instance().Error(std::string("SDL_image initialization failed: ") + IMG_GetError());
         return false;
     }
     
@@ -30,7 +31,7 @@ SDL_Texture* AssetManager::LoadTexture(const std::string& filepath) {
 
     SDL_Surface* surface = IMG_Load(filepath.c_str());
     if (!surface) {
-        std::cerr << "Failed to load image " << filepath << ": " << IMG_GetError() << std::endl;
+        Logger::Instance().Error("Failed to load image " + filepath + ": " + IMG_GetError());
         return nullptr;
     }
 
@@ -38,7 +39,7 @@ SDL_Texture* AssetManager::LoadTexture(const std::string& filepath) {
     SDL_FreeSurface(surface);
 
     if (!texture) {
-        std::cerr << "Failed to create texture from " << filepath << ": " << SDL_GetError() << std::endl;
+        Logger::Instance().Error("Failed to create texture from " + filepath + ": " + SDL_GetError());
         return nullptr;
     }
 

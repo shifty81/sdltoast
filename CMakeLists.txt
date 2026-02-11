@@ -35,6 +35,7 @@ set(SOURCES
     src/engine/AssetManager.cpp
     src/engine/AudioManager.cpp
     src/engine/SpriteSheet.cpp
+    src/engine/Logger.cpp
     src/entities/Entity.cpp
     src/entities/Player.cpp
     src/entities/Enemy.cpp
@@ -62,6 +63,7 @@ set(HEADERS
     src/engine/AssetManager.h
     src/engine/AudioManager.h
     src/engine/SpriteSheet.h
+    src/engine/Logger.h
     src/entities/Entity.h
     src/entities/Player.h
     src/entities/Enemy.h

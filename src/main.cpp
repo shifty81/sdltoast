@@ -1,30 +1,35 @@
 #include "engine/Game.h"
+#include "engine/Logger.h"
 #include <iostream>
 #include <memory>
 
 int main(int argc, char* argv[]) {
-    std::cout << "==================================" << std::endl;
-    std::cout << "   Harvest Quest - Alpha Build   " << std::endl;
-    std::cout << "==================================" << std::endl;
-    std::cout << "A game combining Zelda: A Link to the Past" << std::endl;
-    std::cout << "and Stardew Valley mechanics!" << std::endl;
-    std::cout << std::endl;
-    std::cout << "Controls:" << std::endl;
-    std::cout << "  WASD / Arrow Keys - Move" << std::endl;
-    std::cout << "  ESC - Quit" << std::endl;
-    std::cout << "==================================" << std::endl;
-    std::cout << std::endl;
+    // Initialize logging before anything else
+    Logger::Instance().Initialize("harvest_quest.log");
+
+    Logger::Instance().Info("==================================");
+    Logger::Instance().Info("   Harvest Quest - Alpha Build   ");
+    Logger::Instance().Info("==================================");
+    Logger::Instance().Info("A game combining Zelda: A Link to the Past");
+    Logger::Instance().Info("and Stardew Valley mechanics!");
+    Logger::Instance().Info("");
+    Logger::Instance().Info("Controls:");
+    Logger::Instance().Info("  WASD / Arrow Keys - Move");
+    Logger::Instance().Info("  ESC - Quit");
+    Logger::Instance().Info("==================================");
 
     auto game = std::make_unique<Game>();
 
     if (!game->Initialize("Harvest Quest - Zelda meets Stardew Valley", 800, 600)) {
-        std::cerr << "Failed to initialize game!" << std::endl;
+        Logger::Instance().Error("Failed to initialize game!");
+        Logger::Instance().Shutdown();
         return 1;
     }
 
     game->Run();
     game->Shutdown();
 
-    std::cout << "Thanks for playing!" << std::endl;
+    Logger::Instance().Info("Thanks for playing!");
+    Logger::Instance().Shutdown();
     return 0;
 }
