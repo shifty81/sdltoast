@@ -44,7 +44,7 @@ Tend to your crops in the morning, explore dangerous dungeons in the afternoon, 
 - Decoration pass for environmental detail
 
 ### 🏘️ Social & RPG Elements
-- Befriend 15+ unique NPCs with daily schedules
+- Befriend 15-20 unique NPCs with daily schedules
 - Romance and marriage system
 - Quest and achievement system
 - 4 seasons with 28 days each
