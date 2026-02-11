@@ -157,19 +157,31 @@ void Game::Update(float deltaTime) {
 
     // Update player
     if (m_player) {
+        // Save previous position for collision resolution
+        float prevX, prevY;
+        m_player->GetPosition(prevX, prevY);
+        
         m_player->Update(deltaTime, m_input.get());
         
         // Collision detection with tile system
         float px, py;
         m_player->GetPosition(px, py);
-        int tileX, tileY;
-        m_currentMap->WorldToTile(px + 16, py + 16, tileX, tileY); // Center of player
         
-        // Prevent walking through solid tiles
-        if (m_currentMap->IsSolid(tileX, tileY)) {
-            // Simple pushback (better collision would check before moving)
-            // For now just let them walk on anything
+        // Get actual player dimensions
+        float pw, ph;
+        m_player->GetSize(pw, ph);
+        
+        // Check horizontal movement (keep previous Y)
+        if (m_currentMap->IsAreaSolid(px, prevY, pw, ph)) {
+            px = prevX;
         }
+        
+        // Check vertical movement (use resolved X)
+        if (m_currentMap->IsAreaSolid(px, py, pw, ph)) {
+            py = prevY;
+        }
+        
+        m_player->SetPosition(px, py);
     }
 
     // Update map

@@ -90,8 +90,8 @@ private:
     int Random(int min, int max);
     float RandomFloat(float min = 0.0f, float max = 1.0f);
     
-    std::mt19937 m_rng;
     unsigned int m_seed;
+    std::mt19937 m_rng;
 };
 
 #endif // WORLDGENERATOR_H

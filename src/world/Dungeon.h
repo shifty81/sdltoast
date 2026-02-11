@@ -3,6 +3,8 @@
 
 #include "Map.h"
 #include <memory>
+#include <vector>
+#include <utility>
 
 /**
  * Dungeon class - represents a procedurally generated dungeon
@@ -29,6 +31,9 @@ private:
     unsigned int m_seed;
     bool m_doorsLocked;
     int m_enemiesRemaining;
+    std::vector<std::pair<int,int>> m_doorPositions;
+
+    void FindDoorPositions();
 };
 
 #endif // DUNGEON_H
