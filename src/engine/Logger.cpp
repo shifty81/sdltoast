@@ -84,8 +84,14 @@ void Logger::Error(const std::string& message) {
 
 std::string Logger::GetTimestamp() const {
     std::time_t now = std::time(nullptr);
+    struct tm timeinfo;
     char buf[64];
-    std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", std::localtime(&now));
+#ifdef _WIN32
+    localtime_s(&timeinfo, &now);
+#else
+    localtime_r(&now, &timeinfo);
+#endif
+    std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &timeinfo);
     return std::string(buf);
 }
 
