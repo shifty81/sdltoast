@@ -13,20 +13,62 @@ echo "  Harvest Quest - Build Script   " | tee -a "$BUILD_LOG"
 echo "==================================" | tee -a "$BUILD_LOG"
 echo "" | tee -a "$BUILD_LOG"
 
+# Function to install SDL2 dependencies automatically
+install_sdl2() {
+    echo "Attempting to install SDL2 automatically..." | tee -a "$BUILD_LOG"
+
+    if [ "$(uname)" = "Darwin" ]; then
+        # macOS
+        if command -v brew >/dev/null 2>&1; then
+            echo "Detected macOS with Homebrew. Installing SDL2..." | tee -a "$BUILD_LOG"
+            brew install sdl2 sdl2_image sdl2_mixer sdl2_ttf 2>&1 | tee -a "$BUILD_LOG"
+        else
+            echo "ERROR: Homebrew not found. Please install Homebrew first:" | tee -a "$BUILD_LOG"
+            echo "  /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"" | tee -a "$BUILD_LOG"
+            echo "Build finished with errors: $(date)" >> "$BUILD_LOG"
+            exit 1
+        fi
+    elif [ -f /etc/debian_version ] || command -v apt-get >/dev/null 2>&1; then
+        # Ubuntu/Debian
+        echo "Detected Ubuntu/Debian. Installing SDL2 and build tools..." | tee -a "$BUILD_LOG"
+        sudo apt-get update 2>&1 | tee -a "$BUILD_LOG"
+        sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev cmake build-essential pkg-config 2>&1 | tee -a "$BUILD_LOG"
+    elif [ -f /etc/fedora-release ] || command -v dnf >/dev/null 2>&1; then
+        # Fedora
+        echo "Detected Fedora. Installing SDL2..." | tee -a "$BUILD_LOG"
+        sudo dnf install -y SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel 2>&1 | tee -a "$BUILD_LOG"
+    elif [ -f /etc/arch-release ] || command -v pacman >/dev/null 2>&1; then
+        # Arch Linux
+        echo "Detected Arch Linux. Installing SDL2..." | tee -a "$BUILD_LOG"
+        sudo pacman -S --noconfirm sdl2 sdl2_image sdl2_mixer sdl2_ttf 2>&1 | tee -a "$BUILD_LOG"
+    else
+        echo "ERROR: Unsupported platform. Please install SDL2 manually:" | tee -a "$BUILD_LOG"
+        echo "  Ubuntu/Debian: sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev" | tee -a "$BUILD_LOG"
+        echo "  Fedora: sudo dnf install SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel" | tee -a "$BUILD_LOG"
+        echo "  Arch: sudo pacman -S sdl2 sdl2_image sdl2_mixer sdl2_ttf" | tee -a "$BUILD_LOG"
+        echo "  macOS: brew install sdl2 sdl2_image sdl2_mixer sdl2_ttf" | tee -a "$BUILD_LOG"
+        echo "  Windows: Use vcpkg or download from https://www.libsdl.org/" | tee -a "$BUILD_LOG"
+        echo "Build finished with errors: $(date)" >> "$BUILD_LOG"
+        exit 1
+    fi
+}
+
 # Check for SDL2
 echo "Checking for SDL2..." | tee -a "$BUILD_LOG"
 if ! pkg-config --exists sdl2 2>/dev/null; then
-    echo "ERROR: SDL2 not found!" | tee -a "$BUILD_LOG"
-    echo "" | tee -a "$BUILD_LOG"
-    echo "Please install SDL2:" | tee -a "$BUILD_LOG"
-    echo "  Ubuntu/Debian: sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev" | tee -a "$BUILD_LOG"
-    echo "  macOS: brew install sdl2 sdl2_image sdl2_mixer sdl2_ttf" | tee -a "$BUILD_LOG"
-    echo "  Windows: Use vcpkg or download from https://www.libsdl.org/" | tee -a "$BUILD_LOG"
-    echo "Build finished with errors: $(date)" >> "$BUILD_LOG"
-    exit 1
-fi
+    echo "SDL2 not found. Will attempt automatic installation." | tee -a "$BUILD_LOG"
+    install_sdl2
 
-echo "✓ SDL2 found" | tee -a "$BUILD_LOG"
+    # Verify installation succeeded
+    if ! pkg-config --exists sdl2 2>/dev/null; then
+        echo "ERROR: SDL2 installation failed. Please install manually." | tee -a "$BUILD_LOG"
+        echo "Build finished with errors: $(date)" >> "$BUILD_LOG"
+        exit 1
+    fi
+    echo "✓ SDL2 installed successfully" | tee -a "$BUILD_LOG"
+else
+    echo "✓ SDL2 found" | tee -a "$BUILD_LOG"
+fi
 
 # Create build directory
 echo "" | tee -a "$BUILD_LOG"
