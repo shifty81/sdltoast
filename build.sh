@@ -41,6 +41,45 @@ install_sdl2() {
         # Arch Linux
         echo "Detected Arch Linux. Installing SDL2..." | tee -a "$BUILD_LOG"
         sudo pacman -S --noconfirm sdl2 sdl2_image sdl2_mixer sdl2_ttf 2>&1 | tee -a "$BUILD_LOG"
+    elif [ -f /etc/os-release ]; then
+        # Fallback: parse /etc/os-release for distro family
+        ID=$(grep -oP '^ID=\K.*' /etc/os-release | tr -d '"')
+        ID_LIKE=$(grep -oP '^ID_LIKE=\K.*' /etc/os-release | tr -d '"')
+        PRETTY_NAME=$(grep -oP '^PRETTY_NAME=\K.*' /etc/os-release | tr -d '"')
+        PRETTY_NAME="${PRETTY_NAME:-unknown}"
+        case "$ID $ID_LIKE" in
+            *debian*|*ubuntu*)
+                echo "Detected Debian-based distro ($PRETTY_NAME). Installing SDL2..." | tee -a "$BUILD_LOG"
+                sudo apt-get update 2>&1 | tee -a "$BUILD_LOG"
+                sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev cmake build-essential pkg-config 2>&1 | tee -a "$BUILD_LOG"
+                ;;
+            *fedora*|*rhel*|*centos*)
+                echo "Detected RHEL-based distro ($PRETTY_NAME). Installing SDL2..." | tee -a "$BUILD_LOG"
+                if command -v dnf >/dev/null 2>&1; then
+                    sudo dnf install -y SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel 2>&1 | tee -a "$BUILD_LOG"
+                else
+                    sudo yum install -y SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel 2>&1 | tee -a "$BUILD_LOG"
+                fi
+                ;;
+            *arch*)
+                echo "Detected Arch-based distro ($PRETTY_NAME). Installing SDL2..." | tee -a "$BUILD_LOG"
+                sudo pacman -S --noconfirm sdl2 sdl2_image sdl2_mixer sdl2_ttf 2>&1 | tee -a "$BUILD_LOG"
+                ;;
+            *suse*)
+                echo "Detected SUSE-based distro ($PRETTY_NAME). Installing SDL2..." | tee -a "$BUILD_LOG"
+                sudo zypper install -y libSDL2-devel libSDL2_image-devel libSDL2_mixer-devel libSDL2_ttf-devel 2>&1 | tee -a "$BUILD_LOG"
+                ;;
+            *)
+                echo "ERROR: Unsupported platform ($PRETTY_NAME). Please install SDL2 manually:" | tee -a "$BUILD_LOG"
+                echo "  Ubuntu/Debian: sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev" | tee -a "$BUILD_LOG"
+                echo "  Fedora: sudo dnf install SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel" | tee -a "$BUILD_LOG"
+                echo "  Arch: sudo pacman -S sdl2 sdl2_image sdl2_mixer sdl2_ttf" | tee -a "$BUILD_LOG"
+                echo "  macOS: brew install sdl2 sdl2_image sdl2_mixer sdl2_ttf" | tee -a "$BUILD_LOG"
+                echo "  Windows: Use vcpkg or download from https://www.libsdl.org/" | tee -a "$BUILD_LOG"
+                echo "Build finished with errors: $(date)" >> "$BUILD_LOG"
+                exit 1
+                ;;
+        esac
     else
         echo "ERROR: Unsupported platform. Please install SDL2 manually:" | tee -a "$BUILD_LOG"
         echo "  Ubuntu/Debian: sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev" | tee -a "$BUILD_LOG"
