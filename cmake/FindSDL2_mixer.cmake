@@ -16,6 +16,9 @@ if(NOT SDL2_mixer_FOUND)
         pkg_check_modules(PC_SDL2_MIXER QUIET SDL2_mixer)
     endif()
 
+    # Gather vcpkg hints when available
+    include(${CMAKE_CURRENT_LIST_DIR}/VcpkgHints.cmake)
+
     find_path(SDL2_MIXER_INCLUDE_DIR
         NAMES SDL_mixer.h
         HINTS
@@ -23,6 +26,7 @@ if(NOT SDL2_mixer_FOUND)
             ${PC_SDL2_MIXER_INCLUDE_DIRS}
             $ENV{SDL2DIR}
             $ENV{SDL2MIXERDIR}
+            ${_VCPKG_HINTS}
         PATH_SUFFIXES SDL2 include/SDL2 include
     )
 
@@ -33,6 +37,7 @@ if(NOT SDL2_mixer_FOUND)
             ${PC_SDL2_MIXER_LIBRARY_DIRS}
             $ENV{SDL2DIR}
             $ENV{SDL2MIXERDIR}
+            ${_VCPKG_HINTS}
         PATH_SUFFIXES lib
     )
 
