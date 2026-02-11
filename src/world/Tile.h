@@ -75,6 +75,10 @@ public:
     // Update (for animated tiles, crop growth, etc.)
     void Update(float deltaTime);
 
+    // Crop growth constants
+    static constexpr int MAX_GROWTH_STAGE = 4;
+    static constexpr float GROWTH_INTERVAL = 5.0f; // Seconds between growth stages
+
 private:
     TileType m_type;        // Semantic type
     int m_visualId;         // Which sprite to render
@@ -83,6 +87,7 @@ private:
     SoilState m_soilState;
     int m_cropType;         // -1 = no crop
     int m_growthStage;      // 0-N growth stages
+    float m_growthTimer;    // Time accumulator for crop growth
 };
 
 // Global tile definition registry

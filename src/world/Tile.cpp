@@ -36,6 +36,7 @@ Tile::Tile()
     , m_soilState(SoilState::GRASS)
     , m_cropType(-1)
     , m_growthStage(0)
+    , m_growthTimer(0.0f)
 {
 }
 
@@ -45,6 +46,7 @@ Tile::Tile(TileType type, int visualId)
     , m_soilState(SoilState::GRASS)
     , m_cropType(-1)
     , m_growthStage(0)
+    , m_growthTimer(0.0f)
 {
 }
 
@@ -61,5 +63,16 @@ bool Tile::IsFarmable() const {
 }
 
 void Tile::Update(float deltaTime) {
-    // TODO: Handle animated tiles, crop growth over time, etc.
+    // Crop growth over time
+    if (m_soilState == SoilState::CROP && m_cropType >= 0 &&
+        m_growthStage < MAX_GROWTH_STAGE) {
+        m_growthTimer += deltaTime;
+        if (m_growthTimer >= GROWTH_INTERVAL) {
+            m_growthTimer -= GROWTH_INTERVAL;
+            m_growthStage++;
+            if (m_growthStage >= MAX_GROWTH_STAGE) {
+                m_soilState = SoilState::HARVEST;
+            }
+        }
+    }
 }

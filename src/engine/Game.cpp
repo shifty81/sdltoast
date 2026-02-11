@@ -157,19 +157,44 @@ void Game::Update(float deltaTime) {
 
     // Update player
     if (m_player) {
+        // Save previous position for collision resolution
+        float prevX, prevY;
+        m_player->GetPosition(prevX, prevY);
+        
         m_player->Update(deltaTime, m_input.get());
         
         // Collision detection with tile system
         float px, py;
         m_player->GetPosition(px, py);
-        int tileX, tileY;
-        m_currentMap->WorldToTile(px + 16, py + 16, tileX, tileY); // Center of player
         
-        // Prevent walking through solid tiles
-        if (m_currentMap->IsSolid(tileX, tileY)) {
-            // Simple pushback (better collision would check before moving)
-            // For now just let them walk on anything
+        // Check all four corners of the player for solid tiles
+        float pw = 32.0f;
+        float ph = 32.0f;
+        
+        // Check horizontal movement
+        int tlX, tlY, trX, trY, blX, blY, brX, brY;
+        m_currentMap->WorldToTile(px, prevY, tlX, tlY);
+        m_currentMap->WorldToTile(px + pw - 1, prevY, trX, trY);
+        m_currentMap->WorldToTile(px, prevY + ph - 1, blX, blY);
+        m_currentMap->WorldToTile(px + pw - 1, prevY + ph - 1, brX, brY);
+        
+        if (m_currentMap->IsSolid(tlX, tlY) || m_currentMap->IsSolid(trX, trY) ||
+            m_currentMap->IsSolid(blX, blY) || m_currentMap->IsSolid(brX, brY)) {
+            px = prevX; // Revert horizontal movement
         }
+        
+        // Check vertical movement
+        m_currentMap->WorldToTile(px, py, tlX, tlY);
+        m_currentMap->WorldToTile(px + pw - 1, py, trX, trY);
+        m_currentMap->WorldToTile(px, py + ph - 1, blX, blY);
+        m_currentMap->WorldToTile(px + pw - 1, py + ph - 1, brX, brY);
+        
+        if (m_currentMap->IsSolid(tlX, tlY) || m_currentMap->IsSolid(trX, trY) ||
+            m_currentMap->IsSolid(blX, blY) || m_currentMap->IsSolid(brX, brY)) {
+            py = prevY; // Revert vertical movement
+        }
+        
+        m_player->SetPosition(px, py);
     }
 
     // Update map
