@@ -39,6 +39,8 @@ if defined VCPKG_ROOT (
         echo.
     ) else (
         for /f "delims=" %%i in ('where vcpkg') do set "VCPKG_ROOT=%%~dpi"
+        REM Remove trailing backslash if present
+        if "!VCPKG_ROOT:~-1!"=="\" set "VCPKG_ROOT=!VCPKG_ROOT:~0,-1!"
         echo [OK] Found vcpkg at: !VCPKG_ROOT!
     )
 )
@@ -93,6 +95,8 @@ echo.
 echo To run the game:
 echo   cd build\Debug
 echo   HarvestQuest.exe
+echo.
+echo   (If you built with Release config, look in build\Release instead)
 echo.
 echo Build finished successfully: %DATE% %TIME% >> "..\%BUILD_LOG%"
 cd ..

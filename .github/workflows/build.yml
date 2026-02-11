@@ -61,3 +61,4 @@ jobs:
           name: build-logs-windows
           path: |
             build_output.log
+          if-no-files-found: ignore
