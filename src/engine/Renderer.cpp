@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "Logger.h"
 #include <iostream>
 
 Renderer::Renderer()
@@ -17,7 +18,7 @@ Renderer::~Renderer() {
 bool Renderer::Initialize(SDL_Window* window) {
     m_renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (!m_renderer) {
-        std::cerr << "Renderer creation failed: " << SDL_GetError() << std::endl;
+        Logger::Instance().Error(std::string("Renderer creation failed: ") + SDL_GetError());
         return false;
     }
 

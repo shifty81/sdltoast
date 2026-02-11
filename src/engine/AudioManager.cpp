@@ -1,4 +1,5 @@
 #include "AudioManager.h"
+#include "Logger.h"
 #include <iostream>
 
 AudioManager::~AudioManager() {
@@ -17,7 +18,7 @@ AudioManager::~AudioManager() {
 
 bool AudioManager::Initialize() {
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
-        std::cerr << "SDL_mixer initialization failed: " << Mix_GetError() << std::endl;
+        Logger::Instance().Error(std::string("SDL_mixer initialization failed: ") + Mix_GetError());
         return false;
     }
     
@@ -32,7 +33,7 @@ void AudioManager::PlayMusic(const std::string& filepath, int loops) {
     
     m_currentMusic = Mix_LoadMUS(filepath.c_str());
     if (!m_currentMusic) {
-        std::cerr << "Failed to load music " << filepath << ": " << Mix_GetError() << std::endl;
+        Logger::Instance().Error("Failed to load music " + filepath + ": " + Mix_GetError());
         return;
     }
     
@@ -48,7 +49,7 @@ void AudioManager::PlaySound(const std::string& filepath) {
     } else {
         sound = Mix_LoadWAV(filepath.c_str());
         if (!sound) {
-            std::cerr << "Failed to load sound " << filepath << ": " << Mix_GetError() << std::endl;
+            Logger::Instance().Error("Failed to load sound " + filepath + ": " + Mix_GetError());
             return;
         }
         m_sounds[filepath] = sound;

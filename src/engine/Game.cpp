@@ -4,6 +4,7 @@
 #include "AssetManager.h"
 #include "AudioManager.h"
 #include "SpriteSheet.h"
+#include "Logger.h"
 #include "../entities/Player.h"
 #include "../world/Map.h"
 #include "../world/WorldGenerator.h"
@@ -24,7 +25,7 @@ Game::~Game() {
 bool Game::Initialize(const std::string& title, int width, int height) {
     // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER) < 0) {
-        std::cerr << "SDL initialization failed: " << SDL_GetError() << std::endl;
+        Logger::Instance().Error(std::string("SDL initialization failed: ") + SDL_GetError());
         return false;
     }
 
@@ -39,14 +40,14 @@ bool Game::Initialize(const std::string& title, int width, int height) {
     );
 
     if (!m_window) {
-        std::cerr << "Window creation failed: " << SDL_GetError() << std::endl;
+        Logger::Instance().Error(std::string("Window creation failed: ") + SDL_GetError());
         return false;
     }
 
     // Initialize subsystems
     m_renderer = std::make_unique<Renderer>();
     if (!m_renderer->Initialize(m_window)) {
-        std::cerr << "Renderer initialization failed" << std::endl;
+        Logger::Instance().Error("Renderer initialization failed");
         return false;
     }
 
@@ -55,12 +56,12 @@ bool Game::Initialize(const std::string& title, int width, int height) {
     m_audioManager = std::make_unique<AudioManager>();
 
     if (!m_assetManager->Initialize(m_renderer.get())) {
-        std::cerr << "Asset manager initialization failed" << std::endl;
+        Logger::Instance().Error("Asset manager initialization failed");
         return false;
     }
 
     if (!m_audioManager->Initialize()) {
-        std::cerr << "Audio manager initialization failed" << std::endl;
+        Logger::Instance().Error("Audio manager initialization failed");
         return false;
     }
 
@@ -77,25 +78,29 @@ bool Game::Initialize(const std::string& title, int width, int height) {
     // Generate world using new system
     m_currentMap = std::make_unique<Map>(25, 19);
     
-    std::cout << "\n=== WORLD GENERATION DEMO ===" << std::endl;
-    std::cout << "Press 1 = Farm | 2 = Dungeon | 3 = Overworld" << std::endl;
-    std::cout << "============================\n" << std::endl;
+    Logger::Instance().Info("");
+    Logger::Instance().Info("=== WORLD GENERATION DEMO ===");
+    Logger::Instance().Info("Press 1 = Farm | 2 = Dungeon | 3 = Overworld");
+    Logger::Instance().Info("============================");
+    Logger::Instance().Info("");
     
     // Default: Generate farm
     WorldGenerator generator(12345);
     generator.GenerateFarm(m_currentMap.get(), 25, 19);
-    std::cout << "Generated: Farm (default)" << std::endl;
+    Logger::Instance().Info("Generated: Farm (default)");
 
     m_running = true;
     m_lastFrameTime = SDL_GetTicks();
 
-    std::cout << "Game initialized successfully!" << std::endl;
-    std::cout << "\nControls:" << std::endl;
-    std::cout << "  WASD/Arrows - Move" << std::endl;
-    std::cout << "  1 - Generate Farm" << std::endl;
-    std::cout << "  2 - Generate Dungeon" << std::endl;
-    std::cout << "  3 - Generate Overworld" << std::endl;
-    std::cout << "  ESC - Quit\n" << std::endl;
+    Logger::Instance().Info("Game initialized successfully!");
+    Logger::Instance().Info("");
+    Logger::Instance().Info("Controls:");
+    Logger::Instance().Info("  WASD/Arrows - Move");
+    Logger::Instance().Info("  1 - Generate Farm");
+    Logger::Instance().Info("  2 - Generate Dungeon");
+    Logger::Instance().Info("  3 - Generate Overworld");
+    Logger::Instance().Info("  ESC - Quit");
+    Logger::Instance().Info("");
     
     return true;
 }
@@ -142,17 +147,17 @@ void Game::Update(float deltaTime) {
     if (m_input->IsKeyPressed(SDL_SCANCODE_1)) {
         WorldGenerator generator;
         generator.GenerateFarm(m_currentMap.get(), 25, 19);
-        std::cout << "Generated: Farm" << std::endl;
+        Logger::Instance().Info("Generated: Farm");
     }
     if (m_input->IsKeyPressed(SDL_SCANCODE_2)) {
         WorldGenerator generator;
         generator.GenerateDungeon(m_currentMap.get(), 25, 19);
-        std::cout << "Generated: Dungeon" << std::endl;
+        Logger::Instance().Info("Generated: Dungeon");
     }
     if (m_input->IsKeyPressed(SDL_SCANCODE_3)) {
         WorldGenerator generator;
         generator.GenerateOverworld(m_currentMap.get(), 25, 19, Biome::PLAINS);
-        std::cout << "Generated: Overworld" << std::endl;
+        Logger::Instance().Info("Generated: Overworld");
     }
 
     // Update player
@@ -224,5 +229,5 @@ void Game::Shutdown() {
     }
 
     SDL_Quit();
-    std::cout << "Game shutdown complete" << std::endl;
+    Logger::Instance().Info("Game shutdown complete");
 }
