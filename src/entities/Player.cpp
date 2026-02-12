@@ -2,7 +2,7 @@
 #include "../engine/Input.h"
 #include "../engine/Renderer.h"
 #include "../engine/SpriteSheet.h"
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 Player::Player()
     : Entity()

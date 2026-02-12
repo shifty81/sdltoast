@@ -37,9 +37,10 @@ find_package(SDL2_image REQUIRED)
 find_package(SDL2_mixer REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 
-# Include directories
+# Include directories for project sources.
+# SDL2 include directories are provided automatically by the imported targets
+# (SDL2::SDL2, SDL2_image::SDL2_image, etc.) via target_link_libraries.
 include_directories(
-    ${SDL2_INCLUDE_DIRS}
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/include
 )
