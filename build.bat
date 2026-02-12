@@ -59,6 +59,19 @@ if defined VCPKG_ROOT (
     )
 )
 
+REM Install SDL2 dependencies via vcpkg if available
+if defined VCPKG_ROOT (
+    echo.
+    echo Installing SDL2 dependencies via vcpkg...
+    "!VCPKG_ROOT!\vcpkg.exe" install sdl2 sdl2-image sdl2-mixer sdl2-ttf --triplet x64-windows >> "%BUILD_LOG%" 2>&1
+    if !ERRORLEVEL! neq 0 (
+        echo WARNING: vcpkg install had issues. Will attempt to continue...
+        echo WARNING: vcpkg install had issues >> "%BUILD_LOG%"
+    ) else (
+        echo [OK] SDL2 dependencies installed via vcpkg
+    )
+)
+
 REM Create build directory
 echo.
 echo Creating build directory...

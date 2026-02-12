@@ -1,7 +1,7 @@
 #ifndef SPRITESHEET_H
 #define SPRITESHEET_H
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <string>
 #include <unordered_map>
 

@@ -1,7 +1,7 @@
 #ifndef ASSETMANAGER_H
 #define ASSETMANAGER_H
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <string>
 #include <unordered_map>
 
