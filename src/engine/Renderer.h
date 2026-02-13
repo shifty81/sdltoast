@@ -21,6 +21,7 @@ public:
     void FillRect(int x, int y, int w, int h, unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255);
     void DrawTextureRect(Texture2D texture, int x, int y);
     void DrawTextureRect(Texture2D texture, const Rectangle* srcRect, const Rectangle* dstRect);
+    void DrawGameText(const char* text, int x, int y, int fontSize, unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255);
 
     void SetCamera(int x, int y) { m_cameraX = x; m_cameraY = y; }
     void GetCamera(int& x, int& y) const { x = m_cameraX; y = m_cameraY; }

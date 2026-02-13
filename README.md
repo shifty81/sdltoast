@@ -240,9 +240,9 @@ See [Tileset Integration Guide](docs/TILESET_INTEGRATION.md) for asset format de
 - [x] **Auto-tiling algorithm**
 - [x] **Dungeon generation (Zelda-style)**
 - [x] **Farm generation (Stardew-style)**
-- [ ] Combat system with enemies
-- [ ] Farming mechanics (crop growth timing)
-- [ ] Inventory system (UI)
+- [x] Combat system with enemies
+- [x] Farming mechanics (crop growth timing)
+- [x] Inventory system (UI)
 - [ ] Crafting and quest systems
 - [ ] NPC dialogue and relationship events
 - [ ] Expanded NPC roster and schedules

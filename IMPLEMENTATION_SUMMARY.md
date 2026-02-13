@@ -185,13 +185,18 @@ Run the game and press:
 
 ### What's Next (Content)
 ⏭️ Sprite assets (replace colored rectangles)
-⏭️ Enemy AI and combat mechanics
-⏭️ Crop growth timing system
-⏭️ Inventory UI
-⏭️ Save/load system
-⏭️ Music and sound effects
 ⏭️ Multiple dungeons with unique themes
 ⏭️ NPC schedules and dialogue trees
+⏭️ Save/load system
+⏭️ Crafting and quest systems
+⏭️ Music and sound effects
+
+### Recently Completed
+✅ Combat system (enemies spawn in dungeons, player attack, contact damage)
+✅ Farming mechanics (till, water, plant, harvest with day-based growth)
+✅ Inventory system with UI overlay
+✅ HUD with health, gold, calendar display
+✅ Calendar integration with crop growth
 
 ## 🎓 Learning Outcomes
 

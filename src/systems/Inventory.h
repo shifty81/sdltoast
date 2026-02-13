@@ -15,6 +15,7 @@ public:
     void AddItem(const std::string& name, int quantity);
     bool RemoveItem(const std::string& name, int quantity);
     int GetItemCount(const std::string& name) const;
+    const std::vector<Item>& GetItems() const { return m_items; }
 
 private:
     std::vector<Item> m_items;

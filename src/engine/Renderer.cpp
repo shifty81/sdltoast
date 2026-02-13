@@ -48,3 +48,7 @@ void Renderer::DrawTextureRect(Texture2D texture, const Rectangle* srcRect, cons
     adjustedDst.y -= m_cameraY;
     DrawTexturePro(texture, *srcRect, adjustedDst, Vector2{0, 0}, 0.0f, WHITE);
 }
+
+void Renderer::DrawGameText(const char* text, int x, int y, int fontSize, unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
+    DrawText(text, x, y, fontSize, Color{r, g, b, a});
+}
