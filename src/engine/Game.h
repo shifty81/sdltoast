@@ -1,7 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <SDL.h>
 #include <memory>
 #include <string>
 
@@ -36,7 +35,6 @@ public:
 
     // Game constants
     static constexpr int TARGET_FPS = 60;
-    static constexpr int FRAME_TIME = 1000 / TARGET_FPS;
 
 private:
     void HandleEvents();
@@ -44,7 +42,8 @@ private:
     void Render();
 
     bool m_running;
-    SDL_Window* m_window;
+    int m_windowWidth;
+    int m_windowHeight;
 
     // Core subsystems
     std::unique_ptr<Renderer> m_renderer;
@@ -55,9 +54,6 @@ private:
     // Game objects
     std::unique_ptr<Player> m_player;
     std::unique_ptr<Map> m_currentMap;
-
-    // Timing
-    Uint32 m_lastFrameTime;
 };
 
 #endif // GAME_H

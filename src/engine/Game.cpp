@@ -9,12 +9,13 @@
 #include "../world/Map.h"
 #include "../world/WorldGenerator.h"
 #include "../world/Tile.h"
+#include <raylib.h>
 #include <iostream>
 
 Game::Game()
     : m_running(false)
-    , m_window(nullptr)
-    , m_lastFrameTime(0)
+    , m_windowWidth(0)
+    , m_windowHeight(0)
 {
 }
 
@@ -23,30 +24,22 @@ Game::~Game() {
 }
 
 bool Game::Initialize(const std::string& title, int width, int height) {
-    // Initialize SDL
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER) < 0) {
-        Logger::Instance().Error(std::string("SDL initialization failed: ") + SDL_GetError());
+    m_windowWidth = width;
+    m_windowHeight = height;
+
+    // Initialize Raylib window
+    SetTraceLogLevel(LOG_WARNING);
+    InitWindow(width, height, title.c_str());
+    if (!IsWindowReady()) {
+        Logger::Instance().Error("Window creation failed");
         return false;
     }
 
-    // Create window
-    m_window = SDL_CreateWindow(
-        title.c_str(),
-        SDL_WINDOWPOS_CENTERED,
-        SDL_WINDOWPOS_CENTERED,
-        width,
-        height,
-        SDL_WINDOW_SHOWN
-    );
-
-    if (!m_window) {
-        Logger::Instance().Error(std::string("Window creation failed: ") + SDL_GetError());
-        return false;
-    }
+    SetTargetFPS(TARGET_FPS);
 
     // Initialize subsystems
     m_renderer = std::make_unique<Renderer>();
-    if (!m_renderer->Initialize(m_window)) {
+    if (!m_renderer->Initialize(width, height)) {
         Logger::Instance().Error("Renderer initialization failed");
         return false;
     }
@@ -90,7 +83,6 @@ bool Game::Initialize(const std::string& title, int width, int height) {
     Logger::Instance().Info("Generated: Farm (default)");
 
     m_running = true;
-    m_lastFrameTime = SDL_GetTicks();
 
     Logger::Instance().Info("Game initialized successfully!");
     Logger::Instance().Info("");
@@ -106,55 +98,36 @@ bool Game::Initialize(const std::string& title, int width, int height) {
 }
 
 void Game::Run() {
-    while (m_running) {
-        Uint32 frameStart = SDL_GetTicks();
+    while (m_running && !WindowShouldClose()) {
+        float deltaTime = GetFrameTime();
 
         HandleEvents();
-        
-        float deltaTime = (frameStart - m_lastFrameTime) / 1000.0f;
-        m_lastFrameTime = frameStart;
-        
         Update(deltaTime);
         Render();
-
-        // Frame rate limiting
-        Uint32 frameTime = SDL_GetTicks() - frameStart;
-        if (frameTime < FRAME_TIME) {
-            SDL_Delay(FRAME_TIME - frameTime);
-        }
     }
 }
 
 void Game::HandleEvents() {
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT) {
-            m_running = false;
-        }
-        
-        m_input->ProcessEvent(event);
-    }
+    m_input->Update();
 }
 
 void Game::Update(float deltaTime) {
-    m_input->Update();
-    
-    if (m_input->IsKeyPressed(SDL_SCANCODE_ESCAPE)) {
+    if (m_input->IsKeyPressed(KEY_ESCAPE)) {
         m_running = false;
     }
 
     // World generation hotkeys
-    if (m_input->IsKeyPressed(SDL_SCANCODE_1)) {
+    if (m_input->IsKeyPressed(KEY_ONE)) {
         WorldGenerator generator;
         generator.GenerateFarm(m_currentMap.get(), 25, 19);
         Logger::Instance().Info("Generated: Farm");
     }
-    if (m_input->IsKeyPressed(SDL_SCANCODE_2)) {
+    if (m_input->IsKeyPressed(KEY_TWO)) {
         WorldGenerator generator;
         generator.GenerateDungeon(m_currentMap.get(), 25, 19);
         Logger::Instance().Info("Generated: Dungeon");
     }
-    if (m_input->IsKeyPressed(SDL_SCANCODE_3)) {
+    if (m_input->IsKeyPressed(KEY_THREE)) {
         WorldGenerator generator;
         generator.GenerateOverworld(m_currentMap.get(), 25, 19, Biome::PLAINS);
         Logger::Instance().Info("Generated: Overworld");
@@ -223,11 +196,9 @@ void Game::Shutdown() {
     m_input.reset();
     m_renderer.reset();
 
-    if (m_window) {
-        SDL_DestroyWindow(m_window);
-        m_window = nullptr;
+    if (IsWindowReady()) {
+        CloseWindow();
     }
 
-    SDL_Quit();
     Logger::Instance().Info("Game shutdown complete");
 }

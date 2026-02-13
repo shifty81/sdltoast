@@ -1,7 +1,7 @@
 #ifndef SPRITESHEET_H
 #define SPRITESHEET_H
 
-#include <SDL.h>
+#include <raylib.h>
 #include <string>
 #include <unordered_map>
 
@@ -31,15 +31,15 @@ public:
     int GetTileCount() const { return m_columns * m_rows; }
     
     // Check if loaded
-    bool IsLoaded() const { return m_texture != nullptr; }
+    bool IsLoaded() const { return m_texture.id != 0; }
 
 private:
-    SDL_Texture* m_texture;
+    Texture2D m_texture;
     int m_tileWidth, m_tileHeight;
     int m_columns, m_rows;
     int m_sheetWidth, m_sheetHeight;
     
-    void CalculateSourceRect(int tileId, SDL_Rect& srcRect);
+    void CalculateSourceRect(int tileId, Rectangle& srcRect);
 };
 
 /**

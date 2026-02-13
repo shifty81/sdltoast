@@ -2,7 +2,7 @@
 #include "../engine/Input.h"
 #include "../engine/Renderer.h"
 #include "../engine/SpriteSheet.h"
-#include <SDL.h>
+#include <raylib.h>
 
 Player::Player()
     : Entity()
@@ -25,20 +25,20 @@ void Player::Update(float deltaTime, Input* input) {
     m_velocityY = 0.0f;
 
     // Movement input
-    if (input->IsKeyDown(SDL_SCANCODE_W) || input->IsKeyDown(SDL_SCANCODE_UP)) {
+    if (input->IsKeyDown(KEY_W) || input->IsKeyDown(KEY_UP)) {
         m_velocityY = -MOVE_SPEED;
         m_facing = Direction::UP;
     }
-    else if (input->IsKeyDown(SDL_SCANCODE_S) || input->IsKeyDown(SDL_SCANCODE_DOWN)) {
+    else if (input->IsKeyDown(KEY_S) || input->IsKeyDown(KEY_DOWN)) {
         m_velocityY = MOVE_SPEED;
         m_facing = Direction::DOWN;
     }
 
-    if (input->IsKeyDown(SDL_SCANCODE_A) || input->IsKeyDown(SDL_SCANCODE_LEFT)) {
+    if (input->IsKeyDown(KEY_A) || input->IsKeyDown(KEY_LEFT)) {
         m_velocityX = -MOVE_SPEED;
         m_facing = Direction::LEFT;
     }
-    else if (input->IsKeyDown(SDL_SCANCODE_D) || input->IsKeyDown(SDL_SCANCODE_RIGHT)) {
+    else if (input->IsKeyDown(KEY_D) || input->IsKeyDown(KEY_RIGHT)) {
         m_velocityX = MOVE_SPEED;
         m_facing = Direction::RIGHT;
     }
@@ -87,7 +87,7 @@ void Player::Render(Renderer* renderer) {
 
 void Player::RenderFallback(Renderer* renderer) {
     // Color changes based on facing direction for debugging
-    Uint8 r = 50, g = 50, b = 200;
+    unsigned char r = 50, g = 50, b = 200;
     
     switch (m_facing) {
         case Direction::UP:    r = 50;  g = 200; b = 50;  break;

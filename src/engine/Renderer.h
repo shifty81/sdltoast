@@ -1,7 +1,7 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include <SDL.h>
+#include <raylib.h>
 #include <string>
 
 /**
@@ -12,24 +12,22 @@ public:
     Renderer();
     ~Renderer();
 
-    bool Initialize(SDL_Window* window);
-    void Clear(Uint8 r = 0, Uint8 g = 0, Uint8 b = 0);
+    bool Initialize(int width, int height);
+    void Clear(unsigned char r = 0, unsigned char g = 0, unsigned char b = 0);
     void Present();
 
     // Drawing functions
-    void DrawRect(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
-    void FillRect(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
-    void DrawTexture(SDL_Texture* texture, int x, int y);
-    void DrawTexture(SDL_Texture* texture, const SDL_Rect* srcRect, const SDL_Rect* dstRect);
+    void DrawRect(int x, int y, int w, int h, unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255);
+    void FillRect(int x, int y, int w, int h, unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255);
+    void DrawTextureRect(Texture2D texture, int x, int y);
+    void DrawTextureRect(Texture2D texture, const Rectangle* srcRect, const Rectangle* dstRect);
 
-    SDL_Renderer* GetSDLRenderer() const { return m_renderer; }
-    
     void SetCamera(int x, int y) { m_cameraX = x; m_cameraY = y; }
     void GetCamera(int& x, int& y) const { x = m_cameraX; y = m_cameraY; }
 
 private:
-    SDL_Renderer* m_renderer;
     int m_cameraX, m_cameraY;
+    int m_width, m_height;
 };
 
 #endif // RENDERER_H

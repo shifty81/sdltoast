@@ -1,7 +1,6 @@
 #include "SpriteSheet.h"
 #include "Renderer.h"
 #include "Logger.h"
-#include <SDL_image.h>
 #include <iostream>
 #include <algorithm>
 #include <vector>
@@ -16,7 +15,7 @@
 // ============================================================================
 
 SpriteSheet::SpriteSheet()
-    : m_texture(nullptr)
+    : m_texture{0, 0, 0, 0, 0}
     , m_tileWidth(0)
     , m_tileHeight(0)
     , m_columns(0)
@@ -27,33 +26,33 @@ SpriteSheet::SpriteSheet()
 }
 
 SpriteSheet::~SpriteSheet() {
-    if (m_texture) {
-        SDL_DestroyTexture(m_texture);
-        m_texture = nullptr;
+    if (m_texture.id != 0) {
+        UnloadTexture(m_texture);
+        m_texture.id = 0;
     }
 }
 
 bool SpriteSheet::Load(Renderer* renderer, const std::string& filepath, int tileWidth, int tileHeight) {
     // Load the image
-    SDL_Surface* surface = IMG_Load(filepath.c_str());
-    if (!surface) {
-        Logger::Instance().Error("Failed to load sprite sheet " + filepath + ": " + IMG_GetError());
+    Image image = LoadImage(filepath.c_str());
+    if (image.data == nullptr) {
+        Logger::Instance().Error("Failed to load sprite sheet " + filepath);
         return false;
     }
 
-    m_sheetWidth = surface->w;
-    m_sheetHeight = surface->h;
+    m_sheetWidth = image.width;
+    m_sheetHeight = image.height;
     m_tileWidth = tileWidth;
     m_tileHeight = tileHeight;
     m_columns = m_sheetWidth / m_tileWidth;
     m_rows = m_sheetHeight / m_tileHeight;
 
-    // Create texture
-    m_texture = SDL_CreateTextureFromSurface(renderer->GetSDLRenderer(), surface);
-    SDL_FreeSurface(surface);
+    // Create texture from image
+    m_texture = LoadTextureFromImage(image);
+    UnloadImage(image);
 
-    if (!m_texture) {
-        Logger::Instance().Error("Failed to create texture from " + filepath + ": " + SDL_GetError());
+    if (m_texture.id == 0) {
+        Logger::Instance().Error("Failed to create texture from " + filepath);
         return false;
     }
 
@@ -70,28 +69,36 @@ void SpriteSheet::RenderTile(Renderer* renderer, int tileId, int x, int y, bool 
 }
 
 void SpriteSheet::RenderTile(Renderer* renderer, int tileId, int x, int y, int width, int height, bool flipH, bool flipV) {
-    if (!m_texture) return;
+    if (m_texture.id == 0) return;
 
-    SDL_Rect srcRect;
+    Rectangle srcRect;
     CalculateSourceRect(tileId, srcRect);
 
-    SDL_Rect dstRect = { x, y, width, height };
-    
-    SDL_RendererFlip flip = SDL_FLIP_NONE;
-    if (flipH) flip = (SDL_RendererFlip)(flip | SDL_FLIP_HORIZONTAL);
-    if (flipV) flip = (SDL_RendererFlip)(flip | SDL_FLIP_VERTICAL);
+    // Apply flipping by negating source dimensions
+    if (flipH) srcRect.width = -srcRect.width;
+    if (flipV) srcRect.height = -srcRect.height;
 
-    SDL_RenderCopyEx(renderer->GetSDLRenderer(), m_texture, &srcRect, &dstRect, 0.0, nullptr, flip);
+    int camX, camY;
+    renderer->GetCamera(camX, camY);
+
+    Rectangle dstRect = { 
+        static_cast<float>(x - camX), 
+        static_cast<float>(y - camY), 
+        static_cast<float>(width), 
+        static_cast<float>(height) 
+    };
+
+    DrawTexturePro(m_texture, srcRect, dstRect, Vector2{0, 0}, 0.0f, WHITE);
 }
 
-void SpriteSheet::CalculateSourceRect(int tileId, SDL_Rect& srcRect) {
+void SpriteSheet::CalculateSourceRect(int tileId, Rectangle& srcRect) {
     int col = tileId % m_columns;
     int row = tileId / m_columns;
     
-    srcRect.x = col * m_tileWidth;
-    srcRect.y = row * m_tileHeight;
-    srcRect.w = m_tileWidth;
-    srcRect.h = m_tileHeight;
+    srcRect.x = static_cast<float>(col * m_tileWidth);
+    srcRect.y = static_cast<float>(row * m_tileHeight);
+    srcRect.width = static_cast<float>(m_tileWidth);
+    srcRect.height = static_cast<float>(m_tileHeight);
 }
 
 // ============================================================================

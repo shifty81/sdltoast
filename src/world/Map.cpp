@@ -59,7 +59,7 @@ void Map::Render(Renderer* renderer) {
 }
 
 void Map::RenderTileFallback(Renderer* renderer, const Tile* tile, int screenX, int screenY) {
-    Uint8 r = 50, g = 100, b = 50;  // Default grass
+    unsigned char r = 50, g = 100, b = 50;  // Default grass
     
     switch (tile->GetType()) {
         case TileType::VOID:
