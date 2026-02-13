@@ -5,7 +5,7 @@
 ### Required Tools
 - C++ compiler (GCC 9+, Clang 10+, or MSVC 2019+)
 - CMake 3.15+
-- SDL2 development libraries
+- Raylib (automatically fetched via CMake FetchContent)
 - Git
 
 ### IDE Recommendations
@@ -51,7 +51,7 @@ cmake --build .
 ### Engine Layer (`src/engine/`)
 Core systems that power the game:
 - **Game**: Main game loop and initialization
-- **Renderer**: 2D graphics rendering with SDL2
+- **Renderer**: 2D graphics rendering with Raylib
 - **Input**: Keyboard and gamepad input handling
 - **AssetManager**: Loading and caching of textures/sprites
 - **AudioManager**: Music and sound effects
@@ -153,21 +153,20 @@ Use tools like:
 
 ### Common Issues
 
-**SDL not found during build**
+**Raylib build dependencies not found**
 ```bash
 # Ubuntu/Debian
-sudo apt-get install libsdl2-dev libsdl2-image-dev
+sudo apt-get install cmake build-essential libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
 
 # macOS
-brew install sdl2 sdl2_image
+brew install cmake
 
-# Windows (vcpkg)
-vcpkg install sdl2 sdl2-image
+# Windows - no additional dependencies needed
 ```
 
 **Linking errors**
 - Ensure all source files are listed in CMakeLists.txt
-- Check that SDL2 libraries are properly linked
+- Check that Raylib was fetched successfully by CMake
 
 **Runtime crashes**
 - Enable debug symbols: `cmake -DCMAKE_BUILD_TYPE=Debug ..`
@@ -199,9 +198,10 @@ Follow conventional commits:
 
 ## Resources
 
-### SDL2 Documentation
-- [SDL2 Wiki](https://wiki.libsdl.org/)
-- [Lazy Foo' SDL Tutorials](http://lazyfoo.net/tutorials/SDL/)
+### Raylib Documentation
+- [Raylib Website](https://www.raylib.com/)
+- [Raylib Cheatsheet](https://www.raylib.com/cheatsheet/cheatsheet.html)
+- [Raylib Examples](https://www.raylib.com/examples.html)
 
 ### Game Development
 - [Game Programming Patterns](https://gameprogrammingpatterns.com/)

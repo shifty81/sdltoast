@@ -16,21 +16,20 @@ Harvest Quest is a game that combines:
 ```bash
 sudo apt-get update
 sudo apt-get install git cmake build-essential \
-    libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
+    libasound2-dev libx11-dev libxrandr-dev libxi-dev \
+    libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev \
+    libxinerama-dev libwayland-dev libxkbcommon-dev
 ```
 
 **macOS:**
 ```bash
-brew install cmake sdl2 sdl2_image sdl2_mixer sdl2_ttf
+brew install cmake
 ```
 
 **Windows:**
 - Install [Visual Studio](https://visualstudio.microsoft.com/)
 - Install [CMake](https://cmake.org/download/)
-- Install SDL2 via [vcpkg](https://vcpkg.io/):
-  ```powershell
-  vcpkg install sdl2 sdl2-image sdl2-mixer sdl2-ttf
-  ```
+- No additional libraries needed - Raylib is fetched automatically
 
 ### 2. Clone the Repository
 
@@ -123,14 +122,14 @@ Move around with WASD or arrow keys. The player square changes color based on di
 
 ## Troubleshooting
 
-### "SDL2 not found" error
-Make sure SDL2 is installed. On Ubuntu:
+### "CMake configuration fails" error
+Make sure build dependencies are installed. On Ubuntu:
 ```bash
-sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
+sudo apt-get install cmake build-essential libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
 ```
 
 ### Build fails with linking errors
-Ensure all SDL2 libraries are installed. Check CMakeLists.txt matches your SDL2 installation.
+Ensure X11 and OpenGL development libraries are installed. CMake FetchContent will download Raylib automatically.
 
 ### Game runs but shows black screen
 This is a known issue being worked on. Check that assets directory exists in the build folder.
@@ -157,7 +156,7 @@ Inspired by:
 - The Legend of Zelda: A Link to the Past (Nintendo)
 - Stardew Valley (ConcernedApe)
 
-Built with SDL2 and love ❤️
+Built with Raylib and love ❤️
 
 ---
 

@@ -4,68 +4,76 @@
 
 AudioManager::~AudioManager() {
     for (auto& pair : m_sounds) {
-        Mix_FreeChunk(pair.second);
+        UnloadSound(pair.second);
     }
     m_sounds.clear();
     
-    if (m_currentMusic) {
-        Mix_FreeMusic(m_currentMusic);
+    if (m_musicLoaded) {
+        UnloadMusicStream(m_currentMusic);
     }
     
-    Mix_CloseAudio();
-    Mix_Quit();
+    CloseAudioDevice();
 }
 
 bool AudioManager::Initialize() {
-    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
-        Logger::Instance().Error(std::string("SDL_mixer initialization failed: ") + Mix_GetError());
+    InitAudioDevice();
+    
+    if (!IsAudioDeviceReady()) {
+        Logger::Instance().Error("Audio device initialization failed");
         return false;
     }
     
-    m_currentMusic = nullptr;
+    m_musicLoaded = false;
     return true;
 }
 
-void AudioManager::PlayMusic(const std::string& filepath, int loops) {
-    if (m_currentMusic) {
-        Mix_FreeMusic(m_currentMusic);
+void AudioManager::PlayMusicFile(const std::string& filepath, int loops) {
+    if (m_musicLoaded) {
+        UnloadMusicStream(m_currentMusic);
     }
     
-    m_currentMusic = Mix_LoadMUS(filepath.c_str());
-    if (!m_currentMusic) {
-        Logger::Instance().Error("Failed to load music " + filepath + ": " + Mix_GetError());
+    m_currentMusic = LoadMusicStream(filepath.c_str());
+    if (m_currentMusic.frameCount == 0) {
+        Logger::Instance().Error("Failed to load music " + filepath);
+        m_musicLoaded = false;
         return;
     }
     
-    Mix_PlayMusic(m_currentMusic, loops);
+    m_musicLoaded = true;
+    m_currentMusic.looping = (loops != 0);
+    PlayMusicStream(m_currentMusic);
 }
 
-void AudioManager::PlaySound(const std::string& filepath) {
-    Mix_Chunk* sound = nullptr;
+void AudioManager::PlaySoundFile(const std::string& filepath) {
+    Sound sound = {};
     
     auto it = m_sounds.find(filepath);
     if (it != m_sounds.end()) {
         sound = it->second;
     } else {
-        sound = Mix_LoadWAV(filepath.c_str());
-        if (!sound) {
-            Logger::Instance().Error("Failed to load sound " + filepath + ": " + Mix_GetError());
+        sound = LoadSound(filepath.c_str());
+        if (sound.frameCount == 0) {
+            Logger::Instance().Error("Failed to load sound " + filepath);
             return;
         }
         m_sounds[filepath] = sound;
     }
     
-    Mix_PlayChannel(-1, sound, 0);
+    PlaySound(sound);
 }
 
-void AudioManager::StopMusic() {
-    Mix_HaltMusic();
+void AudioManager::StopMusicPlayback() {
+    if (m_musicLoaded) {
+        StopMusicStream(m_currentMusic);
+    }
 }
 
 void AudioManager::SetMusicVolume(int volume) {
-    Mix_VolumeMusic(volume);
+    if (m_musicLoaded) {
+        ::SetMusicVolume(m_currentMusic, volume / 128.0f);
+    }
 }
 
 void AudioManager::SetSoundVolume(int volume) {
-    Mix_Volume(-1, volume);
+    SetMasterVolume(volume / 128.0f);
 }

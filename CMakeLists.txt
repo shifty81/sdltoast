@@ -1,19 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-# Auto-detect vcpkg toolchain when not already specified.
-# This must be set before project() so the toolchain is loaded during
-# compiler/platform detection.
-if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    if(DEFINED ENV{VCPKG_ROOT} AND EXISTS "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
-        set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-            CACHE STRING "Vcpkg toolchain file")
-    elseif(DEFINED ENV{VCPKG_INSTALLATION_ROOT} AND EXISTS "$ENV{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake")
-        set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
-            CACHE STRING "Vcpkg toolchain file")
-    endif()
-endif()
-
-project(HarvestQuest VERSION 1.0.0 LANGUAGES CXX)
+project(HarvestQuest VERSION 1.0.0 LANGUAGES C CXX)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -27,19 +14,21 @@ else()
     add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# Add cmake/ directory to module path for Find modules (fallback when
-# config-mode packages are not available, e.g. Windows without vcpkg)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
-# Find SDL2 packages
-find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
-find_package(SDL2_mixer REQUIRED)
-find_package(SDL2_ttf REQUIRED)
+# Fetch Raylib via FetchContent
+include(FetchContent)
+set(FETCHCONTENT_QUIET FALSE)
+set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(BUILD_GAMES OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(
+    raylib
+    GIT_REPOSITORY https://github.com/raysan5/raylib.git
+    GIT_TAG 5.5
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+)
+FetchContent_MakeAvailable(raylib)
 
 # Include directories for project sources.
-# SDL2 include directories are provided automatically by the imported targets
-# (SDL2::SDL2, SDL2_image::SDL2_image, etc.) via target_link_libraries.
 include_directories(
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/include
@@ -105,29 +94,8 @@ set(HEADERS
 # Create executable
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
-# Link SDL2 libraries
-if(TARGET SDL2::SDL2main)
-    target_link_libraries(${PROJECT_NAME} SDL2::SDL2main)
-endif()
-target_link_libraries(${PROJECT_NAME}
-    SDL2::SDL2
-    SDL2_image::SDL2_image
-    SDL2_mixer::SDL2_mixer
-    SDL2_ttf::SDL2_ttf
-)
-
-# Platform-specific settings
-if(WIN32)
-    # Windows: Copy DLLs to build directory
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        WIN32_EXECUTABLE ON
-    )
-elseif(APPLE)
-    # macOS: Create app bundle
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        MACOSX_BUNDLE ON
-    )
-endif()
+# Link Raylib
+target_link_libraries(${PROJECT_NAME} raylib)
 
 # Copy assets to build directory
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD

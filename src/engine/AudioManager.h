@@ -1,7 +1,7 @@
 #ifndef AUDIOMANAGER_H
 #define AUDIOMANAGER_H
 
-#include <SDL_mixer.h>
+#include <raylib.h>
 #include <string>
 #include <unordered_map>
 
@@ -12,16 +12,17 @@ public:
 
     bool Initialize();
     
-    void PlayMusic(const std::string& filepath, int loops = -1);
-    void PlaySound(const std::string& filepath);
-    void StopMusic();
+    void PlayMusicFile(const std::string& filepath, int loops = -1);
+    void PlaySoundFile(const std::string& filepath);
+    void StopMusicPlayback();
     
     void SetMusicVolume(int volume); // 0-128
     void SetSoundVolume(int volume); // 0-128
 
 private:
-    Mix_Music* m_currentMusic;
-    std::unordered_map<std::string, Mix_Chunk*> m_sounds;
+    Music m_currentMusic;
+    bool m_musicLoaded;
+    std::unordered_map<std::string, Sound> m_sounds;
 };
 
 #endif // AUDIOMANAGER_H

@@ -79,7 +79,7 @@ void Enemy::Render(Renderer* renderer) {
     if (!m_active) return;
 
     // Color based on AI state
-    Uint8 r = 200, g = 50, b = 50;
+    unsigned char r = 200, g = 50, b = 50;
     if (m_aiState == AIState::CHASE) {
         r = 255; g = 80; b = 80;
     } else if (m_aiState == AIState::IDLE) {

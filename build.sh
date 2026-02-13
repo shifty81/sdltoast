@@ -4,7 +4,6 @@
 set -e
 
 BUILD_LOG="build_output.log"
-VCPKG_TOOLCHAIN=""
 
 # Start logging
 echo "Build started: $(date)" | tee "$BUILD_LOG"
@@ -14,169 +13,42 @@ echo "  Harvest Quest - Build Script   " | tee -a "$BUILD_LOG"
 echo "==================================" | tee -a "$BUILD_LOG"
 echo "" | tee -a "$BUILD_LOG"
 
-# Function to detect vcpkg and set VCPKG_TOOLCHAIN
-detect_vcpkg() {
-    if [ -n "$VCPKG_ROOT" ] && { [ -f "$VCPKG_ROOT/vcpkg" ] || [ -f "$VCPKG_ROOT/vcpkg.exe" ]; }; then
-        echo "Detected vcpkg at: $VCPKG_ROOT" | tee -a "$BUILD_LOG"
-        return 0
-    elif [ -n "$VCPKG_INSTALLATION_ROOT" ] && { [ -f "$VCPKG_INSTALLATION_ROOT/vcpkg" ] || [ -f "$VCPKG_INSTALLATION_ROOT/vcpkg.exe" ]; }; then
-        export VCPKG_ROOT="$VCPKG_INSTALLATION_ROOT"
-        echo "Detected vcpkg at: $VCPKG_ROOT" | tee -a "$BUILD_LOG"
-        return 0
-    elif command -v vcpkg >/dev/null 2>&1; then
-        local vcpkg_path
-        vcpkg_path="$(dirname "$(command -v vcpkg)")"
-        export VCPKG_ROOT="$vcpkg_path"
-        echo "Detected vcpkg at: $VCPKG_ROOT" | tee -a "$BUILD_LOG"
-        return 0
-    fi
-    return 1
-}
-
-# Function to install SDL2 via vcpkg
-install_sdl2_vcpkg() {
-    if detect_vcpkg; then
-        local vcpkg_exe="$VCPKG_ROOT/vcpkg"
-        if [ ! -f "$vcpkg_exe" ] && [ -f "$VCPKG_ROOT/vcpkg.exe" ]; then
-            vcpkg_exe="$VCPKG_ROOT/vcpkg.exe"
-        fi
-        echo "Installing SDL2 via vcpkg..." | tee -a "$BUILD_LOG"
-        if ! "$vcpkg_exe" install sdl2 sdl2-image sdl2-mixer sdl2-ttf 2>&1 | tee -a "$BUILD_LOG"; then
-            echo "WARNING: vcpkg install command failed." | tee -a "$BUILD_LOG"
-            return 1
-        fi
-        if [ -f "$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" ]; then
-            VCPKG_TOOLCHAIN="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
-            echo "Using vcpkg toolchain: $VCPKG_TOOLCHAIN" | tee -a "$BUILD_LOG"
-        fi
-        return 0
-    fi
-    return 1
-}
-
-# Function to install SDL2 dependencies automatically
-install_sdl2() {
-    echo "Attempting to install SDL2 automatically..." | tee -a "$BUILD_LOG"
+# Function to install Raylib build dependencies
+install_raylib_deps() {
+    echo "Attempting to install Raylib build dependencies..." | tee -a "$BUILD_LOG"
 
     if [ "$(uname)" = "Darwin" ]; then
-        # macOS
-        if command -v brew >/dev/null 2>&1; then
-            echo "Detected macOS with Homebrew. Installing SDL2..." | tee -a "$BUILD_LOG"
-            brew install sdl2 sdl2_image sdl2_mixer sdl2_ttf 2>&1 | tee -a "$BUILD_LOG"
-        else
-            echo "ERROR: Homebrew not found. Please install Homebrew first:" | tee -a "$BUILD_LOG"
-            echo "  /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"" | tee -a "$BUILD_LOG"
-            echo "Build finished with errors: $(date)" >> "$BUILD_LOG"
-            exit 1
-        fi
+        # macOS - Raylib builds from source via CMake FetchContent, no extra deps needed
+        echo "macOS detected - no additional dependencies needed." | tee -a "$BUILD_LOG"
     elif [ -f /etc/debian_version ] || command -v apt-get >/dev/null 2>&1; then
-        # Ubuntu/Debian
-        echo "Detected Ubuntu/Debian. Installing SDL2 and build tools..." | tee -a "$BUILD_LOG"
+        # Ubuntu/Debian - need X11/OpenGL dev headers for Raylib
+        echo "Detected Ubuntu/Debian. Installing Raylib build dependencies..." | tee -a "$BUILD_LOG"
         sudo apt-get update 2>&1 | tee -a "$BUILD_LOG"
-        sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev cmake build-essential pkg-config 2>&1 | tee -a "$BUILD_LOG"
+        sudo apt-get install -y cmake build-essential pkg-config \
+            libasound2-dev libx11-dev libxrandr-dev libxi-dev \
+            libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev \
+            libxinerama-dev libwayland-dev libxkbcommon-dev 2>&1 | tee -a "$BUILD_LOG"
     elif [ -f /etc/fedora-release ] || command -v dnf >/dev/null 2>&1; then
         # Fedora
-        echo "Detected Fedora. Installing SDL2..." | tee -a "$BUILD_LOG"
-        sudo dnf install -y SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel 2>&1 | tee -a "$BUILD_LOG"
+        echo "Detected Fedora. Installing Raylib build dependencies..." | tee -a "$BUILD_LOG"
+        sudo dnf install -y cmake gcc-c++ alsa-lib-devel mesa-libGL-devel \
+            libX11-devel libXrandr-devel libXi-devel libXcursor-devel \
+            libXinerama-devel wayland-devel libxkbcommon-devel 2>&1 | tee -a "$BUILD_LOG"
     elif [ -f /etc/arch-release ] || command -v pacman >/dev/null 2>&1; then
         # Arch Linux
-        echo "Detected Arch Linux. Installing SDL2..." | tee -a "$BUILD_LOG"
-        sudo pacman -S --noconfirm sdl2 sdl2_image sdl2_mixer sdl2_ttf 2>&1 | tee -a "$BUILD_LOG"
-    elif [ -f /etc/os-release ]; then
-        # Fallback: parse /etc/os-release for distro family
-        ID=$(grep -oP '^ID=\K.*' /etc/os-release | tr -d '"')
-        ID_LIKE=$(grep -oP '^ID_LIKE=\K.*' /etc/os-release | tr -d '"')
-        PRETTY_NAME=$(grep -oP '^PRETTY_NAME=\K.*' /etc/os-release | tr -d '"')
-        PRETTY_NAME="${PRETTY_NAME:-unknown}"
-        case "$ID $ID_LIKE" in
-            *debian*|*ubuntu*)
-                echo "Detected Debian-based distro ($PRETTY_NAME). Installing SDL2..." | tee -a "$BUILD_LOG"
-                sudo apt-get update 2>&1 | tee -a "$BUILD_LOG"
-                sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev cmake build-essential pkg-config 2>&1 | tee -a "$BUILD_LOG"
-                ;;
-            *fedora*|*rhel*|*centos*)
-                echo "Detected RHEL-based distro ($PRETTY_NAME). Installing SDL2..." | tee -a "$BUILD_LOG"
-                if command -v dnf >/dev/null 2>&1; then
-                    sudo dnf install -y SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel 2>&1 | tee -a "$BUILD_LOG"
-                else
-                    sudo yum install -y SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel 2>&1 | tee -a "$BUILD_LOG"
-                fi
-                ;;
-            *arch*)
-                echo "Detected Arch-based distro ($PRETTY_NAME). Installing SDL2..." | tee -a "$BUILD_LOG"
-                sudo pacman -S --noconfirm sdl2 sdl2_image sdl2_mixer sdl2_ttf 2>&1 | tee -a "$BUILD_LOG"
-                ;;
-            *suse*)
-                echo "Detected SUSE-based distro ($PRETTY_NAME). Installing SDL2..." | tee -a "$BUILD_LOG"
-                sudo zypper install -y libSDL2-devel libSDL2_image-devel libSDL2_mixer-devel libSDL2_ttf-devel 2>&1 | tee -a "$BUILD_LOG"
-                ;;
-            *)
-                if install_sdl2_vcpkg; then
-                    return 0
-                fi
-                echo "ERROR: Unsupported platform ($PRETTY_NAME). Please install SDL2 manually:" | tee -a "$BUILD_LOG"
-                echo "  Ubuntu/Debian: sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev" | tee -a "$BUILD_LOG"
-                echo "  Fedora: sudo dnf install SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel" | tee -a "$BUILD_LOG"
-                echo "  Arch: sudo pacman -S sdl2 sdl2_image sdl2_mixer sdl2_ttf" | tee -a "$BUILD_LOG"
-                echo "  macOS: brew install sdl2 sdl2_image sdl2_mixer sdl2_ttf" | tee -a "$BUILD_LOG"
-                echo "  Windows: Use vcpkg or download from https://www.libsdl.org/" | tee -a "$BUILD_LOG"
-                echo "Build finished with errors: $(date)" >> "$BUILD_LOG"
-                exit 1
-                ;;
-        esac
+        echo "Detected Arch Linux. Installing Raylib build dependencies..." | tee -a "$BUILD_LOG"
+        sudo pacman -S --noconfirm cmake base-devel alsa-lib mesa \
+            libx11 libxrandr libxi libxcursor libxinerama wayland libxkbcommon 2>&1 | tee -a "$BUILD_LOG"
     else
-        # Last resort: try to detect any available package manager
-        if command -v apt-get >/dev/null 2>&1; then
-            echo "Detected apt-get package manager. Installing SDL2..." | tee -a "$BUILD_LOG"
-            sudo apt-get update 2>&1 | tee -a "$BUILD_LOG"
-            sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev cmake build-essential pkg-config 2>&1 | tee -a "$BUILD_LOG"
-        elif command -v dnf >/dev/null 2>&1; then
-            echo "Detected dnf package manager. Installing SDL2..." | tee -a "$BUILD_LOG"
-            sudo dnf install -y SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel 2>&1 | tee -a "$BUILD_LOG"
-        elif command -v yum >/dev/null 2>&1; then
-            echo "Detected yum package manager. Installing SDL2..." | tee -a "$BUILD_LOG"
-            sudo yum install -y SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel 2>&1 | tee -a "$BUILD_LOG"
-        elif command -v pacman >/dev/null 2>&1; then
-            echo "Detected pacman package manager. Installing SDL2..." | tee -a "$BUILD_LOG"
-            sudo pacman -S --noconfirm sdl2 sdl2_image sdl2_mixer sdl2_ttf 2>&1 | tee -a "$BUILD_LOG"
-        elif command -v zypper >/dev/null 2>&1; then
-            echo "Detected zypper package manager. Installing SDL2..." | tee -a "$BUILD_LOG"
-            sudo zypper install -y libSDL2-devel libSDL2_image-devel libSDL2_mixer-devel libSDL2_ttf-devel 2>&1 | tee -a "$BUILD_LOG"
-        elif command -v brew >/dev/null 2>&1; then
-            echo "Detected Homebrew. Installing SDL2..." | tee -a "$BUILD_LOG"
-            brew install sdl2 sdl2_image sdl2_mixer sdl2_ttf 2>&1 | tee -a "$BUILD_LOG"
-        else
-            if install_sdl2_vcpkg; then
-                return 0
-            fi
-            echo "ERROR: Unsupported platform. Please install SDL2 manually:" | tee -a "$BUILD_LOG"
-            echo "  Ubuntu/Debian: sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev" | tee -a "$BUILD_LOG"
-            echo "  Fedora: sudo dnf install SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel" | tee -a "$BUILD_LOG"
-            echo "  Arch: sudo pacman -S sdl2 sdl2_image sdl2_mixer sdl2_ttf" | tee -a "$BUILD_LOG"
-            echo "  macOS: brew install sdl2 sdl2_image sdl2_mixer sdl2_ttf" | tee -a "$BUILD_LOG"
-            echo "  Windows: Use vcpkg or download from https://www.libsdl.org/" | tee -a "$BUILD_LOG"
-            echo "Build finished with errors: $(date)" >> "$BUILD_LOG"
-            exit 1
-        fi
+        echo "WARNING: Could not detect platform. Raylib will be built from source via CMake FetchContent." | tee -a "$BUILD_LOG"
+        echo "You may need to install X11 and OpenGL development libraries manually." | tee -a "$BUILD_LOG"
     fi
 }
 
-# Check for SDL2
-echo "Checking for SDL2..." | tee -a "$BUILD_LOG"
-if ! pkg-config --exists sdl2 2>/dev/null; then
-    echo "SDL2 not found. Will attempt automatic installation." | tee -a "$BUILD_LOG"
-    install_sdl2
-
-    # Verify installation succeeded (skip for vcpkg, as CMake handles SDL2 discovery)
-    if [ -z "$VCPKG_TOOLCHAIN" ] && ! pkg-config --exists sdl2 2>/dev/null; then
-        echo "ERROR: SDL2 installation failed. Please install manually." | tee -a "$BUILD_LOG"
-        echo "Build finished with errors: $(date)" >> "$BUILD_LOG"
-        exit 1
-    fi
-    echo "✓ SDL2 installed successfully" | tee -a "$BUILD_LOG"
-else
-    echo "✓ SDL2 found" | tee -a "$BUILD_LOG"
-fi
+# Install Raylib build dependencies
+echo "Checking/installing Raylib build dependencies..." | tee -a "$BUILD_LOG"
+install_raylib_deps
+echo "✓ Dependencies ready" | tee -a "$BUILD_LOG"
 
 # Create build directory
 echo "" | tee -a "$BUILD_LOG"
@@ -184,14 +56,10 @@ echo "Creating build directory..." | tee -a "$BUILD_LOG"
 mkdir -p build
 cd build
 
-# Configure with CMake
+# Configure with CMake (Raylib is fetched automatically via FetchContent)
 echo "" | tee -a "$BUILD_LOG"
-echo "Configuring with CMake..." | tee -a "$BUILD_LOG"
+echo "Configuring with CMake (Raylib will be downloaded automatically)..." | tee -a "$BUILD_LOG"
 CMAKE_ARGS=(-DCMAKE_BUILD_TYPE=Debug)
-if [ -n "$VCPKG_TOOLCHAIN" ]; then
-    CMAKE_ARGS+=("-DCMAKE_TOOLCHAIN_FILE=$VCPKG_TOOLCHAIN")
-    echo "Using vcpkg toolchain file: $VCPKG_TOOLCHAIN" | tee -a "$BUILD_LOG"
-fi
 if ! cmake .. "${CMAKE_ARGS[@]}" 2>&1 | tee -a "../$BUILD_LOG"; then
     echo "ERROR: CMake configuration failed!" | tee -a "../$BUILD_LOG"
     echo "Build finished with errors: $(date)" >> "../$BUILD_LOG"
