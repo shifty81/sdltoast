@@ -2,11 +2,11 @@
 
 > *When Zelda: A Link to the Past and Stardew Valley had a baby...*
 
-A top-down action-adventure RPG that seamlessly blends dungeon exploration and real-time combat with peaceful farming, crafting, and village life. Built with SDL2 in C++.
+A top-down action-adventure RPG that seamlessly blends dungeon exploration and real-time combat with peaceful farming, crafting, and village life. Built with Raylib in C++.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)
-![SDL2](https://img.shields.io/badge/SDL2-2.0+-green.svg)
+![Raylib](https://img.shields.io/badge/Raylib-5.5-green.svg)
 
 ## 🎮 Concept
 
@@ -57,29 +57,24 @@ Tend to your crops in the morning, explore dangerous dungeons in the afternoon, 
 
 - **C++ Compiler**: GCC 9+, Clang 10+, or MSVC 2019+
 - **CMake**: 3.15 or higher
-- **SDL2 Libraries**:
-  - SDL2 (2.0.0+)
-  - SDL2_image
-  - SDL2_mixer
-  - SDL2_ttf
+- **Raylib**: Automatically fetched via CMake FetchContent (no manual install needed)
+- **Linux only**: X11 and OpenGL development headers
 
-### Installing SDL2
+### Installing Build Dependencies
 
 #### Ubuntu/Debian
 ```bash
 sudo apt-get update
-sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev cmake build-essential
+sudo apt-get install cmake build-essential libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
 ```
 
 #### macOS (Homebrew)
 ```bash
-brew install sdl2 sdl2_image sdl2_mixer sdl2_ttf cmake
+brew install cmake
 ```
 
-#### Windows (vcpkg)
-```bash
-vcpkg install sdl2 sdl2-image sdl2-mixer sdl2-ttf
-```
+#### Windows
+No additional dependencies needed - just CMake and a C++ compiler (MSVC).
 
 ### Building the Game
 
@@ -238,7 +233,7 @@ See [Tileset Integration Guide](docs/TILESET_INTEGRATION.md) for asset format de
 
 - [x] Core game design
 - [x] Project structure
-- [x] Basic SDL2 engine setup
+- [x] Basic Raylib engine setup
 - [x] Character movement and collision
 - [x] **Procedural world generation system**
 - [x] **Smart tile system (semantic tiles)**
@@ -269,10 +264,7 @@ Inspired by:
 - **Stardew Valley** by ConcernedApe
 
 Built with:
-- [SDL2](https://www.libsdl.org/) - Simple DirectMedia Layer
-- [SDL2_image](https://github.com/libsdl-org/SDL_image)
-- [SDL2_mixer](https://github.com/libsdl-org/SDL_mixer)
-- [SDL2_ttf](https://github.com/libsdl-org/SDL_ttf)
+- [Raylib](https://www.raylib.com/) - A simple and easy-to-use library to enjoy videogames programming
 
 ## 📞 Contact
 
