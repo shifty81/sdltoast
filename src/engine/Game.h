@@ -49,6 +49,7 @@ private:
     // Player actions
     void HandleFarmingActions();
     void HandleCombatActions();
+    void HandleTreeChopping();
     void AdvanceDay();
     void SpawnEnemies();
     void UpdateHUD();

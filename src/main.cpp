@@ -17,6 +17,7 @@ int main(int argc, char* argv[]) {
     Logger::Instance().Info("  WASD / Arrow Keys - Move");
     Logger::Instance().Info("  Space - Attack");
     Logger::Instance().Info("  T/R/F/H - Farm (Till/Water/Plant/Harvest)");
+    Logger::Instance().Info("  C - Chop tree");
     Logger::Instance().Info("  N - Advance day | I - Inventory");
     Logger::Instance().Info("  1/2/3 - Generate Farm/Dungeon/Overworld");
     Logger::Instance().Info("  ESC - Quit");

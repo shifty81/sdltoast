@@ -16,7 +16,8 @@ enum class TileType {
     DIRT,           // Dirt path
     STONE,          // Stone floor
     SAND,           // Sand terrain
-    DECORATION      // Non-interactive decoration
+    DECORATION,     // Non-interactive decoration
+    TREE            // Tree (solid, choppable)
 };
 
 // Tile definition - the RULES for a tile type

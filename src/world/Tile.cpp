@@ -20,6 +20,7 @@ void TileRegistry::Initialize() {
     s_definitions[static_cast<int>(TileType::STONE)]      = TileDef(TileType::STONE,      false, false, false, "stone");
     s_definitions[static_cast<int>(TileType::SAND)]       = TileDef(TileType::SAND,       false, false, false, "sand");
     s_definitions[static_cast<int>(TileType::DECORATION)] = TileDef(TileType::DECORATION, false, true,  false, "decoration");
+    s_definitions[static_cast<int>(TileType::TREE)]       = TileDef(TileType::TREE,       true,  true,  false, "tree");
     
     s_initialized = true;
 }
