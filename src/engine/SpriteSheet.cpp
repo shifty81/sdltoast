@@ -15,7 +15,7 @@
 // ============================================================================
 
 SpriteSheet::SpriteSheet()
-    : m_texture{0, 0, 0, 0, 0}
+    : m_texture{}
     , m_tileWidth(0)
     , m_tileHeight(0)
     , m_columns(0)

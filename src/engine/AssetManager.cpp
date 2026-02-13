@@ -36,5 +36,5 @@ Texture2D AssetManager::GetTexture(const std::string& id) const {
     if (it != m_textures.end()) {
         return it->second;
     }
-    return Texture2D{0, 0, 0, 0, 0};
+    return Texture2D{};
 }
