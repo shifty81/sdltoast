@@ -17,6 +17,11 @@ public:
 
     // Enemy damages player on contact
     static bool EnemyContact(Enemy* enemy, Player* player, int attackPower);
+
+    // Combat tuning constants
+    static constexpr float ATTACK_RANGE = 40.0f;
+    static constexpr float DAMAGE_COOLDOWN = 1.0f; // Seconds of invincibility after hit
+    static constexpr int ENEMY_KILL_GOLD = 10;
 };
 
 #endif // COMBAT_H

@@ -25,11 +25,10 @@ bool Combat::PlayerAttack(Player* player, Enemy* enemy, int attackPower) {
     enemy->GetSize(ew, eh);
 
     // Attack range is slightly larger than the player hitbox
-    float attackRange = 40.0f;
-    float ax = px - attackRange / 2;
-    float ay = py - attackRange / 2;
-    float aw = pw + attackRange;
-    float ah = ph + attackRange;
+    float ax = px - ATTACK_RANGE / 2;
+    float ay = py - ATTACK_RANGE / 2;
+    float aw = pw + ATTACK_RANGE;
+    float ah = ph + ATTACK_RANGE;
 
     if (CheckCollision(ax, ay, aw, ah, ex, ey, ew, eh)) {
         int damage = CalculateDamage(attackPower, 0);

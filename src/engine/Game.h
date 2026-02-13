@@ -78,6 +78,11 @@ private:
     bool m_showInventory;
     float m_damageCooldown; // Prevent rapid damage from contact
     std::string m_actionText;
+
+    // Spawn tuning
+    static constexpr int MAX_ENEMIES = 5;
+    static constexpr int SPAWN_BORDER = 2;
+    static constexpr int SPAWN_SPACING = 5;
 };
 
 #endif // GAME_H

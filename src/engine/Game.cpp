@@ -219,7 +219,7 @@ void Game::Update(float deltaTime) {
     } else {
         for (auto& enemy : m_enemies) {
             if (Combat::EnemyContact(enemy.get(), m_player.get(), 1)) {
-                m_damageCooldown = 1.0f; // 1 second invincibility after hit
+                m_damageCooldown = Combat::DAMAGE_COOLDOWN;
                 Logger::Instance().Info("Player hit! Health: " + std::to_string(m_player->GetHealth()));
                 break;
             }
@@ -293,8 +293,8 @@ void Game::HandleCombatActions() {
             if (Combat::PlayerAttack(m_player.get(), enemy.get(), 1)) {
                 hitAny = true;
                 if (!enemy->IsActive()) {
-                    m_gold += 10;
-                    m_actionText = "Enemy defeated! +10g";
+                    m_gold += Combat::ENEMY_KILL_GOLD;
+                    m_actionText = "Enemy defeated! +" + std::to_string(Combat::ENEMY_KILL_GOLD) + "g";
                     Logger::Instance().Info("Enemy defeated! Gold: " + std::to_string(m_gold));
                 } else {
                     m_actionText = "Hit enemy! HP: " + std::to_string(enemy->GetHealth());
@@ -346,12 +346,12 @@ void Game::SpawnEnemies() {
     int height = m_currentMap->GetHeight();
     int spawned = 0;
 
-    for (int y = 2; y < height - 2 && spawned < 5; ++y) {
-        for (int x = 2; x < width - 2 && spawned < 5; ++x) {
+    for (int y = SPAWN_BORDER; y < height - SPAWN_BORDER && spawned < MAX_ENEMIES; ++y) {
+        for (int x = SPAWN_BORDER; x < width - SPAWN_BORDER && spawned < MAX_ENEMIES; ++x) {
             const Tile* tile = m_currentMap->GetTileAt(x, y);
             if (tile && tile->GetType() == TileType::FLOOR && !tile->IsSolid()) {
                 // Only spawn on some floor tiles (spread them out)
-                if ((x + y) % 5 == 0) {
+                if ((x + y) % SPAWN_SPACING == 0) {
                     auto enemy = std::make_unique<Enemy>();
                     float wx, wy;
                     m_currentMap->TileToWorld(x, y, wx, wy);
