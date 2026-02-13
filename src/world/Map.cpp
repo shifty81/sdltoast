@@ -110,9 +110,9 @@ void Map::RenderTileFallback(Renderer* renderer, const Tile* tile, int screenX, 
     if (tile->GetType() == TileType::TREE) {
         // Brown trunk (center bottom)
         renderer->FillRect(screenX + 12, screenY + 18, 8, 14, 100, 60, 20);
-        // Green canopy (top area)
+        // Green canopy (top area, kept within tile bounds)
         renderer->FillRect(screenX + 4, screenY + 2, 24, 18, 30, 140, 30);
-        renderer->FillRect(screenX + 8, screenY - 2, 16, 8, 40, 160, 40);
+        renderer->FillRect(screenX + 8, screenY + 0, 16, 6, 40, 160, 40);
     }
 }
 
