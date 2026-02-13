@@ -3,13 +3,18 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 class Renderer;
 class Input;
 class AssetManager;
 class AudioManager;
 class Player;
+class Enemy;
 class Map;
+class HUD;
+class Calendar;
+class Inventory;
 
 /**
  * Main game class that manages the game loop and core systems
@@ -41,6 +46,13 @@ private:
     void Update(float deltaTime);
     void Render();
 
+    // Player actions
+    void HandleFarmingActions();
+    void HandleCombatActions();
+    void AdvanceDay();
+    void SpawnEnemies();
+    void UpdateHUD();
+
     bool m_running;
     int m_windowWidth;
     int m_windowHeight;
@@ -54,6 +66,18 @@ private:
     // Game objects
     std::unique_ptr<Player> m_player;
     std::unique_ptr<Map> m_currentMap;
+    std::vector<std::unique_ptr<Enemy>> m_enemies;
+
+    // Game systems
+    std::unique_ptr<HUD> m_hud;
+    std::unique_ptr<Calendar> m_calendar;
+    std::unique_ptr<Inventory> m_inventory;
+
+    // State
+    int m_gold;
+    bool m_showInventory;
+    float m_damageCooldown; // Prevent rapid damage from contact
+    std::string m_actionText;
 };
 
 #endif // GAME_H

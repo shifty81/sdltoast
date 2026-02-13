@@ -78,11 +78,6 @@ void Player::Render(Renderer* renderer) {
         // Fallback: colored rectangle (current method)
         RenderFallback(renderer);
     }
-
-    // Draw health hearts (always show)
-    for (int i = 0; i < m_health; ++i) {
-        renderer->FillRect(10 + i * 25, 10, 20, 20, 255, 50, 50);
-    }
 }
 
 void Player::RenderFallback(Renderer* renderer) {
