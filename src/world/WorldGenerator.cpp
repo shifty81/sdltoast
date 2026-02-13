@@ -39,6 +39,9 @@ void WorldGenerator::GenerateFarm(Map* map, int width, int height) {
     
     // STEP 5: Add decorations
     AddDecorations(map, 0.05f);
+    
+    // STEP 6: Add scattered trees around the farm edges
+    AddTrees(map, 0.15f);
 }
 
 std::vector<WorldGenerator::FarmZone> WorldGenerator::GenerateFarmZones(int width, int height) {
@@ -227,6 +230,7 @@ void WorldGenerator::GenerateOverworld(Map* map, int width, int height, Biome bi
     
     ApplyAutoTiling(map);
     AddDecorations(map, 0.08f);
+    AddTrees(map, 0.12f);
 }
 
 float WorldGenerator::Noise2D(int x, int y, int octaves) {
@@ -341,6 +345,41 @@ void WorldGenerator::AddDecorations(Map* map, float density) {
                 if (clearPath) {
                     tile->SetType(TileType::DECORATION);
                     tile->SetVisualId(Random(0, 3)); // Random decoration
+                }
+            }
+        }
+    }
+}
+
+void WorldGenerator::AddTrees(Map* map, float density) {
+    for (int y = 1; y < map->GetHeight() - 1; ++y) {
+        for (int x = 1; x < map->GetWidth() - 1; ++x) {
+            Tile* tile = map->GetTileAt(x, y);
+            if (!tile) continue;
+
+            // Only place trees on grass tiles
+            if (tile->GetType() == TileType::GRASS && RandomFloat() < density) {
+                // Don't place next to paths, soil, or other trees
+                bool clear = true;
+                for (int dy = -1; dy <= 1; ++dy) {
+                    for (int dx = -1; dx <= 1; ++dx) {
+                        if (dx == 0 && dy == 0) continue;
+                        Tile* neighbor = map->GetTileAt(x + dx, y + dy);
+                        if (neighbor) {
+                            TileType nt = neighbor->GetType();
+                            if (nt == TileType::DIRT || nt == TileType::SOIL ||
+                                nt == TileType::TREE || nt == TileType::DOOR) {
+                                clear = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (!clear) break;
+                }
+
+                if (clear) {
+                    tile->SetType(TileType::TREE);
+                    tile->SetVisualId(0);
                 }
             }
         }

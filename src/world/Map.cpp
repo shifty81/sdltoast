@@ -98,10 +98,22 @@ void Map::RenderTileFallback(Renderer* renderer, const Tile* tile, int screenX, 
         case TileType::DECORATION:
             r = 30; g = 140; b = 30;
             break;
+        case TileType::TREE:
+            r = 20; g = 80; b = 20;
+            break;
     }
     
     renderer->FillRect(screenX, screenY, TILE_SIZE, TILE_SIZE, r, g, b);
     renderer->DrawRect(screenX, screenY, TILE_SIZE, TILE_SIZE, r/2, g/2, b/2);
+
+    // Draw tree trunk and canopy on top of base tile
+    if (tile->GetType() == TileType::TREE) {
+        // Brown trunk (center bottom)
+        renderer->FillRect(screenX + 12, screenY + 18, 8, 14, 100, 60, 20);
+        // Green canopy (top area)
+        renderer->FillRect(screenX + 4, screenY + 2, 24, 18, 30, 140, 30);
+        renderer->FillRect(screenX + 8, screenY - 2, 16, 8, 40, 160, 40);
+    }
 }
 
 int Map::GetTileSpriteId(const Tile* tile) const {
@@ -121,6 +133,7 @@ int Map::GetTileSpriteId(const Tile* tile) const {
         case TileType::DOOR:       return 20;
         case TileType::CROP:       return 30 + tile->GetGrowthStage();
         case TileType::DECORATION: return 40 + tile->GetVisualId();
+        case TileType::TREE:       return 50;
         default:                   return 0;
     }
 }
@@ -203,6 +216,16 @@ bool Map::HarvestCrop(int x, int y) {
     tile->SetSoilState(SoilState::HOE);
     tile->SetCropType(-1);
     tile->SetGrowthStage(0);
+    return true;
+}
+
+bool Map::ChopTree(int x, int y) {
+    Tile* tile = GetTileAt(x, y);
+    if (!tile || tile->GetType() != TileType::TREE) return false;
+
+    // Replace tree with grass stump
+    tile->SetType(TileType::GRASS);
+    tile->SetVisualId(0);
     return true;
 }
 

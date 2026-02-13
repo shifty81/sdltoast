@@ -39,6 +39,7 @@ public:
     bool WaterTile(int x, int y);
     bool PlantCrop(int x, int y, int cropType);
     bool HarvestCrop(int x, int y);
+    bool ChopTree(int x, int y);
     
     // World position to tile coordinates
     void WorldToTile(float worldX, float worldY, int& tileX, int& tileY) const;

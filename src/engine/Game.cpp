@@ -107,6 +107,7 @@ bool Game::Initialize(const std::string& title, int width, int height) {
     Logger::Instance().Info("  R - Water tile");
     Logger::Instance().Info("  F - Plant crop");
     Logger::Instance().Info("  H - Harvest crop");
+    Logger::Instance().Info("  C - Chop tree");
     Logger::Instance().Info("  N - Advance day");
     Logger::Instance().Info("  I - Toggle inventory");
     Logger::Instance().Info("  1 - Generate Farm");
@@ -169,6 +170,9 @@ void Game::Update(float deltaTime) {
 
     // Farming actions
     HandleFarmingActions();
+
+    // Tree chopping
+    HandleTreeChopping();
 
     // Combat actions
     HandleCombatActions();
@@ -280,6 +284,26 @@ void Game::HandleFarmingActions() {
             m_gold += cropValue;
             m_actionText = "Harvested " + cropName + "! +" + std::to_string(cropValue) + "g";
             Logger::Instance().Info("Harvested " + cropName + " for " + std::to_string(cropValue) + " gold");
+        }
+    }
+}
+
+void Game::HandleTreeChopping() {
+    if (!m_player || !m_currentMap) return;
+
+    if (m_input->IsKeyPressed(KEY_C)) {
+        float px, py;
+        m_player->GetPosition(px, py);
+        float pw, ph;
+        m_player->GetSize(pw, ph);
+
+        int tileX, tileY;
+        m_currentMap->WorldToTile(px + pw / 2, py + ph / 2, tileX, tileY);
+
+        if (m_currentMap->ChopTree(tileX, tileY)) {
+            m_inventory->AddItem("Wood", 3);
+            m_actionText = "Chopped tree! +3 Wood";
+            Logger::Instance().Info("Chopped tree at (" + std::to_string(tileX) + "," + std::to_string(tileY) + ")");
         }
     }
 }

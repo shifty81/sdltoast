@@ -84,6 +84,7 @@ private:
     
     // === STEP 5: Decoration ===
     void AddDecorations(Map* map, float density = 0.1f);
+    void AddTrees(Map* map, float density = 0.1f);
     
     // Utilities
     bool RoomsOverlap(const Room& a, const Room& b);
