@@ -7,6 +7,9 @@
 #include <sstream>
 #include <cerrno>
 #include <sys/stat.h>
+#ifdef _WIN32
+#include <direct.h>
+#endif
 
 // Simple text-based save format:
 //   HARVEST_QUEST_SAVE
