@@ -18,5 +18,8 @@ void DialogueBox::Render(Renderer* renderer) {
     renderer->FillRect(50, 400, 700, 150, 0, 0, 0, 200);
     renderer->DrawRect(50, 400, 700, 150, 255, 255, 255);
     
-    // TODO: Render text (requires SDL_ttf integration)
+    // Render dialogue text using Raylib's built-in text rendering
+    if (!m_text.empty()) {
+        renderer->DrawGameText(m_text.c_str(), 70, 420, 18, 255, 255, 255);
+    }
 }

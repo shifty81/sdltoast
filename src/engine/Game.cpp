@@ -420,6 +420,7 @@ void Game::SpawnEnemies() {
                     float wx, wy;
                     m_currentMap->TileToWorld(x, y, wx, wy);
                     enemy->SetPosition(wx, wy);
+                    enemy->SetPatrolOrigin(wx, wy);
                     enemy->SetSize(28, 28);
                     enemy->SetAIState(Enemy::AIState::PATROL);
                     m_enemies.push_back(std::move(enemy));
