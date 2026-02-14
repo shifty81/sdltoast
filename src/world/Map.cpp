@@ -22,6 +22,7 @@ Map::~Map() {
 
 bool Map::LoadFromFile(const std::string& filepath) {
     // TODO: Implement map loading from JSON
+    (void)filepath;
     std::cout << "Map loading not yet implemented. Using procedural generation." << std::endl;
     return true;
 }
