@@ -50,6 +50,13 @@ private:
     std::vector<Tile> m_tiles;
     static constexpr int TILE_SIZE = 32;
     
+    // Water animation state
+    float m_waterAnimTimer = 0.0f;
+    int m_waterAnimFrame = 0;
+    static constexpr int WATER_ANIM_FRAMES = 4;
+    static constexpr float WATER_ANIM_SPEED = 0.4f;
+    static constexpr int WATER_FRAME_IDS[WATER_ANIM_FRAMES] = {3, 21, 22, 23};
+    
     int GetIndex(int x, int y) const;
     bool IsValidPosition(int x, int y) const;
     

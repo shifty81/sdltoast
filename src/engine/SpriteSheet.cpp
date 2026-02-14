@@ -149,9 +149,9 @@ void SpriteSheetManager::LoadDefaultAssets(Renderer* renderer) {
         Logger::Instance().Info("Loaded tilesets from root directory!");
     }
     
-    // Load world tileset (16x16 tiles)
+    // Load world tileset (32x32 tiles)
     if (!GetSpriteSheet("world_tiles")) {
-        LoadSpriteSheet(renderer, "world_tiles", "assets/tilesets/world_tileset.png", 16, 16);
+        LoadSpriteSheet(renderer, "world_tiles", "assets/tilesets/world_tileset.png", 32, 32);
     }
     
     // Load character sprite sheet (16x16 or 32x32)
@@ -182,7 +182,7 @@ bool SpriteSheetManager::CheckAndLoadRootPngs(Renderer* renderer) {
     
     // Try to load world tileset from root
     for (const auto& name : tilesetNames) {
-        if (LoadSpriteSheet(renderer, "world_tiles", name, 16, 16)) {
+        if (LoadSpriteSheet(renderer, "world_tiles", name, 32, 32)) {
             Logger::Instance().Info("  ✓ Loaded world tiles from: " + name);
             loadedAny = true;
             break;
@@ -225,7 +225,7 @@ bool SpriteSheetManager::CheckAndLoadRootPngs(Renderer* renderer) {
         std::sort(rootPngs.begin(), rootPngs.end());
         
         if (rootPngs.size() >= 1 && !GetSpriteSheet("world_tiles")) {
-            if (LoadSpriteSheet(renderer, "world_tiles", rootPngs[0], 16, 16)) {
+            if (LoadSpriteSheet(renderer, "world_tiles", rootPngs[0], 32, 32)) {
                 Logger::Instance().Info("  ✓ Loaded world tiles from: " + rootPngs[0] + " (1st PNG in root)");
                 loadedAny = true;
             }
