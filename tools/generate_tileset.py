@@ -179,9 +179,9 @@ def draw_dirt(img, tid):
             else:
                 c = BROWN_MID
             img.putpixel((tx + x, ty + y), c)
-    for px_, py_ in [(6,10),(18,6),(26,22),(10,26),(22,14)]:
-        px(img, tx, ty, px_, py_, BROWN_LIGHT)
-        px(img, tx, ty, px_ + 1, py_, BROWN_LIGHT)
+    for bx, by in [(6,10),(18,6),(26,22),(10,26),(22,14)]:
+        px(img, tx, ty, bx, by, BROWN_LIGHT)
+        px(img, tx, ty, bx + 1, by, BROWN_LIGHT)
 
 def draw_tilled_soil(img, tid):
     tx, ty = tile_pos(tid)
