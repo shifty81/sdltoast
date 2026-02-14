@@ -32,7 +32,7 @@ SpriteSheet::~SpriteSheet() {
     }
 }
 
-bool SpriteSheet::Load(Renderer* renderer, const std::string& filepath, int tileWidth, int tileHeight) {
+bool SpriteSheet::Load(Renderer* /*renderer*/, const std::string& filepath, int tileWidth, int tileHeight) {
     // Load the image
     Image image = LoadImage(filepath.c_str());
     if (image.data == nullptr) {
@@ -92,6 +92,10 @@ void SpriteSheet::RenderTile(Renderer* renderer, int tileId, int x, int y, int w
 }
 
 void SpriteSheet::CalculateSourceRect(int tileId, Rectangle& srcRect) {
+    if (m_columns <= 0) {
+        srcRect = {0, 0, static_cast<float>(m_tileWidth), static_cast<float>(m_tileHeight)};
+        return;
+    }
     int col = tileId % m_columns;
     int row = tileId / m_columns;
     

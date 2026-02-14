@@ -16,7 +16,7 @@ Player::Player()
     m_height = 32.0f;
 }
 
-void Player::Update(float deltaTime) {
+void Player::Update(float /*deltaTime*/) {
     // Base update (called from Player::Update with input)
 }
 

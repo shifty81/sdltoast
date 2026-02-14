@@ -118,10 +118,50 @@ void WorldGenerator::GenerateDungeon(Map* map, int width, int height) {
         CarveCorridor(map, corridor);
     }
     
-    // STEP 5: Auto-tile walls (make it beautiful)
+    // STEP 5: Place doors at room entrances (where corridors meet room edges)
+    for (const auto& room : rooms) {
+        for (int x = room.x; x < room.x + room.width; ++x) {
+            // Top edge
+            if (room.y > 0) {
+                Tile* above = map->GetTileAt(x, room.y - 1);
+                Tile* edge = map->GetTileAt(x, room.y);
+                if (above && edge && above->GetType() == TileType::FLOOR && edge->GetType() == TileType::FLOOR) {
+                    map->SetTile(x, room.y, Tile(TileType::DOOR, 0));
+                }
+            }
+            // Bottom edge
+            if (room.y + room.height < map->GetHeight()) {
+                Tile* below = map->GetTileAt(x, room.y + room.height);
+                Tile* edge = map->GetTileAt(x, room.y + room.height - 1);
+                if (below && edge && below->GetType() == TileType::FLOOR && edge->GetType() == TileType::FLOOR) {
+                    map->SetTile(x, room.y + room.height - 1, Tile(TileType::DOOR, 0));
+                }
+            }
+        }
+        for (int y = room.y; y < room.y + room.height; ++y) {
+            // Left edge
+            if (room.x > 0) {
+                Tile* left = map->GetTileAt(room.x - 1, y);
+                Tile* edge = map->GetTileAt(room.x, y);
+                if (left && edge && left->GetType() == TileType::FLOOR && edge->GetType() == TileType::FLOOR) {
+                    map->SetTile(room.x, y, Tile(TileType::DOOR, 0));
+                }
+            }
+            // Right edge
+            if (room.x + room.width < map->GetWidth()) {
+                Tile* right = map->GetTileAt(room.x + room.width, y);
+                Tile* edge = map->GetTileAt(room.x + room.width - 1, y);
+                if (right && edge && right->GetType() == TileType::FLOOR && edge->GetType() == TileType::FLOOR) {
+                    map->SetTile(room.x + room.width - 1, y, Tile(TileType::DOOR, 0));
+                }
+            }
+        }
+    }
+    
+    // STEP 6: Auto-tile walls (make it beautiful)
     ApplyAutoTiling(map);
     
-    // STEP 6: Add decorations and details
+    // STEP 7: Add decorations and details
     AddDecorations(map, 0.03f);
 }
 
@@ -217,7 +257,7 @@ void WorldGenerator::CarveCorridor(Map* map, const Corridor& corridor) {
 // OVERWORLD GENERATION (Noise-based)
 // ============================================================================
 
-void WorldGenerator::GenerateOverworld(Map* map, int width, int height, Biome biome) {
+void WorldGenerator::GenerateOverworld(Map* map, int width, int height, Biome /*biome*/) {
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
             float heightValue = Noise2D(x, y, 4);
@@ -297,7 +337,7 @@ void WorldGenerator::ApplyAutoTiling(Map* map) {
 }
 
 int WorldGenerator::GetWallAutoTile(bool n, bool s, bool e, bool w,
-                                     bool nw, bool ne, bool sw, bool se) {
+                                     bool /*nw*/, bool /*ne*/, bool /*sw*/, bool /*se*/) {
     // Simplified auto-tiling algorithm
     // Returns visual ID based on neighbor configuration
     

@@ -15,6 +15,7 @@ public:
     int GetHealth() const { return m_health; }
 
     void SetTarget(float x, float y) { m_targetX = x; m_targetY = y; }
+    void SetPatrolOrigin(float x, float y) { m_patrolOriginX = x; m_patrolOriginY = y; }
 
     enum class AIState { IDLE, PATROL, CHASE };
     void SetAIState(AIState state) { m_aiState = state; }
