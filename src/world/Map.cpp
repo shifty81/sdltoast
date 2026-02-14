@@ -132,11 +132,7 @@ int Map::GetTileSpriteId(const Tile* tile) const {
         case TileType::GRASS:      return 0;
         case TileType::DIRT:       return 1;
         case TileType::SOIL:       return 2;
-        case TileType::WATER: {
-            // Animated water: frames at IDs 3, 21, 22, 23
-            static const int waterFrames[] = {3, 21, 22, 23};
-            return waterFrames[m_waterAnimFrame % WATER_ANIM_FRAMES];
-        }
+        case TileType::WATER:      return WATER_FRAME_IDS[m_waterAnimFrame];
         case TileType::STONE:      return 4;
         case TileType::SAND:       return 5;
         case TileType::FLOOR:      return 6;
