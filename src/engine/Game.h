@@ -11,10 +11,13 @@ class AssetManager;
 class AudioManager;
 class Player;
 class Enemy;
+class NPC;
 class Map;
 class HUD;
 class Calendar;
 class Inventory;
+class Crafting;
+class SaveSystem;
 
 /**
  * Main game class that manages the game loop and core systems
@@ -50,8 +53,12 @@ private:
     void HandleFarmingActions();
     void HandleCombatActions();
     void HandleTreeChopping();
+    void HandleCrafting();
+    void HandleNPCInteraction();
+    void HandleSaveLoad();
     void AdvanceDay();
     void SpawnEnemies();
+    void SpawnNPCs();
     void UpdateHUD();
 
     bool m_running;
@@ -68,15 +75,19 @@ private:
     std::unique_ptr<Player> m_player;
     std::unique_ptr<Map> m_currentMap;
     std::vector<std::unique_ptr<Enemy>> m_enemies;
+    std::vector<std::unique_ptr<NPC>> m_npcs;
 
     // Game systems
     std::unique_ptr<HUD> m_hud;
     std::unique_ptr<Calendar> m_calendar;
     std::unique_ptr<Inventory> m_inventory;
+    std::unique_ptr<Crafting> m_crafting;
 
     // State
     int m_gold;
     bool m_showInventory;
+    bool m_showCrafting;
+    int m_craftingIndex;
     float m_damageCooldown; // Prevent rapid damage from contact
     std::string m_actionText;
 

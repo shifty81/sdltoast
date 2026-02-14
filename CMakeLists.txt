@@ -54,6 +54,7 @@ set(SOURCES
     src/systems/Calendar.cpp
     src/systems/Crafting.cpp
     src/systems/Dialogue.cpp
+    src/systems/SaveSystem.cpp
     src/world/Map.cpp
     src/world/Tile.cpp
     src/world/Dungeon.cpp
@@ -82,6 +83,7 @@ set(HEADERS
     src/systems/Calendar.h
     src/systems/Crafting.h
     src/systems/Dialogue.h
+    src/systems/SaveSystem.h
     src/world/Map.h
     src/world/Tile.h
     src/world/Dungeon.h

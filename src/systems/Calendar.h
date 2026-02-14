@@ -15,6 +15,11 @@ public:
     int GetYear() const { return m_year; }
     std::string GetSeasonName() const;
 
+    // Setters for save/load
+    void SetDay(int day) { m_day = day; }
+    void SetSeason(Season season) { m_season = season; }
+    void SetYear(int year) { m_year = year; }
+
 private:
     int m_day;
     Season m_season;

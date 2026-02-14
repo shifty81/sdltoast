@@ -7,6 +7,7 @@
 #include "Logger.h"
 #include "../entities/Player.h"
 #include "../entities/Enemy.h"
+#include "../entities/NPC.h"
 #include "../world/Map.h"
 #include "../world/WorldGenerator.h"
 #include "../world/Tile.h"
@@ -14,6 +15,8 @@
 #include "../systems/Farming.h"
 #include "../systems/Inventory.h"
 #include "../systems/Calendar.h"
+#include "../systems/Crafting.h"
+#include "../systems/SaveSystem.h"
 #include "../ui/HUD.h"
 #include <raylib.h>
 #include <iostream>
@@ -24,6 +27,8 @@ Game::Game()
     , m_windowHeight(0)
     , m_gold(0)
     , m_showInventory(false)
+    , m_showCrafting(false)
+    , m_craftingIndex(0)
     , m_damageCooldown(0.0f)
 {
 }
@@ -81,6 +86,7 @@ bool Game::Initialize(const std::string& title, int width, int height) {
     m_hud = std::make_unique<HUD>();
     m_calendar = std::make_unique<Calendar>();
     m_inventory = std::make_unique<Inventory>();
+    m_crafting = std::make_unique<Crafting>();
     
     // Generate world using new system
     m_currentMap = std::make_unique<Map>(25, 19);
@@ -96,6 +102,9 @@ bool Game::Initialize(const std::string& title, int width, int height) {
     generator.GenerateFarm(m_currentMap.get(), 25, 19);
     Logger::Instance().Info("Generated: Farm (default)");
 
+    // Spawn initial NPCs on the farm
+    SpawnNPCs();
+
     m_running = true;
 
     Logger::Instance().Info("Game initialized successfully!");
@@ -110,6 +119,10 @@ bool Game::Initialize(const std::string& title, int width, int height) {
     Logger::Instance().Info("  C - Chop tree");
     Logger::Instance().Info("  N - Advance day");
     Logger::Instance().Info("  I - Toggle inventory");
+    Logger::Instance().Info("  P - Toggle crafting menu");
+    Logger::Instance().Info("  E - Talk to NPC");
+    Logger::Instance().Info("  F5 - Save game");
+    Logger::Instance().Info("  F9 - Load game");
     Logger::Instance().Info("  1 - Generate Farm");
     Logger::Instance().Info("  2 - Generate Dungeon");
     Logger::Instance().Info("  3 - Generate Overworld");
@@ -143,11 +156,13 @@ void Game::Update(float deltaTime) {
         WorldGenerator generator;
         generator.GenerateFarm(m_currentMap.get(), 25, 19);
         m_enemies.clear();
+        SpawnNPCs();
         Logger::Instance().Info("Generated: Farm");
     }
     if (m_input->IsKeyPressed(KEY_TWO)) {
         WorldGenerator generator;
         generator.GenerateDungeon(m_currentMap.get(), 25, 19);
+        m_npcs.clear();
         SpawnEnemies();
         Logger::Instance().Info("Generated: Dungeon (with enemies)");
     }
@@ -155,12 +170,21 @@ void Game::Update(float deltaTime) {
         WorldGenerator generator;
         generator.GenerateOverworld(m_currentMap.get(), 25, 19, Biome::PLAINS);
         m_enemies.clear();
+        m_npcs.clear();
         Logger::Instance().Info("Generated: Overworld");
     }
 
     // Toggle inventory
     if (m_input->IsKeyPressed(KEY_I)) {
         m_showInventory = !m_showInventory;
+        if (m_showInventory) m_showCrafting = false;
+    }
+
+    // Toggle crafting
+    if (m_input->IsKeyPressed(KEY_P)) {
+        m_showCrafting = !m_showCrafting;
+        if (m_showCrafting) m_showInventory = false;
+        m_craftingIndex = 0;
     }
 
     // Advance day
@@ -176,6 +200,15 @@ void Game::Update(float deltaTime) {
 
     // Combat actions
     HandleCombatActions();
+
+    // Crafting actions
+    HandleCrafting();
+
+    // NPC interaction
+    HandleNPCInteraction();
+
+    // Save/Load
+    HandleSaveLoad();
 
     // Update player
     if (m_player) {
@@ -214,6 +247,13 @@ void Game::Update(float deltaTime) {
             m_player->GetPosition(px, py);
             enemy->SetTarget(px, py);
             enemy->Update(deltaTime);
+        }
+    }
+
+    // Update NPCs
+    for (auto& npc : m_npcs) {
+        if (npc && npc->IsActive()) {
+            npc->Update(deltaTime);
         }
     }
 
@@ -391,6 +431,143 @@ void Game::SpawnEnemies() {
     Logger::Instance().Info("Spawned " + std::to_string(spawned) + " enemies");
 }
 
+void Game::SpawnNPCs() {
+    m_npcs.clear();
+    if (!m_currentMap) return;
+
+    // Create a few NPCs on the farm
+    struct NPCDef {
+        const char* name;
+        float x;
+        float y;
+    };
+
+    NPCDef defs[] = {
+        {"Farmer Gus", 200.0f, 150.0f},
+        {"Merchant Lily", 500.0f, 300.0f},
+        {"Blacksmith Oren", 350.0f, 450.0f},
+    };
+
+    for (const auto& def : defs) {
+        auto npc = std::make_unique<NPC>();
+        npc->SetName(def.name);
+        npc->SetPosition(def.x, def.y);
+        npc->SetSize(32, 32);
+
+        // Build a small dialogue tree for each NPC
+        Dialogue& dlg = npc->GetDialogue();
+
+        // Node 0: greeting
+        DialogueNode greet;
+        greet.speakerLine = std::string(def.name) + ": Hello there, traveler!";
+        greet.choices.push_back({"Tell me about yourself.", 1});
+        greet.choices.push_back({"Goodbye.", -1});
+        greet.nextNodeIndex = -1;
+        dlg.AddNode(greet);
+
+        // Node 1: about
+        DialogueNode about;
+        about.speakerLine = std::string(def.name) + ": I've lived in Meadowbrook all my life.";
+        about.nextNodeIndex = -1;
+        dlg.AddNode(about);
+
+        // Simple schedule: stay at spawn, wander a bit mid-day
+        npc->AddScheduleEntry(0, def.x, def.y);
+        npc->AddScheduleEntry(8, def.x + 40.0f, def.y - 20.0f);
+        npc->AddScheduleEntry(18, def.x, def.y);
+
+        m_npcs.push_back(std::move(npc));
+    }
+
+    Logger::Instance().Info("Spawned " + std::to_string(m_npcs.size()) + " NPCs");
+}
+
+void Game::HandleCrafting() {
+    if (!m_showCrafting || !m_crafting || !m_inventory) return;
+
+    // Navigate recipes
+    if (m_input->IsKeyPressed(KEY_UP)) {
+        m_craftingIndex--;
+        if (m_craftingIndex < 0) m_craftingIndex = m_crafting->GetRecipeCount() - 1;
+    }
+    if (m_input->IsKeyPressed(KEY_DOWN)) {
+        m_craftingIndex++;
+        if (m_craftingIndex >= m_crafting->GetRecipeCount()) m_craftingIndex = 0;
+    }
+
+    // Craft selected recipe with Enter
+    if (m_input->IsKeyPressed(KEY_ENTER)) {
+        if (m_crafting->Craft(m_craftingIndex, m_inventory.get())) {
+            const CraftingRecipe& recipe = m_crafting->GetRecipe(m_craftingIndex);
+            m_actionText = "Crafted " + recipe.resultName + "!";
+            Logger::Instance().Info("Crafted: " + recipe.resultName);
+        } else {
+            m_actionText = "Not enough materials!";
+        }
+    }
+}
+
+void Game::HandleNPCInteraction() {
+    if (!m_player) return;
+
+    if (m_input->IsKeyPressed(KEY_E)) {
+        float px, py;
+        m_player->GetPosition(px, py);
+
+        for (auto& npc : m_npcs) {
+            if (npc && npc->IsActive() && npc->IsPlayerNearby(px, py)) {
+                Dialogue& dlg = npc->GetDialogue();
+                if (!dlg.IsActive()) {
+                    dlg.Start();
+                    npc->AddFriendship(1);
+                    const DialogueNode* node = dlg.GetCurrentNode();
+                    if (node) {
+                        m_actionText = node->speakerLine;
+                    }
+                } else {
+                    // Advance or close dialogue
+                    const DialogueNode* node = dlg.GetCurrentNode();
+                    if (node && node->choices.empty()) {
+                        dlg.Advance();
+                    } else if (node && !node->choices.empty()) {
+                        // Select first choice as default (player can't choose yet via UI)
+                        dlg.SelectChoice(0);
+                    }
+                    const DialogueNode* next = dlg.GetCurrentNode();
+                    if (next) {
+                        m_actionText = next->speakerLine;
+                    } else {
+                        m_actionText = npc->GetName() + ": See you later!";
+                    }
+                }
+                break; // Only talk to closest NPC
+            }
+        }
+    }
+}
+
+void Game::HandleSaveLoad() {
+    if (m_input->IsKeyPressed(KEY_F5)) {
+        if (SaveSystem::Save(SaveSystem::DEFAULT_SAVE_PATH,
+                             m_player.get(), m_inventory.get(),
+                             m_calendar.get(), m_gold)) {
+            m_actionText = "Game saved!";
+        } else {
+            m_actionText = "Save failed!";
+        }
+    }
+
+    if (m_input->IsKeyPressed(KEY_F9)) {
+        if (SaveSystem::Load(SaveSystem::DEFAULT_SAVE_PATH,
+                             m_player.get(), m_inventory.get(),
+                             m_calendar.get(), m_gold)) {
+            m_actionText = "Game loaded!";
+        } else {
+            m_actionText = "No save file found!";
+        }
+    }
+}
+
 void Game::UpdateHUD() {
     if (!m_hud || !m_player || !m_calendar) return;
 
@@ -398,11 +575,26 @@ void Game::UpdateHUD() {
     m_hud->SetGold(m_gold);
     m_hud->SetDayInfo(m_calendar->GetDay(), m_calendar->GetSeasonName(), m_calendar->GetYear());
     m_hud->SetActionText(m_actionText);
-    m_hud->SetShowInventory(m_showInventory);
+    m_hud->SetShowInventory(m_showInventory || m_showCrafting);
 
-    // Update inventory display
+    // Update inventory/crafting display
     m_hud->ClearInventoryLines();
-    if (m_inventory) {
+    if (m_showCrafting && m_crafting) {
+        m_hud->AddInventoryLine("=== CRAFTING (Up/Down, Enter) ===");
+        for (int i = 0; i < m_crafting->GetRecipeCount(); ++i) {
+            const CraftingRecipe& recipe = m_crafting->GetRecipe(i);
+            std::string line;
+            if (i == m_craftingIndex) line += "> "; else line += "  ";
+            line += recipe.resultName + " (";
+            for (size_t j = 0; j < recipe.ingredients.size(); ++j) {
+                if (j > 0) line += ", ";
+                line += std::to_string(recipe.ingredients[j].quantity) + " " + recipe.ingredients[j].name;
+            }
+            line += ")";
+            if (!m_crafting->CanCraft(i, m_inventory.get())) line += " [need more]";
+            m_hud->AddInventoryLine(line);
+        }
+    } else if (m_showInventory && m_inventory) {
         for (const auto& item : m_inventory->GetItems()) {
             std::string line = item.name + " x" + std::to_string(item.quantity);
             m_hud->AddInventoryLine(line);
@@ -425,6 +617,13 @@ void Game::Render() {
         }
     }
 
+    // Render NPCs
+    for (auto& npc : m_npcs) {
+        if (npc && npc->IsActive()) {
+            npc->Render(m_renderer.get());
+        }
+    }
+
     // Render player
     if (m_player) {
         m_player->Render(m_renderer.get());
@@ -440,9 +639,11 @@ void Game::Render() {
 
 void Game::Shutdown() {
     m_enemies.clear();
+    m_npcs.clear();
     m_hud.reset();
     m_calendar.reset();
     m_inventory.reset();
+    m_crafting.reset();
     m_player.reset();
     m_currentMap.reset();
     
