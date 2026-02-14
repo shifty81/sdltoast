@@ -92,8 +92,8 @@ void SpriteSheet::RenderTile(Renderer* renderer, int tileId, int x, int y, int w
 }
 
 void SpriteSheet::CalculateSourceRect(int tileId, Rectangle& srcRect) {
-    if (m_columns <= 0) {
-        srcRect = {0, 0, static_cast<float>(m_tileWidth), static_cast<float>(m_tileHeight)};
+    if (m_columns <= 0 || m_tileWidth <= 0 || m_tileHeight <= 0) {
+        srcRect = {0, 0, 1.0f, 1.0f};
         return;
     }
     int col = tileId % m_columns;
