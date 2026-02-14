@@ -12,8 +12,8 @@ Place your tileset PNG files in these locations:
 
 ### World Tilesets
 - **`assets/tilesets/world_tileset.png`** - Main world tiles (grass, dirt, water, etc.)
-  - Tile size: **16x16 pixels**
-  - Layout: Grid of tiles
+  - Tile size: **32x32 pixels**
+  - Layout: 16-column grid, 4 rows (512×128 PNG)
   
 - **`assets/tilesets/dungeon_tileset.png`** - Dungeon tiles (walls, floors, doors)
   - Tile size: **16x16 pixels**
@@ -36,17 +36,33 @@ The system maps semantic tile types to sprite sheet IDs:
 
 ### World Tiles (world_tileset.png)
 ```
-ID 0  = Grass
-ID 1  = Dirt
+ID 0  = Grass (seamless)
+ID 1  = Dirt (seamless)
 ID 2  = Tilled Soil
-ID 3  = Water
-ID 4  = Stone
-ID 5  = Sand
+ID 3  = Water (frame 0)
+ID 4  = Stone (seamless)
+ID 5  = Sand (seamless)
 ID 6  = Dungeon Floor
-ID 7+ = Walls (auto-tiled variants)
+ID 7+ = Walls (auto-tiled variants, IDs 7-19)
 ID 20 = Door
-ID 30+= Crops (growth stages)
-ID 40+= Decorations
+ID 21 = Water (frame 1)  \
+ID 22 = Water (frame 2)   > Animated water (cycles automatically)
+ID 23 = Water (frame 3)  /
+ID 24 = Path straight horizontal
+ID 25 = Path straight vertical
+ID 26-29 = Path corners (NE, NW, SE, SW)
+ID 30+= Crops (growth stages 0-4)
+ID 35-38 = Path T-junctions (N, S, E, W)
+ID 39 = Path crossroads
+ID 40 = Bush (decoration)
+ID 41 = Rock (decoration)
+ID 42 = Tall grass (decoration)
+ID 43-44 = Flowers (decoration)
+ID 45-46 = Fence segments (decoration)
+ID 47 = Tree stump (decoration)
+ID 50 = Tree (full - trunk + canopy)
+ID 51 = Tree trunk only
+ID 52 = Tree canopy only
 ```
 
 ### Character Tiles (character_tileset.png)
@@ -102,17 +118,18 @@ if (charSheet && charSheet->IsLoaded()) {
 
 ### Requirements
 1. **PNG format** with transparency
-2. **Fixed tile size** (16x16 or 32x32)
+2. **Fixed tile size** (32x32 for world tileset, 16x16 for characters)
 3. **Grid layout** (no spacing between tiles)
 4. **Power-of-2 dimensions recommended** (e.g., 256x256, 512x512)
 
 ### Example Tileset Structure
 
-**world_tileset.png** (256x256, 16x16 tiles = 16x16 grid):
+**world_tileset.png** (512x128, 32x32 tiles = 16×4 grid):
 ```
-[0 ][1 ][2 ][3 ][4 ][5 ][6 ][7 ][8 ][9 ][10][11][12][13][14][15]
-[16][17][18][19][20][21][22][23][24][25][26][27][28][29][30][31]
-...
+Row 0: [Grass][Dirt][Soil][Water][Stone][Sand][Floor][Wall×9 variants...]
+Row 1: [Wall×4][Door][WaterF1][WaterF2][WaterF3][PathH][PathV][Corners×4][Crop0][Crop1]
+Row 2: [Crop2][Crop3][Crop4][T-juncs×4+Cross][Bush][Rock][TallGrass][Flowers][Fences][Stump]
+Row 3: [...][...][TreeFull][TreeTrunk][TreeCanopy][...]
 ```
 
 **character_tileset.png** (64x64, 16x16 tiles = 4x4 grid):
@@ -194,8 +211,12 @@ SpriteSheet* custom = SpriteSheetManager::Instance().GetSpriteSheet("custom_name
 ✅ Graceful fallback if files missing
 ✅ Support for world and character tilesets
 ✅ Tile ID mapping system
-⏳ Waiting for actual tileset PNG files
-⏳ Animation system (future)
+✅ World tileset PNG (32×32 pixel art, 16×4 grid)
+✅ Animated water tiles (4 frames, auto-cycling)
+✅ Path tiles (straight, corners, T-junctions, crossroads)
+✅ Tree tiles (full, trunk, canopy)
+✅ Foliage decorations (bush, rock, tall grass, flowers)
+⏳ Animation system for other tiles (future)
 
 ---
 

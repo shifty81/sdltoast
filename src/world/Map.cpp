@@ -27,6 +27,13 @@ bool Map::LoadFromFile(const std::string& filepath) {
 }
 
 void Map::Update(float deltaTime) {
+    // Update water animation
+    m_waterAnimTimer += deltaTime;
+    if (m_waterAnimTimer >= WATER_ANIM_SPEED) {
+        m_waterAnimTimer -= WATER_ANIM_SPEED;
+        m_waterAnimFrame = (m_waterAnimFrame + 1) % WATER_ANIM_FRAMES;
+    }
+    
     // Update all tiles (for animations, crop growth, etc.)
     for (auto& tile : m_tiles) {
         tile.Update(deltaTime);
@@ -118,18 +125,22 @@ void Map::RenderTileFallback(Renderer* renderer, const Tile* tile, int screenX, 
 
 int Map::GetTileSpriteId(const Tile* tile) const {
     // Map semantic tile types to sprite sheet tile IDs
-    // These IDs depend on your tileset layout
-    // Example mapping (adjust based on actual tileset):
+    // Tileset: 32x32 pixel tiles in a 16-column grid
+    // IDs match the world_tileset.png layout
     
     switch (tile->GetType()) {
-        case TileType::GRASS:      return 0;   // First tile in sheet
+        case TileType::GRASS:      return 0;
         case TileType::DIRT:       return 1;
         case TileType::SOIL:       return 2;
-        case TileType::WATER:      return 3;
+        case TileType::WATER: {
+            // Animated water: frames at IDs 3, 21, 22, 23
+            static const int waterFrames[] = {3, 21, 22, 23};
+            return waterFrames[m_waterAnimFrame % WATER_ANIM_FRAMES];
+        }
         case TileType::STONE:      return 4;
         case TileType::SAND:       return 5;
         case TileType::FLOOR:      return 6;
-        case TileType::WALL:       return 7 + tile->GetVisualId();  // Use auto-tile ID
+        case TileType::WALL:       return 7 + tile->GetVisualId();
         case TileType::DOOR:       return 20;
         case TileType::CROP:       return 30 + tile->GetGrowthStage();
         case TileType::DECORATION: return 40 + tile->GetVisualId();
