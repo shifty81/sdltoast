@@ -530,7 +530,7 @@ void Game::HandleNPCInteraction() {
                     if (node && node->choices.empty()) {
                         dlg.Advance();
                     } else if (node && !node->choices.empty()) {
-                        // Select first choice as default (player can't choose yet via UI)
+                        // TODO: Add UI for player to pick a choice; for now auto-selects first
                         dlg.SelectChoice(0);
                     }
                     const DialogueNode* next = dlg.GetCurrentNode();

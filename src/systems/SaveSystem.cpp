@@ -5,6 +5,7 @@
 #include "../engine/Logger.h"
 #include <fstream>
 #include <sstream>
+#include <cerrno>
 #include <sys/stat.h>
 
 // Simple text-based save format:
@@ -21,12 +22,14 @@ static bool EnsureDirectory(const std::string& filepath) {
     size_t pos = filepath.find_last_of("/\\");
     if (pos == std::string::npos) return true; // no directory
     std::string dir = filepath.substr(0, pos);
+    int result = 0;
 #ifdef _WIN32
-    _mkdir(dir.c_str());
+    result = _mkdir(dir.c_str());
 #else
-    mkdir(dir.c_str(), 0755);
+    result = mkdir(dir.c_str(), 0755);
 #endif
-    return true;
+    // mkdir returns 0 on success, or -1 if directory already exists (EEXIST)
+    return (result == 0 || errno == EEXIST);
 }
 
 bool SaveSystem::Save(const std::string& filepath,
@@ -36,7 +39,10 @@ bool SaveSystem::Save(const std::string& filepath,
                       int gold) {
     if (!player || !inventory || !calendar) return false;
 
-    EnsureDirectory(filepath);
+    if (!EnsureDirectory(filepath)) {
+        Logger::Instance().Error("SaveSystem: Cannot create save directory for: " + filepath);
+        return false;
+    }
 
     std::ofstream file(filepath);
     if (!file.is_open()) {
