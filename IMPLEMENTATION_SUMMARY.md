@@ -63,6 +63,30 @@ Collision/Rules → Tile Painting → Decoration
 - **Farming Interactions**: Till, water, plant, harvest
 - **World/Tile Conversion**: Transform between coordinate systems
 
+#### 7. Crafting System (`Crafting.h/cpp`)
+- **Recipe Definitions**: Ingredients and results for each recipe
+- **8 Built-in Recipes**: Fence, Chest, Sprinkler, Parsnip Soup, Baked Potato, Tomato Sauce, Stone Wall, Bridge
+- **Inventory Integration**: Checks materials and consumes/produces items
+- **Crafting Menu**: Toggle with P key, navigate with Up/Down, craft with Enter
+
+#### 8. Save/Load System (`SaveSystem.h/cpp`)
+- **Text-based Format**: Human-readable save files
+- **Persists**: Player position/health, inventory, calendar, gold
+- **Auto-creates Directories**: Ensures save directory exists
+- **Quick Save/Load**: F5 to save, F9 to load
+
+#### 9. NPC System (`NPC.h/cpp`)
+- **Schedule-Based Movement**: NPCs move to destinations based on time of day
+- **Friendship System**: 0-10 friendship level, increases on interaction
+- **Dialogue Integration**: Each NPC has a branching dialogue tree
+- **Proximity Detection**: E key interacts with nearby NPCs
+
+#### 10. Dialogue Trees (`Dialogue.h/cpp`)
+- **Branching Conversations**: Multiple dialogue nodes with player choices
+- **Node Graph**: Each node has speaker text, optional choices linking to other nodes
+- **Legacy Support**: Original linear dialogue API preserved
+- **Active State Tracking**: Start, advance, select choices, auto-close
+
 ### Game Engine
 
 #### Core Systems (`src/engine/`)
@@ -186,10 +210,8 @@ Run the game and press:
 ### What's Next (Content)
 ⏭️ Sprite assets (replace colored rectangles)
 ⏭️ Multiple dungeons with unique themes
-⏭️ NPC schedules and dialogue trees
-⏭️ Save/load system
-⏭️ Crafting and quest systems
 ⏭️ Music and sound effects
+⏭️ Quest system with objectives and rewards
 
 ### Recently Completed
 ✅ Combat system (enemies spawn in dungeons, player attack, contact damage)
@@ -197,6 +219,10 @@ Run the game and press:
 ✅ Inventory system with UI overlay
 ✅ HUD with health, gold, calendar display
 ✅ Calendar integration with crop growth
+✅ Crafting system (8 recipes: Fence, Chest, Sprinkler, foods, walls, Bridge)
+✅ Save/Load system (F5 save, F9 load — player, inventory, calendar, gold)
+✅ NPC system with schedule-based movement and friendship levels
+✅ Branching dialogue trees with choices for NPC conversations
 
 ## 🎓 Learning Outcomes
 
