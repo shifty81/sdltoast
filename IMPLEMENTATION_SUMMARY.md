@@ -235,6 +235,9 @@ Run the game and press:
 ✅ Unit tests for Dialogue system (12 tests: linear API, dialogue trees, branching choices)
 ✅ Unit tests for Farming system (12 tests: growth days, crop names, crop values)
 ✅ Unit tests for Combat system (15 tests: damage calculation, AABB collision detection)
+✅ Unit tests for Map system (25 tests: tile access, farming cycle, collision, coordinate conversion)
+✅ Unit tests for NPC system (19 tests: friendship, schedule movement, proximity, dialogue integration)
+✅ Unit tests for SaveSystem (15 tests: save/load round-trip, null guards, item names with spaces)
 
 ## 🎓 Learning Outcomes
 

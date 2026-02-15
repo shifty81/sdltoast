@@ -75,3 +75,47 @@ add_executable(test_combat
 target_include_directories(test_combat PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(test_combat raylib)
 add_test(NAME CombatTests COMMAND test_combat)
+
+# Test: Map system (tile operations, farming interactions, collision)
+add_executable(test_map
+    test_map.cpp
+    ${CMAKE_SOURCE_DIR}/src/world/Map.cpp
+    ${CMAKE_SOURCE_DIR}/src/world/Tile.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/Renderer.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/SpriteSheet.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/Logger.cpp
+)
+target_include_directories(test_map PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(test_map raylib)
+add_test(NAME MapTests COMMAND test_map)
+
+# Test: NPC system (friendship, schedule, proximity)
+add_executable(test_npc
+    test_npc.cpp
+    ${CMAKE_SOURCE_DIR}/src/entities/NPC.cpp
+    ${CMAKE_SOURCE_DIR}/src/entities/Entity.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Dialogue.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/Renderer.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/SpriteSheet.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/Logger.cpp
+)
+target_include_directories(test_npc PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(test_npc raylib)
+add_test(NAME NPCTests COMMAND test_npc)
+
+# Test: SaveSystem (save/load round-trip with file I/O)
+add_executable(test_savesystem
+    test_savesystem.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/SaveSystem.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Inventory.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Calendar.cpp
+    ${CMAKE_SOURCE_DIR}/src/entities/Entity.cpp
+    ${CMAKE_SOURCE_DIR}/src/entities/Player.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/Input.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/Renderer.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/SpriteSheet.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/Logger.cpp
+)
+target_include_directories(test_savesystem PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(test_savesystem raylib)
+add_test(NAME SaveSystemTests COMMAND test_savesystem)
