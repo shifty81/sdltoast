@@ -115,6 +115,10 @@ install(DIRECTORY assets/
     DESTINATION share/${PROJECT_NAME}/assets
 )
 
+# Test support (Atlas Forge convention)
+enable_testing()
+add_subdirectory(tests)
+
 # CPack configuration for packaging
 set(CPACK_PACKAGE_NAME "HarvestQuest")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})

@@ -20,8 +20,11 @@ uses_ai_assist = true
 [content]
 schemas_path = "schemas"
 graphs_path = "worlds"
+strategy_path = "strategy"
+conversations_path = "conversations"
 assets_path = "assets"
 data_path = "data"
+config_path = "config"
 
 [code]
 entry_point = "src/main.cpp"

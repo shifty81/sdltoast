@@ -5,6 +5,10 @@
   "description": "Top-down action-adventure RPG blending Zelda-style dungeon exploration with Stardew Valley farming, built on Atlas Engine",
   "modules": {
     "worldGraph": "worlds/overworld.worldgraph",
+    "tileGraphs": "worlds/",
+    "strategyGraphs": "strategy/",
+    "conversationGraphs": "conversations/",
+    "behaviorGraphs": "ai/",
     "ai": true,
     "content": "data/"
   },
@@ -15,5 +19,6 @@
   },
   "assets": {
     "root": "assets"
-  }
+  },
+  "config": "config/runtime.json"
 }

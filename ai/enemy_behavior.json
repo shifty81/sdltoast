@@ -1,0 +1,19 @@
+{
+  "schema": "harvestquest.ai.v1",
+  "behaviors": {
+    "enemy_default": {
+      "states": ["IDLE", "PATROL", "CHASE"],
+      "initialState": "PATROL",
+      "patrol": {
+        "radius": 64.0,
+        "changeTargetInterval": 3.0,
+        "speed": 1.0
+      },
+      "chase": {
+        "detectionRange": 150.0,
+        "abandonRange": 225.0,
+        "speedMultiplier": 1.3
+      }
+    }
+  }
+}

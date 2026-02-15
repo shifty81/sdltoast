@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "harvestquest.npc.v1",
+  "title": "Harvest Quest NPC Definition",
+  "description": "Schema for Harvest Quest NPC data files",
+  "type": "object",
+  "required": ["schema", "npcs"],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "harvestquest.npc.v1"
+    },
+    "npcs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "position"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "NPC display name"
+          },
+          "position": {
+            "type": "object",
+            "required": ["x", "y"],
+            "properties": {
+              "x": { "type": "number" },
+              "y": { "type": "number" }
+            }
+          },
+          "size": {
+            "type": "object",
+            "properties": {
+              "width": { "type": "integer", "default": 32 },
+              "height": { "type": "integer", "default": 32 }
+            }
+          },
+          "schedule": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["hour", "x", "y"],
+              "properties": {
+                "hour": { "type": "integer", "minimum": 0, "maximum": 23 },
+                "x": { "type": "number" },
+                "y": { "type": "number" }
+              }
+            }
+          },
+          "dialogue": {
+            "type": "string",
+            "description": "Path to conversation graph file"
+          }
+        }
+      }
+    }
+  }
+}
