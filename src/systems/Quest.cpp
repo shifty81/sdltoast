@@ -14,6 +14,9 @@ QuestSystem::QuestSystem() {
 }
 
 void QuestSystem::InitQuests() {
+    // Built-in quests are hardcoded for now, matching data/quests.json.
+    // Future: load from JSON data file for data-driven configuration.
+
     // Quest 0: Farm Beginnings — Harvest your first crops
     m_quests.push_back({
         "farm_beginnings",
