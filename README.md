@@ -272,10 +272,11 @@ See [Tileset Integration Guide](docs/TILESET_INTEGRATION.md) for asset format de
 - [x] Combat system with enemies
 - [x] Farming mechanics (crop growth timing)
 - [x] Inventory system (UI)
-- [ ] Crafting and quest systems
-- [ ] NPC dialogue and relationship events
-- [ ] Expanded NPC roster and schedules
-- [ ] Save/load system
+- [x] Crafting system
+- [x] Quest system with objectives and rewards
+- [x] NPC dialogue and branching conversations
+- [x] NPC roster and schedules
+- [x] Save/load system
 - [ ] Sprite assets and animations
 - [ ] Music and sound effects
 - [ ] Alpha release

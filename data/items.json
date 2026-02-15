@@ -1,0 +1,117 @@
+{
+  "schema": "harvestquest.item.v1",
+  "items": [
+    {
+      "name": "Wood",
+      "category": "material",
+      "description": "A piece of wood. Used for building and crafting.",
+      "stackable": true,
+      "sellValue": 2
+    },
+    {
+      "name": "Stone",
+      "category": "material",
+      "description": "A chunk of stone. Used for building and crafting.",
+      "stackable": true,
+      "sellValue": 2
+    },
+    {
+      "name": "Parsnip",
+      "category": "crop",
+      "description": "A freshly harvested parsnip.",
+      "stackable": true,
+      "sellValue": 35
+    },
+    {
+      "name": "Potato",
+      "category": "crop",
+      "description": "A hearty potato.",
+      "stackable": true,
+      "sellValue": 80
+    },
+    {
+      "name": "Tomato",
+      "category": "crop",
+      "description": "A ripe, red tomato.",
+      "stackable": true,
+      "sellValue": 60
+    },
+    {
+      "name": "Fence",
+      "category": "placeable",
+      "description": "A wooden fence segment.",
+      "stackable": true,
+      "sellValue": 5
+    },
+    {
+      "name": "Chest",
+      "category": "placeable",
+      "description": "A wooden storage chest.",
+      "stackable": false,
+      "sellValue": 25
+    },
+    {
+      "name": "Sprinkler",
+      "category": "placeable",
+      "description": "Automatically waters nearby soil each morning.",
+      "stackable": true,
+      "sellValue": 20
+    },
+    {
+      "name": "Stone Wall",
+      "category": "placeable",
+      "description": "A sturdy wall of stone.",
+      "stackable": true,
+      "sellValue": 10
+    },
+    {
+      "name": "Bridge",
+      "category": "placeable",
+      "description": "A wooden bridge to cross water.",
+      "stackable": false,
+      "sellValue": 100
+    },
+    {
+      "name": "Parsnip Soup",
+      "category": "food",
+      "description": "A warm bowl of parsnip soup. Restores health.",
+      "stackable": true,
+      "sellValue": 50
+    },
+    {
+      "name": "Baked Potato",
+      "category": "food",
+      "description": "A delicious baked potato. Restores health.",
+      "stackable": true,
+      "sellValue": 75
+    },
+    {
+      "name": "Tomato Sauce",
+      "category": "food",
+      "description": "Fresh tomato sauce. Ingredient for cooking.",
+      "stackable": true,
+      "sellValue": 90
+    },
+    {
+      "name": "Slime Jelly",
+      "category": "material",
+      "description": "Dropped by slimes. Used in crafting.",
+      "stackable": true,
+      "sellValue": 15
+    },
+    {
+      "name": "Bat Wing",
+      "category": "material",
+      "description": "Dropped by bats. Used in crafting.",
+      "stackable": true,
+      "sellValue": 20
+    },
+    {
+      "name": "Bone",
+      "category": "material",
+      "description": "Dropped by skeletons. Used in crafting.",
+      "stackable": true,
+      "sellValue": 10
+    }
+  ]
+}

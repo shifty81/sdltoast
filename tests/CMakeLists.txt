@@ -26,3 +26,11 @@ add_executable(test_calendar
 )
 target_include_directories(test_calendar PRIVATE ${CMAKE_SOURCE_DIR}/src)
 add_test(NAME CalendarTests COMMAND test_calendar)
+
+# Test: Quest system
+add_executable(test_quest
+    test_quest.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Quest.cpp
+)
+target_include_directories(test_quest PRIVATE ${CMAKE_SOURCE_DIR}/src)
+add_test(NAME QuestTests COMMAND test_quest)

@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "harvestquest.quest.v1",
+  "title": "Harvest Quest Quest Definition",
+  "description": "Schema for Harvest Quest quest data files",
+  "type": "object",
+  "required": ["schema", "quests"],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "harvestquest.quest.v1"
+    },
+    "quests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "description", "objectives", "reward"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the quest"
+          },
+          "title": {
+            "type": "string",
+            "description": "Display title for the quest"
+          },
+          "description": {
+            "type": "string",
+            "description": "Quest description shown to the player"
+          },
+          "objectives": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["description", "requiredCount"],
+              "properties": {
+                "description": { "type": "string" },
+                "requiredCount": { "type": "integer", "minimum": 1 }
+              }
+            },
+            "minItems": 1
+          },
+          "reward": {
+            "type": "object",
+            "required": ["gold"],
+            "properties": {
+              "item": { "type": "string" },
+              "quantity": { "type": "integer", "minimum": 0 },
+              "gold": { "type": "integer", "minimum": 0 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

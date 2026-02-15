@@ -1,0 +1,59 @@
+{
+  "schema": "harvestquest.quest.v1",
+  "quests": [
+    {
+      "id": "farm_beginnings",
+      "title": "Farm Beginnings",
+      "description": "Harvest your first crops to get the farm started.",
+      "objectives": [
+        { "description": "Harvest 5 crops", "requiredCount": 5 }
+      ],
+      "reward": { "item": "Parsnip Soup", "quantity": 1, "gold": 50 }
+    },
+    {
+      "id": "monster_slayer",
+      "title": "Monster Slayer",
+      "description": "Prove your combat skills by defeating enemies.",
+      "objectives": [
+        { "description": "Defeat 10 enemies", "requiredCount": 10 }
+      ],
+      "reward": { "item": "", "quantity": 0, "gold": 200 }
+    },
+    {
+      "id": "lumberjack",
+      "title": "Lumberjack",
+      "description": "Gather wood by chopping trees around the farm.",
+      "objectives": [
+        { "description": "Collect 20 Wood", "requiredCount": 20 }
+      ],
+      "reward": { "item": "Fence", "quantity": 3, "gold": 25 }
+    },
+    {
+      "id": "stone_collector",
+      "title": "Stone Collector",
+      "description": "Collect stone from rocks scattered across the land.",
+      "objectives": [
+        { "description": "Collect 15 Stone", "requiredCount": 15 }
+      ],
+      "reward": { "item": "Stone Wall", "quantity": 2, "gold": 25 }
+    },
+    {
+      "id": "master_crafter",
+      "title": "Master Crafter",
+      "description": "Prove your crafting prowess by crafting several items.",
+      "objectives": [
+        { "description": "Craft 3 items", "requiredCount": 3 }
+      ],
+      "reward": { "item": "Sprinkler", "quantity": 1, "gold": 100 }
+    },
+    {
+      "id": "community_helper",
+      "title": "Community Helper",
+      "description": "Introduce yourself to the villagers of Meadowbrook.",
+      "objectives": [
+        { "description": "Talk to 3 NPCs", "requiredCount": 3 }
+      ],
+      "reward": { "item": "", "quantity": 0, "gold": 150 }
+    }
+  ]
+}

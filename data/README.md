@@ -7,10 +7,11 @@ This directory contains game content data files for the Harvest Quest project.
 ```
 data/
 ├── crops.json          # Crop definitions and growth data
-├── recipes.json        # Crafting recipes
+├── enemies.json        # Enemy types, stats, and loot
+├── items.json          # Item definitions and categories
 ├── npcs.json           # NPC definitions and schedules
-├── enemies.json        # Enemy types and behavior
-└── items.json          # Item definitions
+├── quests.json         # Quest definitions, objectives, and rewards
+└── recipes.json        # Crafting recipes
 ```
 
 ## Format

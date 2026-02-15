@@ -1,0 +1,39 @@
+{
+  "schema": "harvestquest.enemy.v1",
+  "enemies": [
+    {
+      "name": "Slime",
+      "health": 3,
+      "damage": 1,
+      "speed": 30.0,
+      "chaseRange": 150.0,
+      "patrolRadius": 64.0,
+      "loot": [
+        { "item": "Slime Jelly", "chance": 0.5, "quantity": 1 }
+      ]
+    },
+    {
+      "name": "Bat",
+      "health": 2,
+      "damage": 1,
+      "speed": 50.0,
+      "chaseRange": 120.0,
+      "patrolRadius": 96.0,
+      "loot": [
+        { "item": "Bat Wing", "chance": 0.4, "quantity": 1 }
+      ]
+    },
+    {
+      "name": "Skeleton",
+      "health": 5,
+      "damage": 2,
+      "speed": 25.0,
+      "chaseRange": 180.0,
+      "patrolRadius": 48.0,
+      "loot": [
+        { "item": "Bone", "chance": 0.6, "quantity": 1 },
+        { "item": "Stone", "chance": 0.3, "quantity": 2 }
+      ]
+    }
+  ]
+}

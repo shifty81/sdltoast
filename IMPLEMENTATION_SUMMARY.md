@@ -87,6 +87,13 @@ Collision/Rules → Tile Painting → Decoration
 - **Legacy Support**: Original linear dialogue API preserved
 - **Active State Tracking**: Start, advance, select choices, auto-close
 
+#### 11. Quest System (`Quest.h/cpp`)
+- **Quest Definitions**: Title, description, objectives, and rewards
+- **Status Tracking**: AVAILABLE → ACTIVE → COMPLETED (or FAILED)
+- **Objective Progress**: Track counts toward completion goals
+- **6 Built-in Quests**: Farm Beginnings, Monster Slayer, Lumberjack, Stone Collector, Master Crafter, Community Helper
+- **Extensible**: Add custom quests at runtime
+
 ### Game Engine
 
 #### Core Systems (`src/engine/`)
@@ -157,7 +164,7 @@ Run the game and press:
 
 ## 🔢 Statistics
 
-- **54 Files Created**: Source, headers, docs, config
+- **60+ Files Created**: Source, headers, docs, config, data
 - **~15,000 Lines of Code and Documentation**
 - **12+ Tile Types** with semantic meaning
 - **3 World Types**: Farm, Dungeon, Overworld
@@ -211,9 +218,10 @@ Run the game and press:
 ⏭️ Sprite assets (replace colored rectangles)
 ⏭️ Multiple dungeons with unique themes
 ⏭️ Music and sound effects
-⏭️ Quest system with objectives and rewards
 
 ### Recently Completed
+✅ Quest system with objectives, progress tracking, and rewards
+✅ Game data files: crops, enemies, items, quests (JSON + schemas)
 ✅ Combat system (enemies spawn in dungeons, player attack, contact damage)
 ✅ Farming mechanics (till, water, plant, harvest with day-based growth)
 ✅ Inventory system with UI overlay
