@@ -1,0 +1,27 @@
+{
+  "type": "worldgraph",
+  "version": 1,
+  "name": "Harvest Quest Overworld",
+  "description": "Procedurally generated overworld with biomes, farms, and dungeon entrances",
+  "nodes": [
+    {
+      "id": "noise_terrain",
+      "type": "PerlinNoise",
+      "params": { "octaves": 4, "scale": 0.02 }
+    },
+    {
+      "id": "biome_select",
+      "type": "BiomeSelector",
+      "params": { "biomes": ["forest", "plains", "mountain", "water"] }
+    },
+    {
+      "id": "tile_output",
+      "type": "TileOutput",
+      "params": { "tileSize": 16 }
+    }
+  ],
+  "edges": [
+    { "from": "noise_terrain", "to": "biome_select" },
+    { "from": "biome_select", "to": "tile_output" }
+  ]
+}

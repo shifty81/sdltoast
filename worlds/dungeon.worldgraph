@@ -1,0 +1,27 @@
+{
+  "type": "worldgraph",
+  "version": 1,
+  "name": "Harvest Quest Dungeon",
+  "description": "Procedurally generated Zelda-style dungeon with rooms, corridors, and boss areas",
+  "nodes": [
+    {
+      "id": "room_gen",
+      "type": "RoomGenerator",
+      "params": { "minRooms": 5, "maxRooms": 10, "roomSize": [8, 12] }
+    },
+    {
+      "id": "corridor_gen",
+      "type": "CorridorGenerator",
+      "params": { "width": 3 }
+    },
+    {
+      "id": "tile_output",
+      "type": "TileOutput",
+      "params": { "tileSize": 16 }
+    }
+  ],
+  "edges": [
+    { "from": "room_gen", "to": "corridor_gen" },
+    { "from": "corridor_gen", "to": "tile_output" }
+  ]
+}

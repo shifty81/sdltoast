@@ -1,0 +1,27 @@
+{
+  "type": "worldgraph",
+  "version": 1,
+  "name": "Harvest Quest Farm",
+  "description": "Farm layout with soil zones, buildings, and crop areas",
+  "nodes": [
+    {
+      "id": "zone_layout",
+      "type": "ZoneLayout",
+      "params": { "zones": ["crops", "barn", "house", "pond", "orchard"] }
+    },
+    {
+      "id": "soil_gen",
+      "type": "SoilGenerator",
+      "params": { "states": ["grass", "hoed", "watered", "planted", "harvestable"] }
+    },
+    {
+      "id": "tile_output",
+      "type": "TileOutput",
+      "params": { "tileSize": 16 }
+    }
+  ],
+  "edges": [
+    { "from": "zone_layout", "to": "soil_gen" },
+    { "from": "soil_gen", "to": "tile_output" }
+  ]
+}

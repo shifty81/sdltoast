@@ -1,6 +1,6 @@
 # Contributing to Harvest Quest
 
-Thank you for your interest in contributing to Harvest Quest! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to Harvest Quest! This is an [Atlas Forge](https://github.com/shifty81/AtlasForge) game project. This document provides guidelines and instructions for contributing.
 
 ## Code of Conduct
 
@@ -47,8 +47,8 @@ See [DEVELOPMENT.md](DEVELOPMENT.md) for detailed setup instructions.
 #### Code Style Guidelines
 
 **C++ Standards:**
-- Use C++17 features
-- Follow existing naming conventions
+- Use C++20 features (per Atlas Forge conventions)
+- Follow [Atlas Forge naming conventions](https://github.com/shifty81/AtlasForge/blob/main/docs/ATLAS_NAMING_CONVENTIONS.md)
 - Use RAII for resource management
 - Prefer smart pointers over raw pointers
 
@@ -258,3 +258,5 @@ By contributing, you agree that your contributions will be licensed under the MI
 ---
 
 **Thank you for contributing to Harvest Quest! 🌾⚔️**
+
+*An Atlas Forge game project — see [AtlasForge](https://github.com/shifty81/AtlasForge) for engine documentation.*

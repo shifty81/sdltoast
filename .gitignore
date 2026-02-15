@@ -1,19 +1,23 @@
 # Build directories
 build/
 cmake-build-*/
+dist/
 out/
 bin/
 obj/
-_codeql_build_dir/
-_codeql_detected_source_root
 
-# IDE files
+# Dependencies
+node_modules/
+vendor/
+.venv/
+venv/
+
+# IDE and editor files
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-.DS_Store
 
 # Compiled files
 *.o
@@ -24,35 +28,65 @@ _codeql_detected_source_root
 *.dll
 *.so
 *.dylib
+*.class
+*.pyc
+*.pyo
+*.a
+*.lib
 
 # CMake generated files
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
+compile_commands.json
 install_manifest.txt
 Makefile
+*.cmake
+!CMakeLists.txt
+
+# CodeQL artifacts
+_codeql_build_dir/
+_codeql_detected_source_root
 
 # Visual Studio
 .vs/
-*.user
-*.suo
+build_vs/
+*.sln
+*.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
+*.suo
+*.user
+*.pdb
+*.ilk
+*.idb
+
+# Logs and databases
+*.log
+logs/*
+!logs/.gitkeep
+*.sqlite
+*.db
+
+# Temporary files
+*.tmp
+.cache/
+tmp/
+temp/
+
+# OS files
+Thumbs.db
+.DS_Store
 
 # Backup files
 *.bak
 *.backup
-*~
-
-# Logs
-*.log
 
 # Save files (for testing)
 saves/
 
-# Temporary files
-tmp/
-temp/
+# Engine build artifacts
+engine/build/
 
 # User-provided tileset PNGs in root (optional to commit)
 # Uncomment these lines if you want to ignore root PNGs:
