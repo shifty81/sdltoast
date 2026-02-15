@@ -1,11 +1,13 @@
 # Harvest Quest 🌾⚔️
+### An Atlas Forge Game Project
 
 > *When Zelda: A Link to the Past and Stardew Valley had a baby...*
 
-A top-down action-adventure RPG that seamlessly blends dungeon exploration and real-time combat with peaceful farming, crafting, and village life. Built with Raylib in C++.
+A top-down action-adventure RPG that seamlessly blends dungeon exploration and real-time combat with peaceful farming, crafting, and village life. Built as an [Atlas Forge](https://github.com/shifty81/AtlasForge) game project with Raylib in C++.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)
+![Engine](https://img.shields.io/badge/engine-Atlas%20Forge-blueviolet.svg)
 ![Raylib](https://img.shields.io/badge/Raylib-5.5-green.svg)
 
 ## 🎮 Concept
@@ -130,9 +132,15 @@ HarvestQuest.exe  # Windows
 
 ## 📁 Project Structure
 
+This project follows the [Atlas Forge](https://github.com/shifty81/AtlasForge) project layout:
+
 ```
-sdltoast/
-├── src/
+harvestquest/
+├── harvestquest.atlas        # Atlas project manifest (.atlas)
+├── Plugin.toml               # Atlas Forge plugin descriptor
+├── CMakeLists.txt            # Build configuration
+├── build.sh                  # Build script (Atlas-style)
+├── src/                      # Game source code
 │   ├── main.cpp              # Entry point
 │   ├── engine/               # Core engine systems
 │   │   ├── Game.cpp/h
@@ -155,21 +163,41 @@ sdltoast/
 │   └── ui/                   # User interface
 │       ├── HUD.cpp/h
 │       └── Menu.cpp/h
+├── worlds/                   # WorldGraph files (Atlas Forge format)
+│   ├── overworld.worldgraph
+│   ├── dungeon.worldgraph
+│   └── farm.worldgraph
 ├── assets/                   # Game assets
 │   ├── sprites/
 │   ├── tilesets/
 │   ├── music/
 │   └── sfx/
-├── GAME_DESIGN.md           # Detailed design document
-├── CMakeLists.txt           # Build configuration
-└── README.md                # This file
+├── data/                     # Game content data
+├── schemas/                  # JSON schemas for validation
+├── docs/                     # Documentation
+├── tools/                    # Development utilities
+├── GAME_DESIGN.md            # Detailed design document
+└── README.md                 # This file
 ```
 
 ## 🛠️ Development
 
+### Atlas Forge Integration
+
+This project is structured as an [Atlas Forge](https://github.com/shifty81/AtlasForge) game project.
+It can be opened in the Atlas Editor or run with the Atlas Runtime:
+
+```bash
+# Open in Atlas Editor
+./AtlasEditor --project harvestquest.atlas
+
+# Run with Atlas Runtime
+./AtlasRuntime --project harvestquest.atlas
+```
+
 ### Code Style
-- C++17 standard
-- Follow existing naming conventions
+- C++20 standard (per Atlas Forge conventions)
+- Follow [Atlas Forge naming conventions](https://github.com/shifty81/AtlasForge/blob/main/docs/ATLAS_NAMING_CONVENTIONS.md)
 - Use RAII for resource management
 - Document public APIs
 
@@ -189,11 +217,12 @@ ctest --output-on-failure
 
 ## 📖 Documentation
 
+- [Atlas Forge Engine](https://github.com/shifty81/AtlasForge) - Engine reference and architecture
 - [Primary Design Reference](sdltoastnew.rtf) - **Primary** design reference document for the project
 - [SDLDEV Reference Folder](SDLDEV/README.md) - Reference folder recommendations and development notes
 - [Game Design Document](GAME_DESIGN.md) - Detailed gameplay and technical specifications
 - [World Generation System](docs/WORLD_GENERATION.md) - Procedural generation deep-dive
-- [Tileset Integration Guide](docs/TILESET_INTEGRATION.md) - **NEW!** How to add your own tilesets
+- [Tileset Integration Guide](docs/TILESET_INTEGRATION.md) - How to add your own tilesets
 - [Development Guide](DEVELOPMENT.md) - Code architecture and contribution guidelines
 - [Quick Start Guide](QUICKSTART.md) - Get up and running fast
 - [Asset Guidelines](assets/README.md) - How to create game assets
@@ -264,12 +293,14 @@ Inspired by:
 - **Stardew Valley** by ConcernedApe
 
 Built with:
-- [Raylib](https://www.raylib.com/) - A simple and easy-to-use library to enjoy videogames programming
+- [Atlas Forge](https://github.com/shifty81/AtlasForge) — Modular, data-driven game engine
+- [Raylib](https://www.raylib.com/) — A simple and easy-to-use library to enjoy videogames programming
 
 ## 📞 Contact
 
 Project Link: [https://github.com/shifty81/sdltoast](https://github.com/shifty81/sdltoast)
+Engine Link: [https://github.com/shifty81/AtlasForge](https://github.com/shifty81/AtlasForge)
 
 ---
 
-*Cultivate your farm, explore dungeons, save the world! 🌾⚔️✨*
+*An Atlas Forge game project — Cultivate your farm, explore dungeons, save the world! 🌾⚔️✨*

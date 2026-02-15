@@ -1,0 +1,19 @@
+{
+  "schema": "atlas.project.v1",
+  "name": "Harvest Quest",
+  "version": "1.0.0",
+  "description": "Top-down action-adventure RPG blending Zelda-style dungeon exploration with Stardew Valley farming, built on Atlas Engine",
+  "modules": {
+    "worldGraph": "worlds/overworld.worldgraph",
+    "ai": true,
+    "content": "data/"
+  },
+  "runtime": {
+    "entryWorld": "worlds/overworld.worldgraph",
+    "tickRate": 60,
+    "maxPlayers": 1
+  },
+  "assets": {
+    "root": "assets"
+  }
+}

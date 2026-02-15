@@ -1,0 +1,35 @@
+[plugin]
+id = "harvestquest"
+name = "Harvest Quest"
+version = "1.0.0"
+type = "game"
+
+[engine]
+required_version = ">=0.1.0"
+determinism = true
+rollback = false
+server_authoritative = false
+
+[capabilities]
+uses_graphs = true
+uses_schemas = true
+uses_assetgraph = true
+uses_networking = false
+uses_ai_assist = true
+
+[content]
+schemas_path = "schemas"
+graphs_path = "worlds"
+assets_path = "assets"
+data_path = "data"
+
+[code]
+entry_point = "src/main.cpp"
+
+[editor]
+show_in_launcher = true
+default_project = false
+
+[testing]
+test_path = "tests"
+golden_required = false

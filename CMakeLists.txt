@@ -1,9 +1,9 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.22)
 
 project(HarvestQuest VERSION 1.0.0 LANGUAGES C CXX)
 
-# Set C++ standard
-set(CMAKE_CXX_STANDARD 17)
+# Atlas Forge convention: C++20 standard
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -118,6 +118,6 @@ install(DIRECTORY assets/
 # CPack configuration for packaging
 set(CPACK_PACKAGE_NAME "HarvestQuest")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "A game combining Zelda and Stardew Valley")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "An Atlas Forge game — Zelda meets Stardew Valley")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
 include(CPack)
