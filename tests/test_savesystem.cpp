@@ -9,7 +9,7 @@
 #include <iostream>
 #include <cstdio>
 #include <fstream>
-#include <sys/stat.h>
+#include <filesystem>
 
 static int s_passed = 0;
 static int s_failed = 0;
@@ -24,11 +24,13 @@ static int s_failed = 0;
 #define ASSERT_FALSE(expr) do { if (expr) throw 1; } while(0)
 #define ASSERT_EQ(a, b)    do { if ((a) != (b)) throw 1; } while(0)
 
-static const char* TEST_SAVE_PATH = "/tmp/harvestquest_test_save.dat";
+static std::string GetTestSavePath() {
+    return (std::filesystem::temp_directory_path() / "harvestquest_test_save.dat").string();
+}
 
 // Helper to remove a test file
 static void CleanupTestFile() {
-    std::remove(TEST_SAVE_PATH);
+    std::remove(GetTestSavePath().c_str());
 }
 
 // ---- Basic save/load round-trip ----
@@ -40,10 +42,10 @@ TEST(test_save_creates_file) {
     Calendar calendar;
     int gold = 100;
 
-    ASSERT_TRUE(SaveSystem::Save(TEST_SAVE_PATH, &player, &inventory, &calendar, gold));
+    ASSERT_TRUE(SaveSystem::Save(GetTestSavePath().c_str(), &player, &inventory, &calendar, gold));
 
     // Verify file exists
-    std::ifstream file(TEST_SAVE_PATH);
+    std::ifstream file(GetTestSavePath().c_str());
     ASSERT_TRUE(file.is_open());
     file.close();
     CleanupTestFile();
@@ -53,21 +55,21 @@ TEST(test_save_null_player_fails) {
     Inventory inventory;
     Calendar calendar;
     int gold = 0;
-    ASSERT_FALSE(SaveSystem::Save(TEST_SAVE_PATH, nullptr, &inventory, &calendar, gold));
+    ASSERT_FALSE(SaveSystem::Save(GetTestSavePath().c_str(), nullptr, &inventory, &calendar, gold));
 }
 
 TEST(test_save_null_inventory_fails) {
     Player player;
     Calendar calendar;
     int gold = 0;
-    ASSERT_FALSE(SaveSystem::Save(TEST_SAVE_PATH, &player, nullptr, &calendar, gold));
+    ASSERT_FALSE(SaveSystem::Save(GetTestSavePath().c_str(), &player, nullptr, &calendar, gold));
 }
 
 TEST(test_save_null_calendar_fails) {
     Player player;
     Inventory inventory;
     int gold = 0;
-    ASSERT_FALSE(SaveSystem::Save(TEST_SAVE_PATH, &player, &inventory, nullptr, gold));
+    ASSERT_FALSE(SaveSystem::Save(GetTestSavePath().c_str(), &player, &inventory, nullptr, gold));
 }
 
 TEST(test_load_nonexistent_file_fails) {
@@ -75,7 +77,8 @@ TEST(test_load_nonexistent_file_fails) {
     Inventory inventory;
     Calendar calendar;
     int gold = 0;
-    ASSERT_FALSE(SaveSystem::Load("/tmp/nonexistent_save_file.dat",
+    ASSERT_FALSE(SaveSystem::Load(
+        (std::filesystem::temp_directory_path() / "nonexistent_save_file.dat").string(),
                                    &player, &inventory, &calendar, gold));
 }
 
@@ -83,7 +86,7 @@ TEST(test_load_null_player_fails) {
     Inventory inventory;
     Calendar calendar;
     int gold = 0;
-    ASSERT_FALSE(SaveSystem::Load(TEST_SAVE_PATH, nullptr, &inventory, &calendar, gold));
+    ASSERT_FALSE(SaveSystem::Load(GetTestSavePath().c_str(), nullptr, &inventory, &calendar, gold));
 }
 
 // ---- Round-trip: player position ----
@@ -96,14 +99,14 @@ TEST(test_roundtrip_player_position) {
     Calendar saveCal;
     int saveGold = 0;
 
-    ASSERT_TRUE(SaveSystem::Save(TEST_SAVE_PATH, &savePlayer, &saveInv, &saveCal, saveGold));
+    ASSERT_TRUE(SaveSystem::Save(GetTestSavePath().c_str(), &savePlayer, &saveInv, &saveCal, saveGold));
 
     Player loadPlayer;
     Inventory loadInv;
     Calendar loadCal;
     int loadGold = 0;
 
-    ASSERT_TRUE(SaveSystem::Load(TEST_SAVE_PATH, &loadPlayer, &loadInv, &loadCal, loadGold));
+    ASSERT_TRUE(SaveSystem::Load(GetTestSavePath().c_str(), &loadPlayer, &loadInv, &loadCal, loadGold));
 
     float lx, ly;
     loadPlayer.GetPosition(lx, ly);
@@ -124,14 +127,14 @@ TEST(test_roundtrip_player_health) {
     Calendar saveCal;
     int saveGold = 0;
 
-    ASSERT_TRUE(SaveSystem::Save(TEST_SAVE_PATH, &savePlayer, &saveInv, &saveCal, saveGold));
+    ASSERT_TRUE(SaveSystem::Save(GetTestSavePath().c_str(), &savePlayer, &saveInv, &saveCal, saveGold));
 
     Player loadPlayer;
     Inventory loadInv;
     Calendar loadCal;
     int loadGold = 0;
 
-    ASSERT_TRUE(SaveSystem::Load(TEST_SAVE_PATH, &loadPlayer, &loadInv, &loadCal, loadGold));
+    ASSERT_TRUE(SaveSystem::Load(GetTestSavePath().c_str(), &loadPlayer, &loadInv, &loadCal, loadGold));
 
     ASSERT_EQ(loadPlayer.GetHealth(), 7);
     ASSERT_EQ(loadPlayer.GetMaxHealth(), 10);
@@ -150,14 +153,14 @@ TEST(test_roundtrip_calendar) {
     saveCal.SetYear(3);
     int saveGold = 0;
 
-    ASSERT_TRUE(SaveSystem::Save(TEST_SAVE_PATH, &savePlayer, &saveInv, &saveCal, saveGold));
+    ASSERT_TRUE(SaveSystem::Save(GetTestSavePath().c_str(), &savePlayer, &saveInv, &saveCal, saveGold));
 
     Player loadPlayer;
     Inventory loadInv;
     Calendar loadCal;
     int loadGold = 0;
 
-    ASSERT_TRUE(SaveSystem::Load(TEST_SAVE_PATH, &loadPlayer, &loadInv, &loadCal, loadGold));
+    ASSERT_TRUE(SaveSystem::Load(GetTestSavePath().c_str(), &loadPlayer, &loadInv, &loadCal, loadGold));
 
     ASSERT_EQ(loadCal.GetDay(), 15);
     ASSERT_EQ(loadCal.GetSeason(), Season::FALL);
@@ -174,14 +177,14 @@ TEST(test_roundtrip_gold) {
     Calendar saveCal;
     int saveGold = 9999;
 
-    ASSERT_TRUE(SaveSystem::Save(TEST_SAVE_PATH, &savePlayer, &saveInv, &saveCal, saveGold));
+    ASSERT_TRUE(SaveSystem::Save(GetTestSavePath().c_str(), &savePlayer, &saveInv, &saveCal, saveGold));
 
     Player loadPlayer;
     Inventory loadInv;
     Calendar loadCal;
     int loadGold = 0;
 
-    ASSERT_TRUE(SaveSystem::Load(TEST_SAVE_PATH, &loadPlayer, &loadInv, &loadCal, loadGold));
+    ASSERT_TRUE(SaveSystem::Load(GetTestSavePath().c_str(), &loadPlayer, &loadInv, &loadCal, loadGold));
 
     ASSERT_EQ(loadGold, 9999);
     CleanupTestFile();
@@ -197,14 +200,14 @@ TEST(test_roundtrip_inventory_single_item) {
     Calendar saveCal;
     int saveGold = 0;
 
-    ASSERT_TRUE(SaveSystem::Save(TEST_SAVE_PATH, &savePlayer, &saveInv, &saveCal, saveGold));
+    ASSERT_TRUE(SaveSystem::Save(GetTestSavePath().c_str(), &savePlayer, &saveInv, &saveCal, saveGold));
 
     Player loadPlayer;
     Inventory loadInv;
     Calendar loadCal;
     int loadGold = 0;
 
-    ASSERT_TRUE(SaveSystem::Load(TEST_SAVE_PATH, &loadPlayer, &loadInv, &loadCal, loadGold));
+    ASSERT_TRUE(SaveSystem::Load(GetTestSavePath().c_str(), &loadPlayer, &loadInv, &loadCal, loadGold));
 
     ASSERT_EQ(loadInv.GetItemCount("Wood"), 25);
     CleanupTestFile();
@@ -220,14 +223,14 @@ TEST(test_roundtrip_inventory_multiple_items) {
     Calendar saveCal;
     int saveGold = 500;
 
-    ASSERT_TRUE(SaveSystem::Save(TEST_SAVE_PATH, &savePlayer, &saveInv, &saveCal, saveGold));
+    ASSERT_TRUE(SaveSystem::Save(GetTestSavePath().c_str(), &savePlayer, &saveInv, &saveCal, saveGold));
 
     Player loadPlayer;
     Inventory loadInv;
     Calendar loadCal;
     int loadGold = 0;
 
-    ASSERT_TRUE(SaveSystem::Load(TEST_SAVE_PATH, &loadPlayer, &loadInv, &loadCal, loadGold));
+    ASSERT_TRUE(SaveSystem::Load(GetTestSavePath().c_str(), &loadPlayer, &loadInv, &loadCal, loadGold));
 
     ASSERT_EQ(loadInv.GetItemCount("Wood"), 10);
     ASSERT_EQ(loadInv.GetItemCount("Stone"), 5);
@@ -245,14 +248,14 @@ TEST(test_roundtrip_item_with_spaces) {
     Calendar saveCal;
     int saveGold = 0;
 
-    ASSERT_TRUE(SaveSystem::Save(TEST_SAVE_PATH, &savePlayer, &saveInv, &saveCal, saveGold));
+    ASSERT_TRUE(SaveSystem::Save(GetTestSavePath().c_str(), &savePlayer, &saveInv, &saveCal, saveGold));
 
     Player loadPlayer;
     Inventory loadInv;
     Calendar loadCal;
     int loadGold = 0;
 
-    ASSERT_TRUE(SaveSystem::Load(TEST_SAVE_PATH, &loadPlayer, &loadInv, &loadCal, loadGold));
+    ASSERT_TRUE(SaveSystem::Load(GetTestSavePath().c_str(), &loadPlayer, &loadInv, &loadCal, loadGold));
 
     ASSERT_EQ(loadInv.GetItemCount("Parsnip Soup"), 2);
     ASSERT_EQ(loadInv.GetItemCount("Baked Potato"), 1);
@@ -280,14 +283,14 @@ TEST(test_roundtrip_full_state) {
 
     int saveGold = 3750;
 
-    ASSERT_TRUE(SaveSystem::Save(TEST_SAVE_PATH, &savePlayer, &saveInv, &saveCal, saveGold));
+    ASSERT_TRUE(SaveSystem::Save(GetTestSavePath().c_str(), &savePlayer, &saveInv, &saveCal, saveGold));
 
     Player loadPlayer;
     Inventory loadInv;
     Calendar loadCal;
     int loadGold = 0;
 
-    ASSERT_TRUE(SaveSystem::Load(TEST_SAVE_PATH, &loadPlayer, &loadInv, &loadCal, loadGold));
+    ASSERT_TRUE(SaveSystem::Load(GetTestSavePath().c_str(), &loadPlayer, &loadInv, &loadCal, loadGold));
 
     // Verify all state
     float lx, ly;
@@ -317,7 +320,7 @@ TEST(test_load_clears_previous_inventory) {
     Calendar saveCal;
     int saveGold = 0;
 
-    ASSERT_TRUE(SaveSystem::Save(TEST_SAVE_PATH, &savePlayer, &saveInv, &saveCal, saveGold));
+    ASSERT_TRUE(SaveSystem::Save(GetTestSavePath().c_str(), &savePlayer, &saveInv, &saveCal, saveGold));
 
     Player loadPlayer;
     Inventory loadInv;
@@ -325,7 +328,7 @@ TEST(test_load_clears_previous_inventory) {
     Calendar loadCal;
     int loadGold = 0;
 
-    ASSERT_TRUE(SaveSystem::Load(TEST_SAVE_PATH, &loadPlayer, &loadInv, &loadCal, loadGold));
+    ASSERT_TRUE(SaveSystem::Load(GetTestSavePath().c_str(), &loadPlayer, &loadInv, &loadCal, loadGold));
 
     ASSERT_EQ(loadInv.GetItemCount("Garbage"), 0); // Should be cleared
     ASSERT_EQ(loadInv.GetItemCount("Wood"), 5);
