@@ -6,7 +6,7 @@
       "type": "dialogue",
       "params": {
         "speaker": "Blacksmith Oren",
-        "line": "Blacksmith Oren: Hello there, traveler!"
+        "line": "Hello there, traveler!"
       },
       "inputs": {}
     },
@@ -15,7 +15,7 @@
       "type": "dialogue",
       "params": {
         "speaker": "Blacksmith Oren",
-        "line": "Blacksmith Oren: I've lived in Meadowbrook all my life."
+        "line": "I've lived in Meadowbrook all my life."
       },
       "inputs": {}
     }

@@ -6,7 +6,7 @@
       "type": "dialogue",
       "params": {
         "speaker": "Merchant Lily",
-        "line": "Merchant Lily: Hello there, traveler!"
+        "line": "Hello there, traveler!"
       },
       "inputs": {}
     },
@@ -15,7 +15,7 @@
       "type": "dialogue",
       "params": {
         "speaker": "Merchant Lily",
-        "line": "Merchant Lily: I've lived in Meadowbrook all my life."
+        "line": "I've lived in Meadowbrook all my life."
       },
       "inputs": {}
     }

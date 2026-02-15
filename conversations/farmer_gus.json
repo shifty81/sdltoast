@@ -6,7 +6,7 @@
       "type": "dialogue",
       "params": {
         "speaker": "Farmer Gus",
-        "line": "Farmer Gus: Hello there, traveler!"
+        "line": "Hello there, traveler!"
       },
       "inputs": {}
     },
@@ -15,7 +15,7 @@
       "type": "dialogue",
       "params": {
         "speaker": "Farmer Gus",
-        "line": "Farmer Gus: I've lived in Meadowbrook all my life."
+        "line": "I've lived in Meadowbrook all my life."
       },
       "inputs": {}
     }
