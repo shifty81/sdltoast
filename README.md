@@ -196,7 +196,7 @@ It can be opened in the Atlas Editor or run with the Atlas Runtime:
 ```
 
 ### Code Style
-- C++17 standard (migrating to C++20 per Atlas Forge conventions)
+- C++20 standard (per Atlas Forge conventions)
 - Follow [Atlas Forge naming conventions](https://github.com/shifty81/AtlasForge/blob/main/docs/ATLAS_NAMING_CONVENTIONS.md)
 - Use RAII for resource management
 - Document public APIs
