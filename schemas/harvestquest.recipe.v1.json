@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "harvestquest.recipe.v1",
+  "title": "Harvest Quest Recipe Definition",
+  "description": "Schema for Harvest Quest crafting recipe data files",
+  "type": "object",
+  "required": ["schema", "recipes"],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "harvestquest.recipe.v1"
+    },
+    "recipes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["result", "ingredients"],
+        "properties": {
+          "result": {
+            "type": "string",
+            "description": "Name of the crafted item"
+          },
+          "resultQuantity": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "quantity"],
+              "properties": {
+                "name": { "type": "string" },
+                "quantity": { "type": "integer", "minimum": 1 }
+              }
+            },
+            "minItems": 1
+          }
+        }
+      }
+    }
+  }
+}

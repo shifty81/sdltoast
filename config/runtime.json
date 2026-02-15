@@ -1,0 +1,24 @@
+{
+  "window": {
+    "title": "Harvest Quest — An Atlas Forge Game",
+    "width": 800,
+    "height": 600
+  },
+  "gameplay": {
+    "targetFPS": 60,
+    "defaultMap": "farm",
+    "mapWidth": 25,
+    "mapHeight": 19,
+    "tileSize": 32,
+    "startPosition": { "x": 400, "y": 300 }
+  },
+  "farming": {
+    "cropGrowthIntervalSeconds": 5.0,
+    "maxGrowthStage": 4
+  },
+  "combat": {
+    "maxEnemies": 5,
+    "enemySpawnSpacing": 100.0,
+    "damageCooldownSeconds": 0.5
+  }
+}

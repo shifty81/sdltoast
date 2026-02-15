@@ -1,0 +1,64 @@
+{
+  "schema": "harvestquest.recipe.v1",
+  "recipes": [
+    {
+      "result": "Fence",
+      "resultQuantity": 1,
+      "ingredients": [
+        { "name": "Wood", "quantity": 5 }
+      ]
+    },
+    {
+      "result": "Chest",
+      "resultQuantity": 1,
+      "ingredients": [
+        { "name": "Wood", "quantity": 10 }
+      ]
+    },
+    {
+      "result": "Sprinkler",
+      "resultQuantity": 1,
+      "ingredients": [
+        { "name": "Wood", "quantity": 3 },
+        { "name": "Stone", "quantity": 3 }
+      ]
+    },
+    {
+      "result": "Parsnip Soup",
+      "resultQuantity": 1,
+      "ingredients": [
+        { "name": "Parsnip", "quantity": 3 }
+      ]
+    },
+    {
+      "result": "Baked Potato",
+      "resultQuantity": 1,
+      "ingredients": [
+        { "name": "Potato", "quantity": 2 },
+        { "name": "Wood", "quantity": 1 }
+      ]
+    },
+    {
+      "result": "Tomato Sauce",
+      "resultQuantity": 1,
+      "ingredients": [
+        { "name": "Tomato", "quantity": 3 }
+      ]
+    },
+    {
+      "result": "Stone Wall",
+      "resultQuantity": 1,
+      "ingredients": [
+        { "name": "Stone", "quantity": 5 }
+      ]
+    },
+    {
+      "result": "Bridge",
+      "resultQuantity": 1,
+      "ingredients": [
+        { "name": "Wood", "quantity": 20 },
+        { "name": "Stone", "quantity": 10 }
+      ]
+    }
+  ]
+}

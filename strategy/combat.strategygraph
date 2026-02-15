@@ -1,0 +1,33 @@
+{
+  "schema": "atlas.strategygraph.v1",
+  "nodes": [
+    {
+      "id": "detect_player",
+      "type": "condition",
+      "params": {
+        "metric": "player_distance",
+        "operator": "less_than",
+        "threshold": 150.0
+      }
+    },
+    {
+      "id": "chase_action",
+      "type": "action",
+      "params": {
+        "action": "chase_target",
+        "speedMultiplier": 1.3
+      }
+    },
+    {
+      "id": "patrol_action",
+      "type": "action",
+      "params": {
+        "action": "patrol",
+        "radius": 64.0
+      }
+    }
+  ],
+  "links": [
+    { "from": "detect_player", "to": "chase_action" }
+  ]
+}

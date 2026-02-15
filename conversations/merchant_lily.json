@@ -1,0 +1,26 @@
+{
+  "schema": "atlas.conversation.v1",
+  "nodes": [
+    {
+      "id": "greet",
+      "type": "dialogue",
+      "params": {
+        "speaker": "Merchant Lily",
+        "line": "Hello there, traveler!"
+      },
+      "inputs": {}
+    },
+    {
+      "id": "about",
+      "type": "dialogue",
+      "params": {
+        "speaker": "Merchant Lily",
+        "line": "I've lived in Meadowbrook all my life."
+      },
+      "inputs": {}
+    }
+  ],
+  "links": [
+    { "from": "greet", "to": "about" }
+  ]
+}
