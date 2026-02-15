@@ -55,6 +55,7 @@ set(SOURCES
     src/systems/Crafting.cpp
     src/systems/Dialogue.cpp
     src/systems/SaveSystem.cpp
+    src/systems/Quest.cpp
     src/world/Map.cpp
     src/world/Tile.cpp
     src/world/Dungeon.cpp
@@ -84,6 +85,7 @@ set(HEADERS
     src/systems/Crafting.h
     src/systems/Dialogue.h
     src/systems/SaveSystem.h
+    src/systems/Quest.h
     src/world/Map.h
     src/world/Tile.h
     src/world/Dungeon.h

@@ -1,0 +1,29 @@
+{
+  "schema": "harvestquest.crop.v1",
+  "crops": [
+    {
+      "name": "Parsnip",
+      "type": "PARSNIP",
+      "season": "SPRING",
+      "growthDays": 4,
+      "sellValue": 35,
+      "seedCost": 20
+    },
+    {
+      "name": "Potato",
+      "type": "POTATO",
+      "season": "SPRING",
+      "growthDays": 6,
+      "sellValue": 80,
+      "seedCost": 50
+    },
+    {
+      "name": "Tomato",
+      "type": "TOMATO",
+      "season": "SUMMER",
+      "growthDays": 8,
+      "sellValue": 60,
+      "seedCost": 50
+    }
+  ]
+}
