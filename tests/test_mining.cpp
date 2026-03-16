@@ -19,7 +19,7 @@ static int s_failed = 0;
 
 TEST(test_ore_count) {
     MiningSystem ms;
-    ASSERT_TRUE(ms.GetOreCount() >= 10);
+    ASSERT_EQ(ms.GetOreCount(), 10);
 }
 
 TEST(test_get_ore_valid) {
@@ -125,7 +125,7 @@ TEST(test_energy_cost_decreases_with_skill) {
 TEST(test_energy_cost_values) {
     MiningSystem ms;
     ASSERT_EQ(ms.GetEnergyCost(0), 5);   // Base cost
-    ASSERT_TRUE(ms.GetEnergyCost(10) >= 2); // Minimum 2
+    ASSERT_EQ(ms.GetEnergyCost(10), 2); // Minimum cost
 }
 
 TEST(test_xp_reward_valid_ore) {
