@@ -6,6 +6,7 @@
 #include "world/Tile.h"
 #include <cassert>
 #include <iostream>
+#include <fstream>
 
 static int s_passed = 0;
 static int s_failed = 0;
@@ -244,6 +245,76 @@ TEST(test_full_farming_cycle) {
     ASSERT_EQ(tile->GetSoilState(), SoilState::HOE);
 }
 
+// ---- Save/Load tests ----
+
+TEST(test_save_and_load_roundtrip) {
+    // Create a map with some specific tiles
+    Map original(4, 3);
+    original.SetTile(0, 0, Tile(TileType::WALL, 2));
+    original.SetTile(1, 1, Tile(TileType::WATER, 0));
+    original.SetTile(3, 2, Tile(TileType::TREE, 0));
+
+    // Save to file
+    ASSERT_TRUE(original.SaveToFile("/tmp/test_map_roundtrip.txt"));
+
+    // Load into a new map
+    Map loaded;
+    ASSERT_TRUE(loaded.LoadFromFile("/tmp/test_map_roundtrip.txt"));
+
+    // Verify dimensions
+    ASSERT_EQ(loaded.GetWidth(), 4);
+    ASSERT_EQ(loaded.GetHeight(), 3);
+
+    // Verify specific tiles
+    const Tile* t1 = loaded.GetTileAt(0, 0);
+    ASSERT_TRUE(t1 != nullptr);
+    ASSERT_EQ(t1->GetType(), TileType::WALL);
+    ASSERT_EQ(t1->GetVisualId(), 2);
+
+    const Tile* t2 = loaded.GetTileAt(1, 1);
+    ASSERT_TRUE(t2 != nullptr);
+    ASSERT_EQ(t2->GetType(), TileType::WATER);
+
+    const Tile* t3 = loaded.GetTileAt(3, 2);
+    ASSERT_TRUE(t3 != nullptr);
+    ASSERT_EQ(t3->GetType(), TileType::TREE);
+}
+
+TEST(test_save_and_load_farming_state) {
+    Map original(3, 3);
+    original.TillSoil(1, 1);
+    original.PlantCrop(1, 1, 2);  // Tomato
+    Tile* tile = original.GetTileAt(1, 1);
+    tile->SetGrowthStage(3);
+
+    ASSERT_TRUE(original.SaveToFile("/tmp/test_map_farm.txt"));
+
+    Map loaded;
+    ASSERT_TRUE(loaded.LoadFromFile("/tmp/test_map_farm.txt"));
+
+    const Tile* lt = loaded.GetTileAt(1, 1);
+    ASSERT_TRUE(lt != nullptr);
+    ASSERT_EQ(lt->GetType(), TileType::SOIL);
+    ASSERT_EQ(lt->GetSoilState(), SoilState::CROP);
+    ASSERT_EQ(lt->GetCropType(), 2);
+    ASSERT_EQ(lt->GetGrowthStage(), 3);
+}
+
+TEST(test_load_nonexistent_file) {
+    Map map;
+    ASSERT_FALSE(map.LoadFromFile("/tmp/nonexistent_map_file.txt"));
+}
+
+TEST(test_load_invalid_header) {
+    // Write a file with wrong header
+    {
+        std::ofstream f("/tmp/test_map_bad_header.txt");
+        f << "NOT_A_MAP\nSIZE 2 2\nEND\n";
+    }
+    Map map;
+    ASSERT_FALSE(map.LoadFromFile("/tmp/test_map_bad_header.txt"));
+}
+
 int main() {
     TileRegistry::Initialize();
     std::cout << "=== Map Tests ===" << std::endl;
@@ -272,6 +343,10 @@ int main() {
     RUN_TEST(test_chop_tree_on_grass_fails);
     RUN_TEST(test_can_plant_crop);
     RUN_TEST(test_full_farming_cycle);
+    RUN_TEST(test_save_and_load_roundtrip);
+    RUN_TEST(test_save_and_load_farming_state);
+    RUN_TEST(test_load_nonexistent_file);
+    RUN_TEST(test_load_invalid_header);
 
     std::cout << std::endl << s_passed << " passed, " << s_failed << " failed" << std::endl;
     return s_failed > 0 ? 1 : 0;

@@ -18,6 +18,10 @@ class Calendar;
 class Inventory;
 class Crafting;
 class SaveSystem;
+class Energy;
+class Skills;
+class QuestSystem;
+class FishingSystem;
 
 /**
  * Main game class that manages the game loop and core systems
@@ -55,6 +59,7 @@ private:
     void HandleTreeChopping();
     void HandleCrafting();
     void HandleNPCInteraction();
+    void HandleFishing();
     void HandleSaveLoad();
     void AdvanceDay();
     void SpawnEnemies();
@@ -82,6 +87,10 @@ private:
     std::unique_ptr<Calendar> m_calendar;
     std::unique_ptr<Inventory> m_inventory;
     std::unique_ptr<Crafting> m_crafting;
+    std::unique_ptr<Energy> m_energy;
+    std::unique_ptr<Skills> m_skills;
+    std::unique_ptr<QuestSystem> m_questSystem;
+    std::unique_ptr<FishingSystem> m_fishingSystem;
 
     // State
     int m_gold;
@@ -90,6 +99,7 @@ private:
     int m_craftingIndex;
     float m_damageCooldown; // Prevent rapid damage from contact
     std::string m_actionText;
+    int m_dialogueChoiceIndex; // For dialogue choice navigation
 
     // Spawn tuning
     static constexpr int MAX_ENEMIES = 5;

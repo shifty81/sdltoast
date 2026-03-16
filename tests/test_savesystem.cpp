@@ -5,11 +5,15 @@
 #include "entities/Player.h"
 #include "systems/Inventory.h"
 #include "systems/Calendar.h"
+#include "systems/Energy.h"
+#include "systems/Skills.h"
+#include "systems/Quest.h"
 #include <cassert>
 #include <iostream>
 #include <cstdio>
 #include <fstream>
 #include <filesystem>
+#include <cmath>
 
 static int s_passed = 0;
 static int s_failed = 0;
@@ -335,6 +339,97 @@ TEST(test_load_clears_previous_inventory) {
     CleanupTestFile();
 }
 
+// ---- Extended save/load: energy ----
+
+TEST(test_roundtrip_energy) {
+    CleanupTestFile();
+    Player savePlayer;
+    Inventory saveInv;
+    Calendar saveCal;
+    int saveGold = 0;
+    Energy saveEnergy;
+    saveEnergy.Consume(30);  // Current = 70
+
+    ASSERT_TRUE(SaveSystem::Save(GetTestSavePath().c_str(), &savePlayer, &saveInv, &saveCal, saveGold,
+                                 &saveEnergy, nullptr, nullptr));
+
+    Player loadPlayer;
+    Inventory loadInv;
+    Calendar loadCal;
+    int loadGold = 0;
+    Energy loadEnergy;
+
+    ASSERT_TRUE(SaveSystem::Load(GetTestSavePath().c_str(), &loadPlayer, &loadInv, &loadCal, loadGold,
+                                 &loadEnergy, nullptr, nullptr));
+
+    ASSERT_EQ(loadEnergy.GetCurrent(), 70);
+    ASSERT_EQ(loadEnergy.GetMax(), Energy::DEFAULT_MAX);
+    CleanupTestFile();
+}
+
+// ---- Extended save/load: skills ----
+
+TEST(test_roundtrip_skills) {
+    CleanupTestFile();
+    Player savePlayer;
+    Inventory saveInv;
+    Calendar saveCal;
+    int saveGold = 0;
+    Skills saveSkills;
+    saveSkills.AddXP(SkillType::FARMING, 150);   // Level 1
+    saveSkills.AddXP(SkillType::COMBAT, 300);     // Level 2
+
+    ASSERT_TRUE(SaveSystem::Save(GetTestSavePath().c_str(), &savePlayer, &saveInv, &saveCal, saveGold,
+                                 nullptr, &saveSkills, nullptr));
+
+    Player loadPlayer;
+    Inventory loadInv;
+    Calendar loadCal;
+    int loadGold = 0;
+    Skills loadSkills;
+
+    ASSERT_TRUE(SaveSystem::Load(GetTestSavePath().c_str(), &loadPlayer, &loadInv, &loadCal, loadGold,
+                                 nullptr, &loadSkills, nullptr));
+
+    ASSERT_EQ(loadSkills.GetLevel(SkillType::FARMING), 1);
+    ASSERT_EQ(loadSkills.GetXP(SkillType::FARMING), 150);
+    ASSERT_EQ(loadSkills.GetLevel(SkillType::COMBAT), 2);
+    ASSERT_EQ(loadSkills.GetXP(SkillType::COMBAT), 300);
+    ASSERT_EQ(loadSkills.GetLevel(SkillType::MINING), 0);
+    CleanupTestFile();
+}
+
+// ---- Extended save/load: quests ----
+
+TEST(test_roundtrip_quest_active) {
+    CleanupTestFile();
+    Player savePlayer;
+    Inventory saveInv;
+    Calendar saveCal;
+    int saveGold = 0;
+    QuestSystem saveQuests;
+    saveQuests.ActivateQuest("farm_beginnings");
+    saveQuests.UpdateObjective("farm_beginnings", 0, 3);
+
+    ASSERT_TRUE(SaveSystem::Save(GetTestSavePath().c_str(), &savePlayer, &saveInv, &saveCal, saveGold,
+                                 nullptr, nullptr, &saveQuests));
+
+    Player loadPlayer;
+    Inventory loadInv;
+    Calendar loadCal;
+    int loadGold = 0;
+    QuestSystem loadQuests;
+
+    ASSERT_TRUE(SaveSystem::Load(GetTestSavePath().c_str(), &loadPlayer, &loadInv, &loadCal, loadGold,
+                                 nullptr, nullptr, &loadQuests));
+
+    const Quest* q = loadQuests.GetQuest("farm_beginnings");
+    ASSERT_TRUE(q != nullptr);
+    ASSERT_EQ(q->status, QuestStatus::ACTIVE);
+    ASSERT_EQ(q->objectives[0].currentCount, 3);
+    CleanupTestFile();
+}
+
 int main() {
     std::cout << "=== SaveSystem Tests ===" << std::endl;
     RUN_TEST(test_save_creates_file);
@@ -352,6 +447,9 @@ int main() {
     RUN_TEST(test_roundtrip_item_with_spaces);
     RUN_TEST(test_roundtrip_full_state);
     RUN_TEST(test_load_clears_previous_inventory);
+    RUN_TEST(test_roundtrip_energy);
+    RUN_TEST(test_roundtrip_skills);
+    RUN_TEST(test_roundtrip_quest_active);
 
     std::cout << std::endl << s_passed << " passed, " << s_failed << " failed" << std::endl;
     return s_failed > 0 ? 1 : 0;

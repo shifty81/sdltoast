@@ -56,6 +56,9 @@ set(SOURCES
     src/systems/Dialogue.cpp
     src/systems/SaveSystem.cpp
     src/systems/Quest.cpp
+    src/systems/Energy.cpp
+    src/systems/Skills.cpp
+    src/systems/Fishing.cpp
     src/world/Map.cpp
     src/world/Tile.cpp
     src/world/Dungeon.cpp
@@ -86,6 +89,9 @@ set(HEADERS
     src/systems/Dialogue.h
     src/systems/SaveSystem.h
     src/systems/Quest.h
+    src/systems/Energy.h
+    src/systems/Skills.h
+    src/systems/Fishing.h
     src/world/Map.h
     src/world/Tile.h
     src/world/Dungeon.h

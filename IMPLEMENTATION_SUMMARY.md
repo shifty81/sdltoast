@@ -94,6 +94,24 @@ Collision/Rules → Tile Painting → Decoration
 - **6 Built-in Quests**: Farm Beginnings, Monster Slayer, Lumberjack, Stone Collector, Master Crafter, Community Helper
 - **Extensible**: Add custom quests at runtime
 
+#### 12. Energy System (`Energy.h/cpp`)
+- **Action Costs**: Till (4), Water (2), Plant (3), Harvest (2), Chop (6), Mine (5), Fish (4), Attack (3)
+- **Day Cycle**: Energy restored to full on day advance (sleep)
+- **Progression**: Max energy can increase with upgrades
+- **Save/Load**: Persists current and max energy
+
+#### 13. Skill Progression (`Skills.h/cpp`)
+- **5 Skill Types**: Farming, Combat, Mining, Fishing, Foraging
+- **XP & Leveling**: Level 0–10, progressive XP thresholds (100, 300, 600, …, 5500)
+- **Action-Based**: XP earned from gameplay actions (farming, fighting, fishing, etc.)
+- **Save/Load**: Persists all skill levels and XP
+
+#### 14. Fishing System (`Fishing.h/cpp`)
+- **10 Fish Types**: Sunfish, Catfish, Bass, Trout, Salmon, Carp, Eel, Pike, Ice Perch, Golden Trout
+- **Seasonal Availability**: Different fish per season
+- **Difficulty-Based**: Skill level affects catch chance (40% base + 5% per level)
+- **Value Range**: 20g (Carp) to 150g (Golden Trout)
+
 ### Game Engine
 
 #### Core Systems (`src/engine/`)
@@ -164,11 +182,14 @@ Run the game and press:
 
 ## 🔢 Statistics
 
-- **60+ Files Created**: Source, headers, docs, config, data
-- **~15,000 Lines of Code and Documentation**
+- **70+ Files Created**: Source, headers, docs, config, data
+- **~18,000 Lines of Code and Documentation**
+- **197 Unit Tests** across 14 test suites
 - **12+ Tile Types** with semantic meaning
 - **3 World Types**: Farm, Dungeon, Overworld
 - **5-State Farming System**
+- **5 Skill Types** with XP progression
+- **10 Fish Types** with seasonal availability
 - **Auto-Tiling Algorithm** with 8-neighbor detection
 - **Room-Based Dungeon Generation**
 - **MIT Licensed** - Open source
@@ -218,26 +239,40 @@ Run the game and press:
 ⏭️ Sprite assets (replace colored rectangles)
 ⏭️ Multiple dungeons with unique themes
 ⏭️ Music and sound effects
+⏭️ Shop/commerce system (buy/sell items with NPCs)
+⏭️ Mining mini-game mechanics
 
 ### Recently Completed
+✅ Energy system — actions consume energy, restored on sleep (16 tests)
+✅ Skill progression — 5 skills (Farming, Combat, Mining, Fishing, Foraging), XP and leveling to 10 (15 tests)
+✅ Fishing system — 10 fish types, seasonal availability, difficulty-based catch mechanics (13 tests)
+✅ Map save/load — text-based map persistence with LoadFromFile/SaveToFile (4 new map tests, 29 total)
+✅ Extended save/load — energy, skills, and quest state now persist (18 total SaveSystem tests)
+✅ Quest integration — farming, combat, chopping, and NPC actions update quest objectives
+✅ HUD energy bar — visual energy indicator with fill level
+✅ Dialogue choice navigation — Up/Down keys to browse NPC dialogue choices
+✅ Fishing key binding (G) — cast near water, catch fish, earn gold and fishing XP
 ✅ Quest system with objectives, progress tracking, and rewards
 ✅ Game data files: crops, enemies, items, quests (JSON + schemas)
 ✅ Combat system (enemies spawn in dungeons, player attack, contact damage)
 ✅ Farming mechanics (till, water, plant, harvest with day-based growth)
 ✅ Inventory system with UI overlay
-✅ HUD with health, gold, calendar display
+✅ HUD with health, gold, energy, calendar display
 ✅ Calendar integration with crop growth
 ✅ Crafting system (8 recipes: Fence, Chest, Sprinkler, foods, walls, Bridge)
-✅ Save/Load system (F5 save, F9 load — player, inventory, calendar, gold)
+✅ Save/Load system (F5 save, F9 load — player, inventory, calendar, gold, energy, skills, quests)
 ✅ NPC system with schedule-based movement and friendship levels
 ✅ Branching dialogue trees with choices for NPC conversations
 ✅ Unit tests for Crafting system (12 tests: recipes, CanCraft, Craft, edge cases)
 ✅ Unit tests for Dialogue system (12 tests: linear API, dialogue trees, branching choices)
 ✅ Unit tests for Farming system (12 tests: growth days, crop names, crop values)
 ✅ Unit tests for Combat system (15 tests: damage calculation, AABB collision detection)
-✅ Unit tests for Map system (25 tests: tile access, farming cycle, collision, coordinate conversion)
+✅ Unit tests for Map system (29 tests: tile access, farming cycle, collision, coordinate conversion, save/load)
 ✅ Unit tests for NPC system (19 tests: friendship, schedule movement, proximity, dialogue integration)
-✅ Unit tests for SaveSystem (15 tests: save/load round-trip, null guards, item names with spaces)
+✅ Unit tests for SaveSystem (18 tests: save/load round-trip, null guards, items, energy, skills, quests)
+✅ Unit tests for Energy system (16 tests: consume, restore, increase max, action costs)
+✅ Unit tests for Skills system (15 tests: XP, leveling, multi-level, max cap, per-skill independence)
+✅ Unit tests for Fishing system (13 tests: seasonal fish, catch mechanics, difficulty range)
 
 ## 🎓 Learning Outcomes
 

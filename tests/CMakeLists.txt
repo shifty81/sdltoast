@@ -109,6 +109,9 @@ add_executable(test_savesystem
     ${CMAKE_SOURCE_DIR}/src/systems/SaveSystem.cpp
     ${CMAKE_SOURCE_DIR}/src/systems/Inventory.cpp
     ${CMAKE_SOURCE_DIR}/src/systems/Calendar.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Energy.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Skills.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Quest.cpp
     ${CMAKE_SOURCE_DIR}/src/entities/Entity.cpp
     ${CMAKE_SOURCE_DIR}/src/entities/Player.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/Input.cpp
@@ -119,3 +122,28 @@ add_executable(test_savesystem
 target_include_directories(test_savesystem PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(test_savesystem raylib)
 add_test(NAME SaveSystemTests COMMAND test_savesystem)
+
+# Test: Energy system (pure logic)
+add_executable(test_energy
+    test_energy.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Energy.cpp
+)
+target_include_directories(test_energy PRIVATE ${CMAKE_SOURCE_DIR}/src)
+add_test(NAME EnergyTests COMMAND test_energy)
+
+# Test: Skills system (pure logic)
+add_executable(test_skills
+    test_skills.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Skills.cpp
+)
+target_include_directories(test_skills PRIVATE ${CMAKE_SOURCE_DIR}/src)
+add_test(NAME SkillsTests COMMAND test_skills)
+
+# Test: Fishing system (pure logic, depends on Calendar for Season enum)
+add_executable(test_fishing
+    test_fishing.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Fishing.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Calendar.cpp
+)
+target_include_directories(test_fishing PRIVATE ${CMAKE_SOURCE_DIR}/src)
+add_test(NAME FishingTests COMMAND test_fishing)

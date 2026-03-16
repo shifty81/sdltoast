@@ -17,6 +17,10 @@
 #include "../systems/Calendar.h"
 #include "../systems/Crafting.h"
 #include "../systems/SaveSystem.h"
+#include "../systems/Energy.h"
+#include "../systems/Skills.h"
+#include "../systems/Quest.h"
+#include "../systems/Fishing.h"
 #include "../ui/HUD.h"
 #include <raylib.h>
 #include <iostream>
@@ -30,6 +34,7 @@ Game::Game()
     , m_showCrafting(false)
     , m_craftingIndex(0)
     , m_damageCooldown(0.0f)
+    , m_dialogueChoiceIndex(0)
 {
 }
 
@@ -87,6 +92,10 @@ bool Game::Initialize(const std::string& title, int width, int height) {
     m_calendar = std::make_unique<Calendar>();
     m_inventory = std::make_unique<Inventory>();
     m_crafting = std::make_unique<Crafting>();
+    m_energy = std::make_unique<Energy>();
+    m_skills = std::make_unique<Skills>();
+    m_questSystem = std::make_unique<QuestSystem>();
+    m_fishingSystem = std::make_unique<FishingSystem>();
     
     // Generate world using new system
     m_currentMap = std::make_unique<Map>(25, 19);
@@ -117,7 +126,8 @@ bool Game::Initialize(const std::string& title, int width, int height) {
     Logger::Instance().Info("  F - Plant crop");
     Logger::Instance().Info("  H - Harvest crop");
     Logger::Instance().Info("  C - Chop tree");
-    Logger::Instance().Info("  N - Advance day");
+    Logger::Instance().Info("  G - Cast fishing line");
+    Logger::Instance().Info("  N - Advance day (sleep)");
     Logger::Instance().Info("  I - Toggle inventory");
     Logger::Instance().Info("  P - Toggle crafting menu");
     Logger::Instance().Info("  E - Talk to NPC");
@@ -207,6 +217,9 @@ void Game::Update(float deltaTime) {
     // NPC interaction
     HandleNPCInteraction();
 
+    // Fishing
+    HandleFishing();
+
     // Save/Load
     HandleSaveLoad();
 
@@ -292,21 +305,33 @@ void Game::HandleFarmingActions() {
     m_currentMap->WorldToTile(px + pw / 2, py + ph / 2, tileX, tileY);
 
     if (m_input->IsKeyPressed(KEY_T)) {
-        if (m_currentMap->TillSoil(tileX, tileY)) {
+        if (m_energy && !m_energy->HasEnergy(Energy::COST_TILL)) {
+            m_actionText = "Too tired to till!";
+        } else if (m_currentMap->TillSoil(tileX, tileY)) {
+            if (m_energy) m_energy->Consume(Energy::COST_TILL);
+            if (m_skills) m_skills->AddXP(SkillType::FARMING, 5);
             m_actionText = "Tilled soil!";
             Logger::Instance().Info("Tilled soil at (" + std::to_string(tileX) + "," + std::to_string(tileY) + ")");
         }
     }
 
     if (m_input->IsKeyPressed(KEY_R)) {
-        if (m_currentMap->WaterTile(tileX, tileY)) {
+        if (m_energy && !m_energy->HasEnergy(Energy::COST_WATER)) {
+            m_actionText = "Too tired to water!";
+        } else if (m_currentMap->WaterTile(tileX, tileY)) {
+            if (m_energy) m_energy->Consume(Energy::COST_WATER);
+            if (m_skills) m_skills->AddXP(SkillType::FARMING, 3);
             m_actionText = "Watered tile!";
             Logger::Instance().Info("Watered tile at (" + std::to_string(tileX) + "," + std::to_string(tileY) + ")");
         }
     }
 
     if (m_input->IsKeyPressed(KEY_F)) {
-        if (m_currentMap->PlantCrop(tileX, tileY, static_cast<int>(CropType::PARSNIP))) {
+        if (m_energy && !m_energy->HasEnergy(Energy::COST_PLANT)) {
+            m_actionText = "Too tired to plant!";
+        } else if (m_currentMap->PlantCrop(tileX, tileY, static_cast<int>(CropType::PARSNIP))) {
+            if (m_energy) m_energy->Consume(Energy::COST_PLANT);
+            if (m_skills) m_skills->AddXP(SkillType::FARMING, 4);
             m_actionText = "Planted Parsnip!";
             Logger::Instance().Info("Planted crop at (" + std::to_string(tileX) + "," + std::to_string(tileY) + ")");
         }
@@ -315,15 +340,27 @@ void Game::HandleFarmingActions() {
     if (m_input->IsKeyPressed(KEY_H)) {
         Tile* tile = m_currentMap->GetTileAt(tileX, tileY);
         if (tile && tile->GetSoilState() == SoilState::HARVEST) {
-            CropType type = static_cast<CropType>(tile->GetCropType());
-            std::string cropName = FarmingSystem::GetCropName(type);
-            int cropValue = FarmingSystem::GetCropValue(type);
+            if (m_energy && !m_energy->HasEnergy(Energy::COST_HARVEST)) {
+                m_actionText = "Too tired to harvest!";
+            } else {
+                CropType type = static_cast<CropType>(tile->GetCropType());
+                std::string cropName = FarmingSystem::GetCropName(type);
+                int cropValue = FarmingSystem::GetCropValue(type);
 
-            m_currentMap->HarvestCrop(tileX, tileY);
-            m_inventory->AddItem(cropName, 1);
-            m_gold += cropValue;
-            m_actionText = "Harvested " + cropName + "! +" + std::to_string(cropValue) + "g";
-            Logger::Instance().Info("Harvested " + cropName + " for " + std::to_string(cropValue) + " gold");
+                m_currentMap->HarvestCrop(tileX, tileY);
+                if (m_energy) m_energy->Consume(Energy::COST_HARVEST);
+                if (m_skills) m_skills->AddXP(SkillType::FARMING, 8);
+                m_inventory->AddItem(cropName, 1);
+                m_gold += cropValue;
+                m_actionText = "Harvested " + cropName + "! +" + std::to_string(cropValue) + "g";
+                Logger::Instance().Info("Harvested " + cropName + " for " + std::to_string(cropValue) + " gold");
+
+                // Update quest objective
+                if (m_questSystem) {
+                    m_questSystem->UpdateObjective("farm_beginnings", 0, 1);
+                    m_questSystem->CheckCompletion("farm_beginnings");
+                }
+            }
         }
     }
 }
@@ -340,10 +377,20 @@ void Game::HandleTreeChopping() {
         int tileX, tileY;
         m_currentMap->WorldToTile(px + pw / 2, py + ph / 2, tileX, tileY);
 
-        if (m_currentMap->ChopTree(tileX, tileY)) {
+        if (m_energy && !m_energy->HasEnergy(Energy::COST_CHOP)) {
+            m_actionText = "Too tired to chop!";
+        } else if (m_currentMap->ChopTree(tileX, tileY)) {
+            if (m_energy) m_energy->Consume(Energy::COST_CHOP);
+            if (m_skills) m_skills->AddXP(SkillType::FORAGING, 6);
             m_inventory->AddItem("Wood", 3);
             m_actionText = "Chopped tree! +3 Wood";
             Logger::Instance().Info("Chopped tree at (" + std::to_string(tileX) + "," + std::to_string(tileY) + ")");
+
+            // Update quest objective
+            if (m_questSystem) {
+                m_questSystem->UpdateObjective("lumberjack", 0, 3);
+                m_questSystem->CheckCompletion("lumberjack");
+            }
         }
     }
 }
@@ -352,21 +399,33 @@ void Game::HandleCombatActions() {
     if (!m_player) return;
 
     if (m_input->IsKeyPressed(KEY_SPACE)) {
-        bool hitAny = false;
-        for (auto& enemy : m_enemies) {
-            if (Combat::PlayerAttack(m_player.get(), enemy.get(), 1)) {
-                hitAny = true;
-                if (!enemy->IsActive()) {
-                    m_gold += Combat::ENEMY_KILL_GOLD;
-                    m_actionText = "Enemy defeated! +" + std::to_string(Combat::ENEMY_KILL_GOLD) + "g";
-                    Logger::Instance().Info("Enemy defeated! Gold: " + std::to_string(m_gold));
-                } else {
-                    m_actionText = "Hit enemy! HP: " + std::to_string(enemy->GetHealth());
+        if (m_energy && !m_energy->HasEnergy(Energy::COST_ATTACK)) {
+            m_actionText = "Too tired to attack!";
+        } else {
+            if (m_energy) m_energy->Consume(Energy::COST_ATTACK);
+            bool hitAny = false;
+            for (auto& enemy : m_enemies) {
+                if (Combat::PlayerAttack(m_player.get(), enemy.get(), 1)) {
+                    hitAny = true;
+                    if (m_skills) m_skills->AddXP(SkillType::COMBAT, 10);
+                    if (!enemy->IsActive()) {
+                        m_gold += Combat::ENEMY_KILL_GOLD;
+                        m_actionText = "Enemy defeated! +" + std::to_string(Combat::ENEMY_KILL_GOLD) + "g";
+                        Logger::Instance().Info("Enemy defeated! Gold: " + std::to_string(m_gold));
+
+                        // Update quest objective
+                        if (m_questSystem) {
+                            m_questSystem->UpdateObjective("monster_slayer", 0, 1);
+                            m_questSystem->CheckCompletion("monster_slayer");
+                        }
+                    } else {
+                        m_actionText = "Hit enemy! HP: " + std::to_string(enemy->GetHealth());
+                    }
                 }
             }
-        }
-        if (!hitAny) {
-            m_actionText = "Attack!";
+            if (!hitAny) {
+                m_actionText = "Attack!";
+            }
         }
     }
 }
@@ -375,6 +434,11 @@ void Game::AdvanceDay() {
     if (!m_calendar || !m_currentMap) return;
 
     m_calendar->AdvanceDay();
+
+    // Restore energy on sleep
+    if (m_energy) {
+        m_energy->RestoreFull();
+    }
     
     // Grow crops on the map
     int width = m_currentMap->GetWidth();
@@ -521,9 +585,19 @@ void Game::HandleNPCInteraction() {
                 if (!dlg.IsActive()) {
                     dlg.Start();
                     npc->AddFriendship(1);
+                    m_dialogueChoiceIndex = 0;
                     const DialogueNode* node = dlg.GetCurrentNode();
                     if (node) {
                         m_actionText = node->speakerLine;
+                        if (!node->choices.empty()) {
+                            m_actionText += " [" + node->choices[0].text + "]";
+                        }
+                    }
+
+                    // Update quest objective
+                    if (m_questSystem) {
+                        m_questSystem->UpdateObjective("community_helper", 0, 1);
+                        m_questSystem->CheckCompletion("community_helper");
                     }
                 } else {
                     // Advance or close dialogue
@@ -531,12 +605,17 @@ void Game::HandleNPCInteraction() {
                     if (node && node->choices.empty()) {
                         dlg.Advance();
                     } else if (node && !node->choices.empty()) {
-                        // TODO: Add UI for player to pick a choice; for now auto-selects first
-                        dlg.SelectChoice(0);
+                        // Use Up/Down to navigate choices, E to confirm
+                        dlg.SelectChoice(m_dialogueChoiceIndex);
+                        m_dialogueChoiceIndex = 0;
                     }
                     const DialogueNode* next = dlg.GetCurrentNode();
                     if (next) {
                         m_actionText = next->speakerLine;
+                        if (!next->choices.empty()) {
+                            int idx = std::min(m_dialogueChoiceIndex, static_cast<int>(next->choices.size()) - 1);
+                            m_actionText += " [" + next->choices[idx].text + "]";
+                        }
                     } else {
                         m_actionText = npc->GetName() + ": See you later!";
                     }
@@ -545,13 +624,78 @@ void Game::HandleNPCInteraction() {
             }
         }
     }
+
+    // Navigate dialogue choices with Up/Down when in dialogue
+    if (m_input->IsKeyPressed(KEY_UP)) {
+        if (m_dialogueChoiceIndex > 0) m_dialogueChoiceIndex--;
+    }
+    if (m_input->IsKeyPressed(KEY_DOWN)) {
+        m_dialogueChoiceIndex++;
+    }
+}
+
+void Game::HandleFishing() {
+    if (!m_player || !m_fishingSystem || !m_calendar) return;
+
+    if (m_input->IsKeyPressed(KEY_G)) {
+        // Check if near water
+        float px, py;
+        m_player->GetPosition(px, py);
+        float pw, ph;
+        m_player->GetSize(pw, ph);
+        int tileX, tileY;
+        m_currentMap->WorldToTile(px + pw / 2, py + ph / 2, tileX, tileY);
+
+        // Check adjacent tiles for water
+        bool nearWater = false;
+        for (int dy = -1; dy <= 1; ++dy) {
+            for (int dx = -1; dx <= 1; ++dx) {
+                const Tile* adj = m_currentMap->GetTileAt(tileX + dx, tileY + dy);
+                if (adj && adj->GetType() == TileType::WATER) {
+                    nearWater = true;
+                    break;
+                }
+            }
+            if (nearWater) break;
+        }
+
+        if (!nearWater) {
+            m_actionText = "No water nearby to fish!";
+            return;
+        }
+
+        if (m_energy && !m_energy->HasEnergy(Energy::COST_FISH_CAST)) {
+            m_actionText = "Too tired to fish!";
+            return;
+        }
+
+        if (m_energy) m_energy->Consume(Energy::COST_FISH_CAST);
+        int skillLevel = m_skills ? m_skills->GetLevel(SkillType::FISHING) : 0;
+        int result = m_fishingSystem->AttemptCatch(m_calendar->GetSeason(), skillLevel);
+
+        if (result >= 0) {
+            const FishType* fish = m_fishingSystem->GetFish(result);
+            if (fish) {
+                m_inventory->AddItem(fish->name, 1);
+                m_gold += fish->value;
+                if (m_skills) m_skills->AddXP(SkillType::FISHING, fish->difficulty * 5);
+                m_actionText = "Caught " + fish->name + "! +" + std::to_string(fish->value) + "g";
+                Logger::Instance().Info("Caught: " + fish->name + " (value: " + std::to_string(fish->value) + ")");
+            }
+        } else {
+            if (m_skills) m_skills->AddXP(SkillType::FISHING, 2);
+            m_actionText = "The fish got away...";
+        }
+    }
 }
 
 void Game::HandleSaveLoad() {
     if (m_input->IsKeyPressed(KEY_F5)) {
         if (SaveSystem::Save(SaveSystem::DEFAULT_SAVE_PATH,
                              m_player.get(), m_inventory.get(),
-                             m_calendar.get(), m_gold)) {
+                             m_calendar.get(), m_gold,
+                             m_energy.get(), m_skills.get(),
+                             m_questSystem.get())) {
             m_actionText = "Game saved!";
         } else {
             m_actionText = "Save failed!";
@@ -561,7 +705,9 @@ void Game::HandleSaveLoad() {
     if (m_input->IsKeyPressed(KEY_F9)) {
         if (SaveSystem::Load(SaveSystem::DEFAULT_SAVE_PATH,
                              m_player.get(), m_inventory.get(),
-                             m_calendar.get(), m_gold)) {
+                             m_calendar.get(), m_gold,
+                             m_energy.get(), m_skills.get(),
+                             m_questSystem.get())) {
             m_actionText = "Game loaded!";
         } else {
             m_actionText = "No save file found!";
@@ -574,6 +720,9 @@ void Game::UpdateHUD() {
 
     m_hud->SetHealth(m_player->GetHealth(), m_player->GetMaxHealth());
     m_hud->SetGold(m_gold);
+    if (m_energy) {
+        m_hud->SetEnergy(m_energy->GetCurrent(), m_energy->GetMax());
+    }
     m_hud->SetDayInfo(m_calendar->GetDay(), m_calendar->GetSeasonName(), m_calendar->GetYear());
     m_hud->SetActionText(m_actionText);
     m_hud->SetShowInventory(m_showInventory || m_showCrafting);
@@ -645,6 +794,10 @@ void Game::Shutdown() {
     m_calendar.reset();
     m_inventory.reset();
     m_crafting.reset();
+    m_energy.reset();
+    m_skills.reset();
+    m_questSystem.reset();
+    m_fishingSystem.reset();
     m_player.reset();
     m_currentMap.reset();
     
