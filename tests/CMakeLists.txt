@@ -147,3 +147,20 @@ add_executable(test_fishing
 )
 target_include_directories(test_fishing PRIVATE ${CMAKE_SOURCE_DIR}/src)
 add_test(NAME FishingTests COMMAND test_fishing)
+
+# Test: Shop/Commerce system (depends on Inventory for buy/sell)
+add_executable(test_shop
+    test_shop.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Shop.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Inventory.cpp
+)
+target_include_directories(test_shop PRIVATE ${CMAKE_SOURCE_DIR}/src)
+add_test(NAME ShopTests COMMAND test_shop)
+
+# Test: Mining system (pure logic)
+add_executable(test_mining
+    test_mining.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Mining.cpp
+)
+target_include_directories(test_mining PRIVATE ${CMAKE_SOURCE_DIR}/src)
+add_test(NAME MiningTests COMMAND test_mining)

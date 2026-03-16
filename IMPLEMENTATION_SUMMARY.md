@@ -239,10 +239,12 @@ Run the game and press:
 ⏭️ Sprite assets (replace colored rectangles)
 ⏭️ Multiple dungeons with unique themes
 ⏭️ Music and sound effects
-⏭️ Shop/commerce system (buy/sell items with NPCs)
-⏭️ Mining mini-game mechanics
+⏭️ Animal husbandry system
+⏭️ Skill-based bonuses
 
 ### Recently Completed
+✅ Shop/commerce system — 3 shops (General Store, Blacksmith, Tavern), buy/sell with gold and inventory integration (20 tests)
+✅ Mining system — 10 ore/gem types, skill-based availability, energy cost scaling, XP rewards (17 tests)
 ✅ Energy system — actions consume energy, restored on sleep (16 tests)
 ✅ Skill progression — 5 skills (Farming, Combat, Mining, Fishing, Foraging), XP and leveling to 10 (15 tests)
 ✅ Fishing system — 10 fish types, seasonal availability, difficulty-based catch mechanics (13 tests)

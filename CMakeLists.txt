@@ -59,6 +59,8 @@ set(SOURCES
     src/systems/Energy.cpp
     src/systems/Skills.cpp
     src/systems/Fishing.cpp
+    src/systems/Shop.cpp
+    src/systems/Mining.cpp
     src/world/Map.cpp
     src/world/Tile.cpp
     src/world/Dungeon.cpp
@@ -92,6 +94,8 @@ set(HEADERS
     src/systems/Energy.h
     src/systems/Skills.h
     src/systems/Fishing.h
+    src/systems/Shop.h
+    src/systems/Mining.h
     src/world/Map.h
     src/world/Tile.h
     src/world/Dungeon.h
