@@ -62,9 +62,12 @@ set(SOURCES
     src/systems/Fishing.cpp
     src/systems/Shop.cpp
     src/systems/Mining.cpp
+    src/systems/AnimalHusbandry.cpp
+    src/systems/SkillBonuses.cpp
     src/world/Map.cpp
     src/world/Tile.cpp
     src/world/Dungeon.cpp
+    src/world/DungeonTheme.cpp
     src/world/WorldGenerator.cpp
     src/ui/HUD.cpp
     src/ui/Menu.cpp
@@ -98,9 +101,12 @@ set(HEADERS
     src/systems/Fishing.h
     src/systems/Shop.h
     src/systems/Mining.h
+    src/systems/AnimalHusbandry.h
+    src/systems/SkillBonuses.h
     src/world/Map.h
     src/world/Tile.h
     src/world/Dungeon.h
+    src/world/DungeonTheme.h
     src/world/WorldGenerator.h
     src/ui/HUD.h
     src/ui/Menu.h

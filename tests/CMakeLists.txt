@@ -81,9 +81,11 @@ add_executable(test_map
     test_map.cpp
     ${CMAKE_SOURCE_DIR}/src/world/Map.cpp
     ${CMAKE_SOURCE_DIR}/src/world/Tile.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/TilesetConfig.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/Renderer.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/SpriteSheet.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/Logger.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Calendar.cpp
 )
 target_include_directories(test_map PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(test_map raylib)
@@ -174,3 +176,28 @@ add_executable(test_tileset_config
 )
 target_include_directories(test_tileset_config PRIVATE ${CMAKE_SOURCE_DIR}/src)
 add_test(NAME TilesetConfigTests COMMAND test_tileset_config)
+
+# Test: Animal Husbandry system (pure logic)
+add_executable(test_animal
+    test_animal.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/AnimalHusbandry.cpp
+)
+target_include_directories(test_animal PRIVATE ${CMAKE_SOURCE_DIR}/src)
+add_test(NAME AnimalTests COMMAND test_animal)
+
+# Test: Skill Bonuses system (depends on Skills for convenience overloads)
+add_executable(test_skill_bonuses
+    test_skill_bonuses.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/SkillBonuses.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Skills.cpp
+)
+target_include_directories(test_skill_bonuses PRIVATE ${CMAKE_SOURCE_DIR}/src)
+add_test(NAME SkillBonusesTests COMMAND test_skill_bonuses)
+
+# Test: Dungeon Theme system (pure logic)
+add_executable(test_dungeon_theme
+    test_dungeon_theme.cpp
+    ${CMAKE_SOURCE_DIR}/src/world/DungeonTheme.cpp
+)
+target_include_directories(test_dungeon_theme PRIVATE ${CMAKE_SOURCE_DIR}/src)
+add_test(NAME DungeonThemeTests COMMAND test_dungeon_theme)
