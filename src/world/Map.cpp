@@ -1,6 +1,8 @@
 #include "Map.h"
 #include "../engine/Renderer.h"
 #include "../engine/SpriteSheet.h"
+#include "../engine/TilesetConfig.h"
+#include "../systems/Calendar.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -238,6 +240,52 @@ int Map::GetTileSpriteId(const Tile* tile) const {
         case TileType::DECORATION: return 40 + tile->GetVisualId();
         case TileType::TREE:       return 50;
         default:                   return 0;
+    }
+}
+
+void Map::Render(Renderer* renderer, Season season, const TilesetConfig* config) {
+    if (!config) {
+        // No config provided — use the original method
+        Render(renderer);
+        return;
+    }
+
+    SpriteSheet* worldTiles = SpriteSheetManager::Instance().GetSpriteSheet("world_tiles");
+
+    for (int y = 0; y < m_height; ++y) {
+        for (int x = 0; x < m_width; ++x) {
+            const Tile* tile = GetTileAt(x, y);
+            if (!tile) continue;
+
+            int screenX = x * TILE_SIZE;
+            int screenY = y * TILE_SIZE;
+
+            if (worldTiles && worldTiles->IsLoaded()) {
+                int tileId = GetTileSpriteId(tile, season, config);
+                worldTiles->RenderTile(renderer, tileId, screenX, screenY, TILE_SIZE, TILE_SIZE);
+            } else {
+                RenderTileFallback(renderer, tile, screenX, screenY);
+            }
+        }
+    }
+}
+
+int Map::GetTileSpriteId(const Tile* tile, Season season, const TilesetConfig* config) const {
+    TileType type = tile->GetType();
+
+    switch (type) {
+        case TileType::WATER:
+            return config->GetWaterFrame(m_waterAnimFrame);
+        case TileType::WALL:
+            return config->GetWallAutoTileBase() + tile->GetVisualId();
+        case TileType::CROP:
+            return config->GetCropGrowthBase() + tile->GetGrowthStage();
+        case TileType::DECORATION:
+            return config->GetDecorationBase() + tile->GetVisualId();
+        case TileType::TREE:
+            return config->GetTreeBase();
+        default:
+            return config->GetSpriteId(type, season);
     }
 }
 

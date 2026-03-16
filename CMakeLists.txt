@@ -43,6 +43,7 @@ set(SOURCES
     src/engine/AssetManager.cpp
     src/engine/AudioManager.cpp
     src/engine/SpriteSheet.cpp
+    src/engine/TilesetConfig.cpp
     src/engine/Logger.cpp
     src/entities/Entity.cpp
     src/entities/Player.cpp
@@ -78,6 +79,7 @@ set(HEADERS
     src/engine/AssetManager.h
     src/engine/AudioManager.h
     src/engine/SpriteSheet.h
+    src/engine/TilesetConfig.h
     src/engine/Logger.h
     src/entities/Entity.h
     src/entities/Player.h

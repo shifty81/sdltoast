@@ -164,3 +164,13 @@ add_executable(test_mining
 )
 target_include_directories(test_mining PRIVATE ${CMAKE_SOURCE_DIR}/src)
 add_test(NAME MiningTests COMMAND test_mining)
+
+# Test: TilesetConfig system (pure logic — no Raylib needed)
+add_executable(test_tileset_config
+    test_tileset_config.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/TilesetConfig.cpp
+    ${CMAKE_SOURCE_DIR}/src/world/Tile.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Calendar.cpp
+)
+target_include_directories(test_tileset_config PRIVATE ${CMAKE_SOURCE_DIR}/src)
+add_test(NAME TilesetConfigTests COMMAND test_tileset_config)

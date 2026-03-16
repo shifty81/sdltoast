@@ -233,16 +233,18 @@ Run the game and press:
 ✅ Smart tile system
 ✅ Player movement and rendering
 ✅ Map system with farming support
+✅ Configurable tileset system with seasonal support
 ✅ Documentation and build system
 
 ### What's Next (Content)
-⏭️ Sprite assets (replace colored rectangles)
+⏭️ Sprite assets (drop in "The Seasons Collective" or any RPG tileset — just edit tileset.cfg)
 ⏭️ Multiple dungeons with unique themes
 ⏭️ Music and sound effects
 ⏭️ Animal husbandry system
 ⏭️ Skill-based bonuses
 
 ### Recently Completed
+✅ TilesetConfig system — configurable tile-type→sprite-ID mapping with per-season overrides, file-based config, seasonal tileset support (13 tests)
 ✅ Shop/commerce system — 3 shops (General Store, Blacksmith, Tavern), buy/sell with gold and inventory integration (20 tests)
 ✅ Mining system — 10 ore/gem types, skill-based availability, energy cost scaling, XP rewards (17 tests)
 ✅ Energy system — actions consume energy, restored on sleep (16 tests)
