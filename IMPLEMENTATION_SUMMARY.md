@@ -112,6 +112,27 @@ Collision/Rules → Tile Painting → Decoration
 - **Difficulty-Based**: Skill level affects catch chance (40% base + 5% per level)
 - **Value Range**: 20g (Carp) to 150g (Golden Trout)
 
+#### 15. Animal Husbandry (`AnimalHusbandry.h/cpp`)
+- **5 Animal Types**: Chicken, Cow, Sheep, Goat, Pig
+- **Daily Care**: Feed and pet animals for happiness (+1 per day, -2 if not fed)
+- **Production System**: Animals produce goods (Eggs, Milk, Wool, Goat Milk, Truffles)
+- **Value Scaling**: Product value scales with happiness (0.5x–2.0x multiplier)
+- **Purchase Costs**: 200g (Chicken) to 600g (Pig)
+
+#### 16. Skill-Based Bonuses (`SkillBonuses.h/cpp`)
+- **Farming**: Crop value multiplier (1.0x–2.0x), growth speed bonus (0–3 days)
+- **Combat**: Damage bonus (+0–5), critical hit chance (0%–30%)
+- **Mining**: Extra ore chance (0%–50%), energy cost reduction (0–2)
+- **Fishing**: Catch rate bonus (+0–50%), fish value multiplier (1.0x–2.5x)
+- **Foraging**: Double harvest chance (0%–40%), rare find chance (0%–20%)
+
+#### 17. Dungeon Themes (`DungeonTheme.h/cpp`)
+- **5 Themed Dungeons**: Forest Temple, Crystal Caverns, Desert Pyramid, Shadow Catacombs, Sky Tower
+- **Scaling Difficulty**: Tiers 1–5 with increasing boss HP/damage
+- **Level Gating**: Recommended combat levels for progression
+- **Variable Room Counts**: 5–16 rooms based on theme
+- **Loot Tiers**: 1–5 loot quality matching difficulty
+
 ### Game Engine
 
 #### Core Systems (`src/engine/`)
@@ -183,8 +204,8 @@ Run the game and press:
 ## 🔢 Statistics
 
 - **70+ Files Created**: Source, headers, docs, config, data
-- **~18,000 Lines of Code and Documentation**
-- **197 Unit Tests** across 14 test suites
+- **~20,000 Lines of Code and Documentation**
+- **314 Unit Tests** across 20 test suites
 - **12+ Tile Types** with semantic meaning
 - **3 World Types**: Farm, Dungeon, Overworld
 - **5-State Farming System**
@@ -238,12 +259,13 @@ Run the game and press:
 
 ### What's Next (Content)
 ⏭️ Sprite assets (drop in "The Seasons Collective" or any RPG tileset — just edit tileset.cfg)
-⏭️ Multiple dungeons with unique themes
 ⏭️ Music and sound effects
-⏭️ Animal husbandry system
-⏭️ Skill-based bonuses
+⏭️ Marriage system
 
 ### Recently Completed
+✅ Animal husbandry system — 5 animal types (Chicken, Cow, Sheep, Goat, Pig), happiness/care mechanics, daily produce with value scaling (25 tests)
+✅ Skill-based bonuses — farming quality, combat damage, mining efficiency, fishing catch rate, foraging double harvest (23 tests)
+✅ Multiple dungeon themes — 5 themed dungeons (Forest Temple, Crystal Caverns, Desert Pyramid, Shadow Catacombs, Sky Tower) with scaling difficulty/loot (18 tests)
 ✅ TilesetConfig system — configurable tile-type→sprite-ID mapping with per-season overrides, file-based config, seasonal tileset support (13 tests)
 ✅ Shop/commerce system — 3 shops (General Store, Blacksmith, Tavern), buy/sell with gold and inventory integration (20 tests)
 ✅ Mining system — 10 ore/gem types, skill-based availability, energy cost scaling, XP rewards (17 tests)
@@ -277,6 +299,9 @@ Run the game and press:
 ✅ Unit tests for Energy system (16 tests: consume, restore, increase max, action costs)
 ✅ Unit tests for Skills system (15 tests: XP, leveling, multi-level, max cap, per-skill independence)
 ✅ Unit tests for Fishing system (13 tests: seasonal fish, catch mechanics, difficulty range)
+✅ Unit tests for Animal Husbandry system (25 tests: add/remove, feed/pet, happiness, production, value scaling)
+✅ Unit tests for Skill Bonuses system (23 tests: all 5 skill types, edge cases, Skills object convenience)
+✅ Unit tests for Dungeon Theme system (18 tests: theme data, difficulty ordering, level gating, boss stats)
 
 ## 🎓 Learning Outcomes
 
