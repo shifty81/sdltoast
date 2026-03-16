@@ -109,6 +109,9 @@ add_executable(test_savesystem
     ${CMAKE_SOURCE_DIR}/src/systems/SaveSystem.cpp
     ${CMAKE_SOURCE_DIR}/src/systems/Inventory.cpp
     ${CMAKE_SOURCE_DIR}/src/systems/Calendar.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Energy.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Skills.cpp
+    ${CMAKE_SOURCE_DIR}/src/systems/Quest.cpp
     ${CMAKE_SOURCE_DIR}/src/entities/Entity.cpp
     ${CMAKE_SOURCE_DIR}/src/entities/Player.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/Input.cpp

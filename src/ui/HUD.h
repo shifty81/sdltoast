@@ -15,6 +15,7 @@ public:
     
     void SetHealth(int current, int max) { m_currentHealth = current; m_maxHealth = max; }
     void SetGold(int gold) { m_gold = gold; }
+    void SetEnergy(int current, int max) { m_currentEnergy = current; m_maxEnergy = max; }
     void SetDayInfo(int day, const std::string& season, int year);
     void SetActionText(const std::string& text) { m_actionText = text; }
     void SetShowInventory(bool show) { m_showInventory = show; }
@@ -27,6 +28,8 @@ private:
     int m_currentHealth = 3;
     int m_maxHealth = 3;
     int m_gold = 0;
+    int m_currentEnergy = 100;
+    int m_maxEnergy = 100;
     int m_day = 1;
     std::string m_season = "Spring";
     int m_year = 1;

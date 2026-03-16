@@ -28,6 +28,18 @@ void HUD::Render(Renderer* renderer) {
     std::string goldText = "Gold: " + std::to_string(m_gold);
     renderer->DrawGameText(goldText.c_str(), 10, 38, 16, 255, 215, 0);
 
+    // Draw energy bar
+    int barX = 10, barY = 58, barW = 120, barH = 12;
+    renderer->FillRect(barX, barY, barW, barH, 40, 40, 40);
+    if (m_maxEnergy > 0) {
+        int fillW = (m_currentEnergy * barW) / m_maxEnergy;
+        unsigned char g = static_cast<unsigned char>(180 + (m_currentEnergy * 75 / m_maxEnergy));
+        renderer->FillRect(barX, barY, fillW, barH, 50, g, 50);
+    }
+    renderer->DrawRect(barX, barY, barW, barH, 100, 200, 100);
+    std::string energyText = "E: " + std::to_string(m_currentEnergy) + "/" + std::to_string(m_maxEnergy);
+    renderer->DrawGameText(energyText.c_str(), barX + barW + 5, barY - 1, 14, 150, 255, 150);
+
     // Draw day/season info (top-right)
     std::string dayText = m_season + " " + std::to_string(m_day) + ", Year " + std::to_string(m_year);
     renderer->DrawGameText(dayText.c_str(), 600, 10, 16, 255, 255, 255);
