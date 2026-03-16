@@ -78,7 +78,11 @@ bool TilesetConfig::LoadFromFile(const std::string& filepath) {
         if (key == "TILE_SIZE") {
             iss >> m_tileSize;
         } else if (key == "SHEET_FILE") {
-            iss >> m_sheetFile;
+            // Read rest of line to support paths with spaces
+            std::string rest;
+            std::getline(iss, rest);
+            if (!rest.empty() && rest[0] == ' ') rest = rest.substr(1);
+            if (!rest.empty()) m_sheetFile = rest;
         } else if (key == "WALL_AUTOTILE_BASE") {
             iss >> m_wallAutoTileBase;
         } else if (key == "CROP_GROWTH_BASE") {

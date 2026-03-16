@@ -139,28 +139,8 @@ void Map::Update(float deltaTime) {
 }
 
 void Map::Render(Renderer* renderer) {
-    // Try to use sprite sheets if available
-    SpriteSheet* worldTiles = SpriteSheetManager::Instance().GetSpriteSheet("world_tiles");
-    
-    for (int y = 0; y < m_height; ++y) {
-        for (int x = 0; x < m_width; ++x) {
-            const Tile* tile = GetTileAt(x, y);
-            if (!tile) continue;
-            
-            int screenX = x * TILE_SIZE;
-            int screenY = y * TILE_SIZE;
-            
-            // Use sprite sheet if loaded
-            if (worldTiles && worldTiles->IsLoaded()) {
-                // Map tile type to sprite sheet tile ID
-                int tileId = GetTileSpriteId(tile);
-                worldTiles->RenderTile(renderer, tileId, screenX, screenY, TILE_SIZE, TILE_SIZE);
-            } else {
-                // Fallback: Render colored rectangles (current method)
-                RenderTileFallback(renderer, tile, screenX, screenY);
-            }
-        }
-    }
+    // Delegate to the season-aware overload with defaults
+    Render(renderer, Season::SPRING, nullptr);
 }
 
 void Map::RenderTileFallback(Renderer* renderer, const Tile* tile, int screenX, int screenY) {
@@ -244,12 +224,6 @@ int Map::GetTileSpriteId(const Tile* tile) const {
 }
 
 void Map::Render(Renderer* renderer, Season season, const TilesetConfig* config) {
-    if (!config) {
-        // No config provided — use the original method
-        Render(renderer);
-        return;
-    }
-
     SpriteSheet* worldTiles = SpriteSheetManager::Instance().GetSpriteSheet("world_tiles");
 
     for (int y = 0; y < m_height; ++y) {
@@ -261,7 +235,9 @@ void Map::Render(Renderer* renderer, Season season, const TilesetConfig* config)
             int screenY = y * TILE_SIZE;
 
             if (worldTiles && worldTiles->IsLoaded()) {
-                int tileId = GetTileSpriteId(tile, season, config);
+                int tileId = config
+                    ? GetTileSpriteId(tile, season, config)
+                    : GetTileSpriteId(tile);
                 worldTiles->RenderTile(renderer, tileId, screenX, screenY, TILE_SIZE, TILE_SIZE);
             } else {
                 RenderTileFallback(renderer, tile, screenX, screenY);

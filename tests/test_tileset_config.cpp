@@ -200,6 +200,18 @@ TEST(test_overrides_persist_on_reload) {
     ASSERT_EQ(cfg.GetSpriteId(TileType::GRASS), 99);
 }
 
+TEST(test_sheet_file_with_spaces) {
+    const char* path = "/tmp/test_spaces.cfg";
+    {
+        std::ofstream f(path);
+        f << "SHEET_FILE assets/my tilesets/world tileset.png\n";
+    }
+
+    TilesetConfig cfg;
+    ASSERT_TRUE(cfg.LoadFromFile(path));
+    ASSERT_EQ(cfg.GetSheetFile(), "assets/my tilesets/world tileset.png");
+}
+
 TEST(test_all_tile_types_have_defaults) {
     TilesetConfig cfg;
     cfg.LoadDefaults();
@@ -232,6 +244,7 @@ int main() {
     RUN_TEST(test_load_comments_and_empty_lines);
     RUN_TEST(test_unknown_tile_type_returns_zero);
     RUN_TEST(test_overrides_persist_on_reload);
+    RUN_TEST(test_sheet_file_with_spaces);
     RUN_TEST(test_all_tile_types_have_defaults);
 
     std::cout << std::endl << s_passed << " passed, " << s_failed << " failed" << std::endl;
