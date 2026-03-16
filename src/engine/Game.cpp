@@ -4,6 +4,7 @@
 #include "AssetManager.h"
 #include "AudioManager.h"
 #include "SpriteSheet.h"
+#include "TilesetConfig.h"
 #include "Logger.h"
 #include "../entities/Player.h"
 #include "../entities/Enemy.h"
@@ -96,6 +97,13 @@ bool Game::Initialize(const std::string& title, int width, int height) {
     m_skills = std::make_unique<Skills>();
     m_questSystem = std::make_unique<QuestSystem>();
     m_fishingSystem = std::make_unique<FishingSystem>();
+
+    // Initialize tileset configuration
+    m_tilesetConfig = std::make_unique<TilesetConfig>();
+    if (!m_tilesetConfig->LoadFromFile("assets/tilesets/tileset.cfg")) {
+        Logger::Instance().Info("No tileset config found, using defaults");
+        m_tilesetConfig->LoadDefaults();
+    }
     
     // Generate world using new system
     m_currentMap = std::make_unique<Map>(25, 19);
@@ -755,9 +763,10 @@ void Game::UpdateHUD() {
 void Game::Render() {
     m_renderer->Clear(20, 20, 30); // Dark background
 
-    // Render map
+    // Render map (with seasonal tileset support)
     if (m_currentMap) {
-        m_currentMap->Render(m_renderer.get());
+        Season season = m_calendar ? m_calendar->GetSeason() : Season::SPRING;
+        m_currentMap->Render(m_renderer.get(), season, m_tilesetConfig.get());
     }
 
     // Render enemies
@@ -798,6 +807,7 @@ void Game::Shutdown() {
     m_skills.reset();
     m_questSystem.reset();
     m_fishingSystem.reset();
+    m_tilesetConfig.reset();
     m_player.reset();
     m_currentMap.reset();
     

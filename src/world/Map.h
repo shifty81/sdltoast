@@ -6,6 +6,8 @@
 #include <string>
 
 class Renderer;
+class TilesetConfig;
+enum class Season;
 
 /**
  * Map class represents a tile-based world
@@ -21,6 +23,7 @@ public:
     bool SaveToFile(const std::string& filepath) const;
     void Update(float deltaTime);
     void Render(Renderer* renderer);
+    void Render(Renderer* renderer, Season season, const TilesetConfig* config);
 
     int GetWidth() const { return m_width; }
     int GetHeight() const { return m_height; }
@@ -64,6 +67,7 @@ private:
     // Helper methods for rendering
     void RenderTileFallback(Renderer* renderer, const Tile* tile, int screenX, int screenY);
     int GetTileSpriteId(const Tile* tile) const;
+    int GetTileSpriteId(const Tile* tile, Season season, const TilesetConfig* config) const;
 };
 
 #endif // MAP_H

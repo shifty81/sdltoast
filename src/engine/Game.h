@@ -22,6 +22,7 @@ class Energy;
 class Skills;
 class QuestSystem;
 class FishingSystem;
+class TilesetConfig;
 
 /**
  * Main game class that manages the game loop and core systems
@@ -91,6 +92,7 @@ private:
     std::unique_ptr<Skills> m_skills;
     std::unique_ptr<QuestSystem> m_questSystem;
     std::unique_ptr<FishingSystem> m_fishingSystem;
+    std::unique_ptr<TilesetConfig> m_tilesetConfig;
 
     // State
     int m_gold;

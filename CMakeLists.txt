@@ -43,6 +43,7 @@ set(SOURCES
     src/engine/AssetManager.cpp
     src/engine/AudioManager.cpp
     src/engine/SpriteSheet.cpp
+    src/engine/TilesetConfig.cpp
     src/engine/Logger.cpp
     src/entities/Entity.cpp
     src/entities/Player.cpp
@@ -59,6 +60,8 @@ set(SOURCES
     src/systems/Energy.cpp
     src/systems/Skills.cpp
     src/systems/Fishing.cpp
+    src/systems/Shop.cpp
+    src/systems/Mining.cpp
     src/world/Map.cpp
     src/world/Tile.cpp
     src/world/Dungeon.cpp
@@ -76,6 +79,7 @@ set(HEADERS
     src/engine/AssetManager.h
     src/engine/AudioManager.h
     src/engine/SpriteSheet.h
+    src/engine/TilesetConfig.h
     src/engine/Logger.h
     src/entities/Entity.h
     src/entities/Player.h
@@ -92,6 +96,8 @@ set(HEADERS
     src/systems/Energy.h
     src/systems/Skills.h
     src/systems/Fishing.h
+    src/systems/Shop.h
+    src/systems/Mining.h
     src/world/Map.h
     src/world/Tile.h
     src/world/Dungeon.h
