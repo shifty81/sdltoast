@@ -2,6 +2,8 @@
 #include "../engine/Renderer.h"
 #include "../engine/SpriteSheet.h"
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 Map::Map()
     : m_width(25)
@@ -21,9 +23,102 @@ Map::~Map() {
 }
 
 bool Map::LoadFromFile(const std::string& filepath) {
-    // TODO: Implement map loading from JSON
-    (void)filepath;
-    std::cout << "Map loading not yet implemented. Using procedural generation." << std::endl;
+    std::ifstream file(filepath);
+    if (!file.is_open()) {
+        std::cout << "Map: Cannot open file: " << filepath << std::endl;
+        return false;
+    }
+
+    std::string line;
+
+    // Verify header
+    if (!std::getline(file, line) || line != "HARVEST_QUEST_MAP") {
+        std::cout << "Map: Invalid map file format" << std::endl;
+        return false;
+    }
+
+    int width = 0, height = 0;
+
+    // Read dimensions
+    if (!std::getline(file, line)) return false;
+    std::istringstream dimStream(line);
+    std::string tag;
+    dimStream >> tag >> width >> height;
+    if (tag != "SIZE" || width <= 0 || height <= 0) {
+        std::cout << "Map: Invalid SIZE line" << std::endl;
+        return false;
+    }
+
+    // Prepare tile storage
+    m_width = width;
+    m_height = height;
+    m_tiles.clear();
+    m_tiles.resize(m_width * m_height, Tile(TileType::GRASS, 0));
+
+    // Read tile data
+    while (std::getline(file, line)) {
+        if (line == "END") break;
+        if (line.empty()) continue;
+
+        std::istringstream iss(line);
+        iss >> tag;
+
+        if (tag == "TILE") {
+            int x, y, typeInt, visualId;
+            iss >> x >> y >> typeInt >> visualId;
+            if (IsValidPosition(x, y)) {
+                auto type = static_cast<TileType>(typeInt);
+                Tile tile(type, visualId);
+
+                // Optional: soil state and crop data
+                int soilInt = -1;
+                int cropType = -1;
+                int growthStage = 0;
+                if (iss >> soilInt) {
+                    tile.SetSoilState(static_cast<SoilState>(soilInt));
+                }
+                if (iss >> cropType) {
+                    tile.SetCropType(cropType);
+                }
+                if (iss >> growthStage) {
+                    tile.SetGrowthStage(growthStage);
+                }
+
+                m_tiles[GetIndex(x, y)] = tile;
+            }
+        }
+    }
+
+    file.close();
+    std::cout << "Map: Loaded " << m_width << "x" << m_height << " map from " << filepath << std::endl;
+    return true;
+}
+
+bool Map::SaveToFile(const std::string& filepath) const {
+    std::ofstream file(filepath);
+    if (!file.is_open()) {
+        std::cout << "Map: Cannot open file for writing: " << filepath << std::endl;
+        return false;
+    }
+
+    file << "HARVEST_QUEST_MAP\n";
+    file << "SIZE " << m_width << " " << m_height << "\n";
+
+    for (int y = 0; y < m_height; ++y) {
+        for (int x = 0; x < m_width; ++x) {
+            const Tile* tile = GetTileAt(x, y);
+            if (!tile) continue;
+            file << "TILE " << x << " " << y << " "
+                 << static_cast<int>(tile->GetType()) << " "
+                 << tile->GetVisualId() << " "
+                 << static_cast<int>(tile->GetSoilState()) << " "
+                 << tile->GetCropType() << " "
+                 << tile->GetGrowthStage() << "\n";
+        }
+    }
+
+    file << "END\n";
+    file.close();
     return true;
 }
 

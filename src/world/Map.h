@@ -18,6 +18,7 @@ public:
     ~Map();
 
     bool LoadFromFile(const std::string& filepath);
+    bool SaveToFile(const std::string& filepath) const;
     void Update(float deltaTime);
     void Render(Renderer* renderer);
 
